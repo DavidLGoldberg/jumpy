@@ -1,0 +1,16 @@
+# See https://atom.io/docs/latest/creating-a-package#menus for more details
+'context-menu':
+  '.overlayer':
+      'Enable jumpy': 'jumpy:toggle'
+
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'jumpy'
+      'submenu': [
+        { 'label': 'Toggle', 'command': 'jumpy:toggle' }
+      ]
+    ]
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "name": "jumpy",
+  "main": "./lib/jumpy",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "activationEvents": ["jumpy:toggle"],
+  "repository": "https://github.com/atom/jumpy",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+  }
+}
