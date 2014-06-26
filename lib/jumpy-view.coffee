@@ -1,7 +1,9 @@
 {View} = require 'atom'
+{$} = require 'atom'
 
 module.exports =
 class JumpyView extends View
+  @jumpMode = false
   @content: ->
     @div class: 'jumpy overlay from-top', =>
       @div "The Jumpy package is Alive! It's ALIVE!", class: "message"
@@ -17,7 +19,9 @@ class JumpyView extends View
     @detach()
 
   toggle: ->
-    console.log "JumpyView was toggled!"
+    @jumpMode = !@jumpMode
+    $('#status-bar-jumpy').html(if @jumpMode then "Jumpy: Jump Mode!" else "")
+
     if @hasParent()
       @detach()
     else
