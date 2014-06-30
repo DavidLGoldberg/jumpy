@@ -5,8 +5,7 @@ module.exports =
 class JumpyView extends View
   @jumpMode = false
   @content: ->
-    @div class: 'jumpy', =>
-      @div "aa", class: "label"
+    @div "aa", class: 'jumpy label'
 
   initialize: (serializeState) ->
     atom.workspaceView.command "jumpy:toggle", => @toggle()
