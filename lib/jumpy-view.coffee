@@ -5,8 +5,8 @@ module.exports =
 class JumpyView extends View
   @jumpMode = false
   @content: ->
-    @div class: 'jumpy overlay from-top', =>
-      @div "The Jumpy package is Alive! It's ALIVE!", class: "message"
+    @div class: 'jumpy', =>
+      @div "aa", class: "label"
 
   initialize: (serializeState) ->
     atom.workspaceView.command "jumpy:toggle", => @toggle()
@@ -22,7 +22,8 @@ class JumpyView extends View
     @jumpMode = !@jumpMode
     $('#status-bar-jumpy').html(if @jumpMode then "Jumpy: Jump Mode!" else "")
 
-    if @hasParent()
-      @detach()
+    if @jumpMode
+      atom.workspaceView.find('.line .source .variable').prepend(this)
     else
-      atom.workspaceView.append(this)
+      atom.workspaceView.find('.jumpy').remove()
+      @detach()
