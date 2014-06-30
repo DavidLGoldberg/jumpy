@@ -5,14 +5,8 @@ module.exports =
 class JumpyView extends View
   @jumpMode = false
 
-  characters = (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
-  keys = []
-  for c1 in characters
-    for c2 in characters
-      keys.push c1 + c2
-
   @content: ->
-    @div keys.pop(), class: 'jumpy label'
+    @div '', class: 'jumpy label'
 
   initialize: (serializeState) ->
     atom.workspaceView.command "jumpy:toggle", => @toggle()
@@ -31,6 +25,15 @@ class JumpyView extends View
     if @jumpMode
       relevantClasses = ['variable', 'keyword', 'method', 'string.quoted']
       atom.workspaceView.find((".line .source .#{c}" for c in relevantClasses).join()).prepend(this)
+
+      characters = (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
+      keys = []
+      for c1 in characters
+        for c2 in characters
+          keys.push c1 + c2
+
+      for label in atom.workspaceView.find(".jumpy.label")
+          $(label).html(keys.pop())
     else
       atom.workspaceView.find('.jumpy').remove()
       @detach()
