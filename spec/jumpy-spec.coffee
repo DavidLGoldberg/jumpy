@@ -28,3 +28,12 @@ describe "Jumpy", ->
         expect(atom.workspaceView.find('.jumpy')).toExist()
         atom.workspaceView.trigger 'jumpy:toggle'
         expect(atom.workspaceView.find('.jumpy')).not.toExist()
+
+  describe "when the jumpy:toggle event is triggered", ->
+    it "prints hotkey overlays", ->
+      atom.workspaceView.trigger 'jumpy:toggle'
+
+      waitsForPromise ->
+        activationPromise
+
+      runs ->
