@@ -33,7 +33,7 @@ class JumpyView extends View
           keys.push c1 + c2
 
       for label in atom.workspaceView.find(".jumpy.label")
-          $(label).html(keys.pop())
+          $(label).html(keys.shift())
     else
       atom.workspaceView.find('.jumpy').remove()
       @detach()
