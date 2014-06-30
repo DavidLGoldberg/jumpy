@@ -4,8 +4,15 @@
 module.exports =
 class JumpyView extends View
   @jumpMode = false
+
+  characters = (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
+  keys = []
+  for c1 in characters
+    for c2 in characters
+      keys.push c1 + c2
+
   @content: ->
-    @div "aa", class: 'jumpy label'
+    @div keys.pop(), class: 'jumpy label'
 
   initialize: (serializeState) ->
     atom.workspaceView.command "jumpy:toggle", => @toggle()
