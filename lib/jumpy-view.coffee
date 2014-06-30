@@ -22,7 +22,8 @@ class JumpyView extends View
     $('#status-bar-jumpy').html(if @jumpMode then "Jumpy: Jump Mode!" else "")
 
     if @jumpMode
-      atom.workspaceView.find('.line .source .variable').prepend(this)
+      relevantClasses = ['variable', 'keyword', 'method', 'string.quoted']
+      atom.workspaceView.find((".line .source .#{c}" for c in relevantClasses).join()).prepend(this)
     else
       atom.workspaceView.find('.jumpy').remove()
       @detach()
