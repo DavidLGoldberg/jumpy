@@ -23,9 +23,7 @@ class JumpyView extends View
 
     if @jumpMode
       $('#status-bar-jumpy').html("Jumpy: Jump Mode!")
-      atom.workspaceView.eachEditorView (e) -> e.addClass 'jumpy-specificity-1'
-      atom.workspaceView.eachEditorView (e) -> e.addClass 'jumpy-specificity-2'
-      atom.workspaceView.eachEditorView (e) -> e.addClass 'jumpy-jump-mode'
+      atom.workspaceView.eachEditorView (e) -> e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
 
       relevantClasses = ['variable', 'keyword', 'method', 'string.quoted']
       atom.workspaceView.find((".line .source .#{c}" for c in relevantClasses).join()).prepend(this)
@@ -40,8 +38,6 @@ class JumpyView extends View
           $(label).html(keys.shift())
     else
       $('#status-bar-jumpy').html("")
-      atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-specificity-1'
-      atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-specificity-2'
-      atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-jump-mode'
+      atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
       atom.workspaceView.find('.jumpy').remove()
       @detach()
