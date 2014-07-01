@@ -9,3 +9,6 @@
 # https://atom.io/docs/latest/advanced/keymaps
 '.editor':
   'cmd-space': 'jumpy:toggle'
+
+'.editor.jumpy-specificity-1.jumpy-specificity-2.jumpy-jump-mode':
+  'space': 'jumpy:toggle'
