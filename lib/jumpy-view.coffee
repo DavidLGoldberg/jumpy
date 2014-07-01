@@ -1,5 +1,6 @@
 {View} = require 'atom'
 {$} = require 'atom'
+_ = require 'lodash'
 
 characters = (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
 
@@ -11,6 +12,7 @@ class JumpyView extends View
     @div '', class: 'jumpy label'
 
   initialize: (serializeState) ->
+    @pixels = @getAllPixelLocations()
     atom.workspaceView.command "jumpy:toggle", => @toggle()
     that = this
     for c in characters
@@ -39,7 +41,37 @@ class JumpyView extends View
       @detach()
 
   jump: ->
+      location = @findLocation()
+      if location == null
+          return
+      editor = atom.workspaceView.getActivePaneItem()
+      editor.setCursorBufferPosition(location)
       console.log "Jumpy jumped to: #{@firstChar}#{@secondChar}"
+
+  findLocation: ->
+      nearest10 = (val) ->
+          Math.round(val / 10) * 10
+
+      labelElement = atom.workspaceView.find(".jumpy.#{@firstChar}#{@secondChar}").get(0)
+      labelLocation = labelElement.getBoundingClientRect()
+      for line, lineIndex in @pixels
+          line = _.compact line
+          for char, charIndex in line
+              #console.log lineIndex, charIndex, char, nearest10(labelLocation.left), nearest10(labelLocation.top)
+              if nearest10(labelLocation.left) == char.left + 270 && nearest10(labelLocation.bottom - labelLocation.height) == char.top + 40
+                  return [lineIndex, charIndex]
+
+      return null
+
+  getAllPixelLocations: ->
+      pixels = []
+      for line, lineIndex in atom.workspaceView.getActivePaneItem().buffer.lines
+          pixels.push([])
+          for char, charIndex in line
+              pixelPosition = atom.workspaceView.getActiveView().pixelPositionForBufferPosition([lineIndex, charIndex])
+              pixels[lineIndex][charIndex] = pixelPosition unless pixelPosition.left == 0 && pixelPosition.top == 0
+
+      return pixels
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -67,6 +99,8 @@ class JumpyView extends View
           keys.push c1 + c2
 
       for label in atom.workspaceView.find(".jumpy.label")
-          $(label).html(keys.shift())
+          key = keys.shift()
+          $(label).html(key)
+          $(label).addClass(key)
     else
         @clearJumpMode()
