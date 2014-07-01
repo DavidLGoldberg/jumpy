@@ -21,6 +21,9 @@ class JumpyView extends View
   toggle: ->
     @jumpMode = !@jumpMode
 
+    if @hasParent()
+      @detach()
+      
     if @jumpMode
       $('#status-bar-jumpy').html("Jumpy: Jump Mode!")
       atom.workspaceView.eachEditorView (e) -> e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
