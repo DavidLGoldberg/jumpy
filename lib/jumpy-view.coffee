@@ -101,7 +101,8 @@ class JumpyView extends View
 
       for label in atom.workspaceView.find(".jumpy.label")
           key = keys.shift()
-          $(label).html(key)
-          $(label).addClass(key)
+          $(label)
+              .html(key)
+              .addClass(key)
     else
         @clearJumpMode()
