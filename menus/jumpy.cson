@@ -1,12 +1,5 @@
 # See https://atom.io/docs/latest/creating-a-package#menus for more details
 'menu': [
   {
-    'label': 'Packages'
-    'submenu': [
-      'label': 'jumpy'
-      'submenu': [
-        { 'label': 'Toggle', 'command': 'jumpy:toggle' }
-      ]
-    ]
   }
 ]
