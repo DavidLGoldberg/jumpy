@@ -53,11 +53,15 @@ class JumpyView extends View
 
       labelElement = atom.workspaceView.find(".jumpy.#{@firstChar}#{@secondChar}").get(0)
       labelLocation = labelElement.getBoundingClientRect()
+      lines = atom.workspaceView.find('.lines')
+      offsetTop = lines.get(0).offsetTop
+      #offsetLeft = lines.offset().left
+      offsetLeft = 0
       for line, lineIndex in @pixels
           line = _.compact line
           for char, charIndex in line
               #console.log lineIndex, charIndex, char, nearest10(labelLocation.left), nearest10(labelLocation.top)
-              if nearest10(labelLocation.left) == char.left + 270 && nearest10(labelLocation.bottom - labelLocation.height) == char.top + 40
+              if nearest10(labelLocation.left) == char.left + 270 + offsetLeft && nearest10(labelLocation.bottom - labelLocation.height) == char.top + 40 + offsetTop
                   return [lineIndex, charIndex]
 
       return null
