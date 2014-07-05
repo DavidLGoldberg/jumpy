@@ -100,6 +100,5 @@ class JumpyView extends View
             .html(key)
             .addClass(key)
 
-
   clear: ->
       @clearJumpMode()
