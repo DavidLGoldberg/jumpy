@@ -34,6 +34,7 @@ class JumpyView extends View
       @secondChar = null
 
   clearJumpMode: ->
+      @jumpMode = !@jumpMode
       @clearKeys()
       $('#status-bar-jumpy').html("")
       atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
