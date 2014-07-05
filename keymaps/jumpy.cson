@@ -11,7 +11,9 @@
   'cmd-space': 'jumpy:toggle'
 
 '.editor.jumpy-specificity-1.jumpy-specificity-2.jumpy-jump-mode':
-  'space': 'jumpy:toggle'
+  'space': 'jumpy:clear'
+  'escape': 'jumpy:clear'
+  'cmd-space': 'jumpy:clear'
   'a': 'jumpy:a'
   'b': 'jumpy:b'
   'c': 'jumpy:c'
