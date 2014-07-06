@@ -48,20 +48,31 @@ class JumpyView extends View
       console.log "Jumpy jumped to: #{@firstChar}#{@secondChar}"
 
   findLocation: ->
-      nearest10 = (val) ->
-          Math.round(val / 10) * 10
+      nearestMultiple = (val, base) ->
+          Math.round(val / base) * base
 
+      cursor = $('.editor .scroll-view .overlayer .cursor').get(0)
       labelElement = atom.workspaceView.find(".jumpy.#{@firstChar}#{@secondChar}").get(0)
       labelLocation = labelElement.getBoundingClientRect()
+      nearestCursor =
+          left: nearestMultiple(labelLocation.left, cursor.clientWidth)
+          top: nearestMultiple(labelLocation.bottom - labelLocation.height, cursor.clientHeight)
+      console.log nearestCursor.left, nearestCursor.top
+
       lines = atom.workspaceView.find('.lines')
       offsetTop = lines.get(0).offsetTop
-      #offsetLeft = lines.offset().left
-      offsetLeft = 0
+      #offsetLeft = lines.get(0).offsetLeft
+      offsetLeft = 0 # TODO: this needs to be replace with scroll to the right info.
+      scrollViewOffset = $('.editor .scroll-view').offset()
       for line, lineIndex in @pixels
           line = _.compact line
           for char, charIndex in line
-              #console.log lineIndex, charIndex, char, nearest10(labelLocation.left), nearest10(labelLocation.top)
-              if nearest10(labelLocation.left) == char.left + 270 + offsetLeft && nearest10(labelLocation.bottom - labelLocation.height) == char.top + 40 + offsetTop
+              #console.log lineIndex, charIndex, char
+              isAtLeft = (nearestCursor.left ==
+                  char.left + scrollViewOffset.left + offsetLeft)
+              isAtTop = (nearestCursor.top ==
+                  char.top + scrollViewOffset.top + offsetTop)
+              if isAtLeft && isAtTop
                   return [lineIndex, charIndex]
 
       return null
