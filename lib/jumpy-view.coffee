@@ -53,6 +53,8 @@ class JumpyView extends View
 
       cursor = $('.editor .scroll-view .overlayer .cursor').get(0)
       labelElement = atom.workspaceView.find(".jumpy.#{@firstChar}#{@secondChar}").get(0)
+      return null unless labelElement
+
       labelLocation = labelElement.getBoundingClientRect()
       nearestCursor =
           left: nearestMultiple(labelLocation.left, cursor.clientWidth)
