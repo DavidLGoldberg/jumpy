@@ -42,10 +42,11 @@ class JumpyView extends View
   jump: ->
       location = @findLocation()
       if location == null
+          console.log "Jumpy canceled jump.  No location found."
           return
       editor = atom.workspaceView.getActivePaneItem()
       editor.setCursorBufferPosition(location)
-      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar}"
+      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at #{location}"
 
   findLocation: ->
       nearestMultiple = (val, base) ->
