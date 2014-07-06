@@ -51,11 +51,11 @@ class JumpyView extends View
       nearestMultiple = (val, base) ->
           Math.round(val / base) * base
 
-      cursor = $('.editor .scroll-view .overlayer .cursor').get(0)
       labelElement = atom.workspaceView.find(".jumpy.#{@firstChar}#{@secondChar}").get(0)
       return null unless labelElement
 
       labelLocation = labelElement.getBoundingClientRect()
+      cursor = $('.editor .scroll-view .overlayer .cursor').get(0)
       nearestCursor =
           left: nearestMultiple(labelLocation.left, cursor.clientWidth)
           top: nearestMultiple(labelLocation.bottom - labelLocation.height, cursor.clientHeight)
