@@ -52,6 +52,8 @@ class JumpyView extends View
           Math.round(val / 10) * 10
 
       labelElement = atom.workspaceView.find(".jumpy.#{@firstChar}#{@secondChar}").get(0)
+      return null unless labelElement
+
       labelLocation = labelElement.getBoundingClientRect()
       lines = atom.workspaceView.find('.lines')
       offsetTop = lines.get(0).offsetTop
