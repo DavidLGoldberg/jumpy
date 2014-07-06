@@ -25,7 +25,7 @@ class JumpyView extends View
           @secondChar = character
 
       if @secondChar
-          @jump()
+          @jump() # Jump first.  Currently need the placement of the labels.
           @clearJumpMode()
 
   clearKeys: ->
