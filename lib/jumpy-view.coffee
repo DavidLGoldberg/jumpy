@@ -3,6 +3,10 @@
 _ = require 'lodash'
 
 characters = (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
+keys = []
+for c1 in characters
+  for c2 in characters
+      keys.push c1 + c2
 
 module.exports =
 class JumpyView extends View
@@ -107,13 +111,10 @@ class JumpyView extends View
     relevantClasses = ['variable', 'keyword', 'method', 'string.quoted']
     atom.workspaceView.find((".line .source .#{c}" for c in relevantClasses).join()).prepend(this)
 
-    keys = []
-    for c1 in characters
-      for c2 in characters
-          keys.push c1 + c2
+    nextKeys = _.clone keys
 
     for label in atom.workspaceView.find(".jumpy.label")
-        key = keys.shift()
+        key = nextKeys.shift()
         $(label)
             .html(key)
             .addClass(key)
