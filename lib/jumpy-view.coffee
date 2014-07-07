@@ -11,7 +11,7 @@ for c1 in characters
 module.exports =
 class JumpyView extends View
   @content: ->
-    @div '', class: 'jumpy label'
+    @div ''
 
   initialize: (serializeState) ->
     @pixels = @getAllPixelLocations()
@@ -39,8 +39,8 @@ class JumpyView extends View
   clearJumpMode: ->
       @clearKeys()
       $('#status-bar-jumpy').html("")
-      atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
       atom.workspaceView.find('.jumpy').remove()
+      atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
       @detach()
 
   jump: ->
@@ -64,21 +64,29 @@ class JumpyView extends View
       nearestCursor =
           left: nearestMultiple(labelLocation.left, cursor.clientWidth)
           top: nearestMultiple(labelLocation.bottom - labelLocation.height, cursor.clientHeight)
-      console.log nearestCursor.left, nearestCursor.top
+      console.log nearestCursor.left, nearestCursor.top, cursor.clientHeight, labelLocation, labelElement
 
       lines = atom.workspaceView.find('.lines')
       offsetTop = lines.get(0).offsetTop
+      console.log offsetTop
       #offsetLeft = lines.get(0).offsetLeft
-      offsetLeft = 0 # TODO: this needs to be replace with scroll to the right info.
+      offsetLeft = 0 # TODO: this needs to be replaced with scroll to the right info.
       scrollViewOffset = $('.editor .scroll-view').offset()
       for line, lineIndex in @pixels
           line = _.compact line
           for char, charIndex in line
               #console.log lineIndex, charIndex, char
               isAtLeft = (nearestCursor.left ==
-                  char.left + scrollViewOffset.left + offsetLeft)
+                  char.left + scrollViewOffset.left - offsetLeft)
               isAtTop = (nearestCursor.top ==
-                  char.top + scrollViewOffset.top + offsetTop)
+                  char.top + scrollViewOffset.top - offsetTop)
+                  #char.top + scrollViewOffset.top - 42 - offsetTop)
+
+              if lineIndex == @pixels.length - 2 && charIndex == 0
+                  # TODO: handle changing y coord after 2nd run...found class="cc aa"!
+                  # TODO: missing offset
+                  console.log "Last one:", lineIndex, charIndex, char.left, char.top, isAtLeft, isAtTop
+
               if isAtLeft && isAtTop
                   return [lineIndex, charIndex]
 
@@ -99,17 +107,16 @@ class JumpyView extends View
 
   # Tear down any state and detach
   destroy: ->
+    console.log 'Jumpy: "destroy" called. Detaching.'
+    @clearJumpMode()
     @detach()
 
   toggle: ->
-    if @hasParent()
-      @detach()
-
     $('#status-bar-jumpy').html("Jumpy: Jump Mode!")
     atom.workspaceView.eachEditorView (e) -> e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
 
     relevantClasses = ['variable', 'keyword', 'method', 'string.quoted']
-    atom.workspaceView.find((".line .source .#{c}" for c in relevantClasses).join()).prepend(this)
+    atom.workspaceView.find((".line .source .#{c}" for c in relevantClasses).join()).prepend('<div class="jumpy label"></div>')
 
     nextKeys = _.clone keys
 
