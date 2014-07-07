@@ -48,7 +48,7 @@ class JumpyView extends View
       if location == null
           console.log "Jumpy canceled jump.  No location found."
           return
-      editor = atom.workspaceView.getActivePaneItem()
+      editor = atom.workspace.getActivePaneItem()
       editor.setCursorBufferPosition(location)
       console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location})"
 
@@ -84,7 +84,7 @@ class JumpyView extends View
 
   getAllPixelLocations: ->
       pixels = []
-      for line, lineIndex in atom.workspaceView.getActivePaneItem().buffer.lines
+      for line, lineIndex in atom.workspace.getActivePaneItem().buffer.lines
           pixels.push([])
           for char, charIndex in line
               pixelPosition = atom.workspaceView.getActiveView().pixelPositionForBufferPosition([lineIndex, charIndex])
