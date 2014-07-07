@@ -1,39 +1,66 @@
+path = require 'path'
 {WorkspaceView} = require 'atom'
 Jumpy = require '../lib/jumpy'
 
-# Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
-#
-# To run a specific `it` or `describe` block add an `f` to the front (e.g. `fit`
-# or `fdescribe`). Remove the `f` to unfocus the block.
-
 describe "Jumpy", ->
-  activationPromise = null
+    [editorView, editor, activationPromise, promise2] = []
 
-  beforeEach ->
-    atom.workspaceView = new WorkspaceView
-    activationPromise = atom.packages.activatePackage('jumpy')
+    beforeEach ->
+        atom.workspaceView = new WorkspaceView
+        atom.project.setPath(path.join(__dirname, 'fixtures'))
 
-  describe "when the jumpy:toggle event is triggered", ->
-    it "attaches and then detaches the view", ->
-      expect(atom.workspaceView.find('.jumpy')).not.toExist()
+        waitsForPromise ->
+            atom.workspace.open 'test_text'
 
-      # This is an activation event, triggering it will cause the package to be
-      # activated.
-      atom.workspaceView.trigger 'jumpy:toggle'
+        runs ->
+            atom.workspaceView.attachToDom()
+            editorView = atom.workspaceView.getActiveView()
+            editor = editorView.getEditor()
+            activationPromise = atom.packages.activatePackage 'jumpy'
+            editorView.trigger 'jumpy:toggle'
 
-      waitsForPromise ->
-        activationPromise
+        waitsForPromise ->
+            activationPromise
 
-      runs ->
-        expect(atom.workspaceView.find('.jumpy')).toExist()
-        atom.workspaceView.trigger 'jumpy:toggle'
-        expect(atom.workspaceView.find('.jumpy')).not.toExist()
+    describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
+        it "jumpy is cleared", ->
+            editor.setCursorBufferPosition [1,1]
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:c'
+            expect(editorView.find('.jumpy')).not.toExist()
 
-  describe "when the jumpy:toggle event is triggered", ->
-    it "prints hotkey overlays", ->
-      atom.workspaceView.trigger 'jumpy:toggle'
+    describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
+        it "jumps the cursor", ->
+            editor.setCursorBufferPosition [1,1]
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:c'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toEqual 0
+            expect(cursorPosition.column).toEqual 10
 
-      waitsForPromise ->
-        activationPromise
+    describe "when the jumpy:toggle event is triggered and hotkeys are entered
+        in succession", ->
+        it "jumps the cursor twice", ->
+            editor.setCursorBufferPosition [1,1]
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:c'
+            editorView.trigger 'jumpy:toggle'
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:e'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toEqual 1
+            expect(cursorPosition.column).toEqual 5
 
-      runs ->
+    # describe "when the jumpy:toggle event is triggered", ->
+    #     it "updates the status bar", ->
+    #         expect(atom.workspaceView.find('#status-bar-jumpy')).toExist()
+
+    describe "when the jumpy:toggle event is triggered", ->
+        it "draws labels", ->
+            # TODO: make this more thorough!
+            expect(editorView.find('.jumpy')).toExist()
+
+    describe "when the jumpy:clear event is triggered", ->
+        it "clears labels", ->
+            editorView.trigger 'jumpy:clear'
+            expect(editorView.find('.jumpy')).not.toExist()

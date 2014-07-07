@@ -1,5 +1,5 @@
 JumpyView = require '../lib/jumpy-view'
 
-describe "JumpyView", ->
-  it "has one valid test", ->
-      return # placeholder
+# describe "JumpyView", ->
+#   it "has one valid test", ->
+#       return true# placeholder
