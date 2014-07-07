@@ -50,7 +50,7 @@ class JumpyView extends View
           return
       editor = atom.workspaceView.getActivePaneItem()
       editor.setCursorBufferPosition(location)
-      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at #{location}"
+      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location})"
 
   findLocation: ->
       nearestMultiple = (val, base) ->
@@ -64,28 +64,25 @@ class JumpyView extends View
       nearestCursor =
           left: nearestMultiple(labelLocation.left, cursor.clientWidth)
           top: nearestMultiple(labelLocation.bottom - labelLocation.height, cursor.clientHeight)
-      console.log nearestCursor.left, nearestCursor.top, cursor.clientHeight, labelLocation, labelElement
+      console.log nearestCursor.left, nearestCursor.top, cursor.clientHeight, labelLocation
 
       lines = atom.workspaceView.find('.lines')
       offsetTop = lines.get(0).offsetTop
-      console.log offsetTop
       #offsetLeft = lines.get(0).offsetLeft
       offsetLeft = 0 # TODO: this needs to be replaced with scroll to the right info.
       scrollViewOffset = $('.editor .scroll-view').offset()
       for line, lineIndex in @pixels
           line = _.compact line
           for char, charIndex in line
-              #console.log lineIndex, charIndex, char
               isAtLeft = (nearestCursor.left ==
-                  char.left + scrollViewOffset.left - offsetLeft)
+                  nearestMultiple(char.left + scrollViewOffset.left + offsetLeft, cursor.clientWidth))
               isAtTop = (nearestCursor.top ==
-                  char.top + scrollViewOffset.top - offsetTop)
-                  #char.top + scrollViewOffset.top - 42 - offsetTop)
+                  nearestMultiple(char.top + scrollViewOffset.top + offsetTop, cursor.clientHeight))
 
               if lineIndex == @pixels.length - 2 && charIndex == 0
                   # TODO: handle changing y coord after 2nd run...found class="cc aa"!
                   # TODO: missing offset
-                  console.log "Last one:", lineIndex, charIndex, char.left, char.top, isAtLeft, isAtTop
+                  console.log "Last one:", lineIndex, charIndex, char.left, isAtLeft, isAtTop
 
               if isAtLeft && isAtTop
                   return [lineIndex, charIndex]
