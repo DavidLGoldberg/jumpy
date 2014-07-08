@@ -56,8 +56,9 @@ class JumpyView extends View
   findLocation: ->
       label = "#{@firstChar}#{@secondChar}"
       for editor in atom.workspaceView.getEditorViews()
-          if label of @allPositions[editor.id]
-              return @allPositions[editor.id][label]
+          currentId = editor.find('.jumpy.labels').attr('jumpyid')
+          if label of @allPositions[currentId]
+              return @allPositions[currentId][label]
 
       return null
 
@@ -78,7 +79,7 @@ class JumpyView extends View
     atom.workspaceView.eachEditorView (e) ->
         return if !e.active
         e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
-        e.find('.scroll-view .overlayer').append('<div class="jumpy labels"></div>')
+        e.find('.scroll-view .overlayer').append("<div class='jumpy labels' jumpyid='#{e.id}'></div>")
         positions = {}
         that.allPositions[e.id] = positions
 
