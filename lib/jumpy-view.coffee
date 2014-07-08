@@ -54,9 +54,12 @@ class JumpyView extends View
       console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location.row},#{location.column})"
 
   findLocation: ->
-      bufferPosition = @allPositions[0]["#{@firstChar}#{@secondChar}"]
-      return null unless bufferPosition
-      return bufferPosition
+      label = "#{@firstChar}#{@secondChar}"
+      for editor in atom.workspaceView.getEditorViews()
+          if label of @allPositions[editor.id]
+              return @allPositions[editor.id][label]
+
+      return null
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -71,14 +74,13 @@ class JumpyView extends View
     $('#status-bar-jumpy').html("Jumpy: Jump Mode!")
     @allPositions = {}
     that = this
-    editorCount = 0
     nextKeys = _.clone keys
     atom.workspaceView.eachEditorView (e) ->
         return if !e.active
         e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
         e.find('.scroll-view .overlayer').append('<div class="jumpy labels"></div>')
         positions = {}
-        that.allPositions[editorCount++] = positions
+        that.allPositions[e.id] = positions
 
         wordsPattern = /([\w]){2,}/g
         for line, lineNumber in atom.workspace.getActivePaneItem().buffer.lines
