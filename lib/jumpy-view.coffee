@@ -51,7 +51,7 @@ class JumpyView extends View
           return
       editor = atom.workspace.getActivePaneItem()
       editor.setCursorBufferPosition(location)
-      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location})"
+      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location.row},#{location.column})"
 
   findLocation: ->
       bufferPosition = @allPositions[0]["#{@firstChar}#{@secondChar}"]
