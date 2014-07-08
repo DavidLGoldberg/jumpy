@@ -74,6 +74,7 @@ class JumpyView extends View
     editorCount = 0
     nextKeys = _.clone keys
     atom.workspaceView.eachEditorView (e) ->
+        return if !e.active
         e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
         e.find('.scroll-view .overlayer').append('<div class="jumpy labels"></div>')
         positions = {}
