@@ -10,11 +10,11 @@ for c1 in characters
 
 module.exports =
 class JumpyView extends View
+
   @content: ->
     @div ''
 
   initialize: (serializeState) ->
-    @pixels = @getAllPixelLocations()
     atom.workspaceView.command "jumpy:toggle", => @toggle()
     atom.workspaceView.command "jumpy:clear", => @clear()
     that = this
@@ -39,8 +39,9 @@ class JumpyView extends View
   clearJumpMode: ->
       @clearKeys()
       $('#status-bar-jumpy').html("")
-      atom.workspaceView.find('.jumpy').remove()
-      atom.workspaceView.eachEditorView (e) -> e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
+      atom.workspaceView.eachEditorView (e) ->
+          e.find('.jumpy').remove()
+          e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
       @detach()
 
   jump: ->
@@ -53,44 +54,9 @@ class JumpyView extends View
       console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location})"
 
   findLocation: ->
-      nearestMultiple = (val, base) ->
-          Math.round(val / base) * base
-
-      labelElement = atom.workspaceView.find(".jumpy.#{@firstChar}#{@secondChar}").get(0)
-      return null unless labelElement
-
-      labelLocation = labelElement.getBoundingClientRect()
-      cursor = $('.editor .scroll-view .overlayer .cursor').get(0)
-      nearestCursor =
-          left: nearestMultiple(labelLocation.left, cursor.clientWidth)
-          top: nearestMultiple(labelLocation.bottom - labelLocation.height, cursor.clientHeight)
-
-      lines = atom.workspaceView.find('.lines')
-      offsetTop = lines.get(0).offsetTop
-      offsetLeft = $('.scroll-view').scrollLeft()
-      scrollViewOffset = $('.editor .scroll-view').offset()
-      for line, lineIndex in @pixels
-          line = _.compact line
-          for char, charIndex in line
-              isAtLeft = (nearestCursor.left ==
-                  nearestMultiple(char.left + scrollViewOffset.left - offsetLeft, cursor.clientWidth))
-              isAtTop = (nearestCursor.top ==
-                  nearestMultiple(char.top + scrollViewOffset.top + offsetTop, cursor.clientHeight))
-
-              if isAtLeft && isAtTop
-                  return [lineIndex, charIndex]
-
-      return null
-
-  getAllPixelLocations: ->
-      pixels = []
-      for line, lineIndex in atom.workspace.getActivePaneItem().buffer.lines
-          pixels.push([])
-          for char, charIndex in line
-              pixelPosition = atom.workspaceView.getActiveView().pixelPositionForBufferPosition([lineIndex, charIndex])
-              pixels[lineIndex][charIndex] = pixelPosition unless pixelPosition.left == 0 && pixelPosition.top == 0
-
-      return pixels
+      bufferPosition = @allPositions[0]["#{@firstChar}#{@secondChar}"]
+      return null unless bufferPosition
+      return bufferPosition
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -103,18 +69,26 @@ class JumpyView extends View
 
   toggle: ->
     $('#status-bar-jumpy').html("Jumpy: Jump Mode!")
-    atom.workspaceView.eachEditorView (e) -> e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
-
-    relevantClasses = ['variable', 'keyword', 'method', 'string.quoted']
-    atom.workspaceView.find((".line .source .#{c}" for c in relevantClasses).join()).prepend('<div class="jumpy label"></div>')
-
+    @allPositions = {}
+    that = this
+    editorCount = 0
     nextKeys = _.clone keys
+    atom.workspaceView.eachEditorView (e) ->
+        e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
+        e.find('.scroll-view .overlayer').append('<div class="jumpy labels"></div>')
+        positions = {}
+        that.allPositions[editorCount++] = positions
 
-    for label in atom.workspaceView.find(".jumpy.label")
-        key = nextKeys.shift()
-        $(label)
-            .html(key)
-            .addClass(key)
+        wordsPattern = /([\w]){2,}/g
+        for line, lineNumber in atom.workspace.getActivePaneItem().buffer.lines
+            if line != ''
+                while ((word = wordsPattern.exec(line)) != null)
+                    keyLabel = nextKeys.shift()
+                    positions[keyLabel] = {row: lineNumber, column: word.index}
+                    pixelPosition = e.pixelPositionForBufferPosition([lineNumber, word.index])
+                    labelElement = $("<div class='jumpy label'>#{keyLabel}</div>")
+                        .css({left: pixelPosition.left, top: pixelPosition.top})
+                    e.find(".jumpy.labels").append(labelElement)
 
   clear: ->
       @clearJumpMode()
