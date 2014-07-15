@@ -97,7 +97,7 @@ class JumpyView extends View
         for line, lineNumber in editorView.getEditor().buffer.lines
             if line != ''
                 while ((word = wordsPattern.exec(line)) != null)
-                    if isScreenRowVisible(lineNumber)
+                    if isScreenRowVisible(lineNumber + 1)
                         keyLabel = nextKeys.shift()
                         position = {row: lineNumber, column: word.index}
                         that.allPositions[keyLabel] = { editor: editorView.getEditor().id, position: position } # creates a reference.
