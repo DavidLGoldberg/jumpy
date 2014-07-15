@@ -90,11 +90,14 @@ class JumpyView extends View
         positions = {}
         that.allPositions[e.id] = positions # creates a reference.
 
+        isScreenRowVisible = (lineNumber) ->
+            return lineNumber > e.getFirstVisibleScreenRow() &&
+                lineNumber < e.getLastVisibleScreenRow()
         wordsPattern = /([\w]){2,}/g
         for line, lineNumber in atom.workspace.getActivePaneItem().buffer.lines
             if line != ''
                 while ((word = wordsPattern.exec(line)) != null)
-                    if e.isScreenRowVisible(lineNumber)
+                    if isScreenRowVisible(lineNumber)
                         keyLabel = nextKeys.shift()
                         positions[keyLabel] = {row: lineNumber, column: word.index}
                         pixelPosition = e.pixelPositionForBufferPosition([lineNumber, word.index])
