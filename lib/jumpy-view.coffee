@@ -42,7 +42,7 @@ class JumpyView extends View
       $('#status-bar-jumpy').html("")
       atom.workspaceView.eachEditorView (e) ->
           e.find('.jumpy').remove()
-          e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
+          e.removeClass 'jumpy-jump-mode'
       atom.keymap.keyBindings = @backedUpKeyBindings
       @detach()
 
@@ -89,7 +89,7 @@ class JumpyView extends View
     nextKeys = _.clone keys
     atom.workspaceView.eachEditorView (e) ->
         return if !e.active
-        e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
+        e.addClass 'jumpy-jump-mode'
         e.find('.scroll-view .overlayer').append("<div class='jumpy labels'></div>")
         positions = {}
         that.allPositions[e.getEditor().id] = positions # creates a reference.
