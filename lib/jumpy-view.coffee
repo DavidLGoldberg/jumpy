@@ -58,13 +58,8 @@ class JumpyView extends View
 
   findLocation: ->
       label = "#{@firstChar}#{@secondChar}"
-      for editor in atom.workspace.getEditors()
-          currentId = editor.id
-          if label of @allPositions[currentId]
-              return {
-                  editor: currentId
-                  position: @allPositions[currentId][label]
-              }
+      if label of @allPositions
+          return @allPositions[label]
 
       return null
 
@@ -91,8 +86,6 @@ class JumpyView extends View
         return if !editorView.active
         editorView.addClass 'jumpy-jump-mode'
         editorView.find('.scroll-view .overlayer').append("<div class='jumpy labels'></div>")
-        positions = {}
-        that.allPositions[editorView.getEditor().id] = positions # creates a reference.
 
         isScreenRowVisible = (lineNumber) ->
             return lineNumber > editorView.getFirstVisibleScreenRow() &&
@@ -103,7 +96,8 @@ class JumpyView extends View
                 while ((word = wordsPattern.exec(line)) != null)
                     if isScreenRowVisible(lineNumber)
                         keyLabel = nextKeys.shift()
-                        positions[keyLabel] = {row: lineNumber, column: word.index}
+                        position = {row: lineNumber, column: word.index}
+                        that.allPositions[keyLabel] = { editor: editorView.getEditor().id, position: position } # creates a reference.
                         pixelPosition = editorView.pixelPositionForBufferPosition([lineNumber, word.index])
                         labelElement = $("<div class='jumpy label'>#{keyLabel}</div>")
                             .css({left: pixelPosition.left, top: pixelPosition.top})
