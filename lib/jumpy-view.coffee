@@ -87,27 +87,27 @@ class JumpyView extends View
     @allPositions = {}
     that = this
     nextKeys = _.clone keys
-    atom.workspaceView.eachEditorView (e) ->
-        return if !e.active
-        e.addClass 'jumpy-jump-mode'
-        e.find('.scroll-view .overlayer').append("<div class='jumpy labels'></div>")
+    atom.workspaceView.eachEditorView (editorView) ->
+        return if !editorView.active
+        editorView.addClass 'jumpy-jump-mode'
+        editorView.find('.scroll-view .overlayer').append("<div class='jumpy labels'></div>")
         positions = {}
-        that.allPositions[e.getEditor().id] = positions # creates a reference.
+        that.allPositions[editorView.getEditor().id] = positions # creates a reference.
 
         isScreenRowVisible = (lineNumber) ->
-            return lineNumber > e.getFirstVisibleScreenRow() &&
-                lineNumber < e.getLastVisibleScreenRow()
+            return lineNumber > editorView.getFirstVisibleScreenRow() &&
+                lineNumber < editorView.getLastVisibleScreenRow()
         wordsPattern = /([\w]){2,}/g
-        for line, lineNumber in atom.workspace.getActivePaneItem().buffer.lines
+        for line, lineNumber in editorView.getEditor().buffer.lines
             if line != ''
                 while ((word = wordsPattern.exec(line)) != null)
                     if isScreenRowVisible(lineNumber)
                         keyLabel = nextKeys.shift()
                         positions[keyLabel] = {row: lineNumber, column: word.index}
-                        pixelPosition = e.pixelPositionForBufferPosition([lineNumber, word.index])
+                        pixelPosition = editorView.pixelPositionForBufferPosition([lineNumber, word.index])
                         labelElement = $("<div class='jumpy label'>#{keyLabel}</div>")
                             .css({left: pixelPosition.left, top: pixelPosition.top})
-                        e.find(".jumpy.labels").append(labelElement)
+                        editorView.find(".jumpy.labels").append(labelElement)
 
   clear: ->
       @clearJumpMode()
