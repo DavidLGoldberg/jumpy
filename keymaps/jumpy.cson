@@ -10,9 +10,7 @@
 '.editor':
   'cmd-space': 'jumpy:toggle'
 
-
-'.editor.jumpy-specificity-1.jumpy-specificity-2.jumpy-jump-mode,
-.editor.jumpy-specificity-1.jumpy-specificity-2.jumpy-jump-mode.vim-mode:not(.insert-mode)':
+'.editor.jumpy-jump-mode':
   'space': 'jumpy:clear'
   'escape': 'jumpy:clear'
   'cmd-space': 'jumpy:clear'
