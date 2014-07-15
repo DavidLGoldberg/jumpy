@@ -88,18 +88,19 @@ class JumpyView extends View
         e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
         e.find('.scroll-view .overlayer').append("<div class='jumpy labels' jumpyid='#{e.id}'></div>")
         positions = {}
-        that.allPositions[e.id] = positions
+        that.allPositions[e.id] = positions # creates a reference.
 
         wordsPattern = /([\w]){2,}/g
         for line, lineNumber in atom.workspace.getActivePaneItem().buffer.lines
             if line != ''
                 while ((word = wordsPattern.exec(line)) != null)
-                    keyLabel = nextKeys.shift()
-                    positions[keyLabel] = {row: lineNumber, column: word.index}
-                    pixelPosition = e.pixelPositionForBufferPosition([lineNumber, word.index])
-                    labelElement = $("<div class='jumpy label'>#{keyLabel}</div>")
-                        .css({left: pixelPosition.left, top: pixelPosition.top})
-                    e.find(".jumpy.labels").append(labelElement)
+                    if e.isScreenRowVisible(lineNumber)
+                        keyLabel = nextKeys.shift()
+                        positions[keyLabel] = {row: lineNumber, column: word.index}
+                        pixelPosition = e.pixelPositionForBufferPosition([lineNumber, word.index])
+                        labelElement = $("<div class='jumpy label'>#{keyLabel}</div>")
+                            .css({left: pixelPosition.left, top: pixelPosition.top})
+                        e.find(".jumpy.labels").append(labelElement)
 
   clear: ->
       @clearJumpMode()
