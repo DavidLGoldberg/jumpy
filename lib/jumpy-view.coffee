@@ -51,16 +51,20 @@ class JumpyView extends View
       if location == null
           console.log "Jumpy canceled jump.  No location found."
           return
-      editor = atom.workspace.getActivePaneItem()
-      editor.setCursorBufferPosition(location)
-      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location.row},#{location.column})"
+      editor = _.find atom.workspace.getEditors(), (editor) ->
+          editor.id == location.editor
+      editor.setCursorBufferPosition(location.position)
+      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location.position.row},#{location.position.column})"
 
   findLocation: ->
       label = "#{@firstChar}#{@secondChar}"
-      for editor in atom.workspaceView.getEditorViews()
-          currentId = editor.find('.jumpy.labels').attr('jumpyid')
+      for editor in atom.workspace.getEditors()
+          currentId = editor.id
           if label of @allPositions[currentId]
-              return @allPositions[currentId][label]
+              return {
+                  editor: currentId
+                  position: @allPositions[currentId][label]
+              }
 
       return null
 
@@ -86,9 +90,9 @@ class JumpyView extends View
     atom.workspaceView.eachEditorView (e) ->
         return if !e.active
         e.addClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
-        e.find('.scroll-view .overlayer').append("<div class='jumpy labels' jumpyid='#{e.id}'></div>")
+        e.find('.scroll-view .overlayer').append("<div class='jumpy labels'></div>")
         positions = {}
-        that.allPositions[e.id] = positions # creates a reference.
+        that.allPositions[e.getEditor().id] = positions # creates a reference.
 
         isScreenRowVisible = (lineNumber) ->
             return lineNumber > e.getFirstVisibleScreenRow() &&
