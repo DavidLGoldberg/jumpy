@@ -20,6 +20,7 @@ class JumpyView extends View
     that = this
     for c in characters
       atom.workspaceView.command "jumpy:#{c}", (c) -> that.getKey(c)
+    @backedUpKeyBindings = _.clone(atom.keymap.keyBindings)
 
   getKey: (character) ->
       character = character.type.charAt(character.type.length - 1)
@@ -42,6 +43,7 @@ class JumpyView extends View
       atom.workspaceView.eachEditorView (e) ->
           e.find('.jumpy').remove()
           e.removeClass 'jumpy-specificity-1 jumpy-specificity-2 jumpy-jump-mode'
+      atom.keymap.keyBindings = @backedUpKeyBindings
       @detach()
 
   jump: ->
@@ -71,7 +73,12 @@ class JumpyView extends View
     @clearJumpMode()
     @detach()
 
+  turnOffSlowKeys: ->
+      atom.keymap.keyBindings = atom.keymap.keyBindings.filter (keymap) ->
+          keymap.command.indexOf('jumpy') > -1
+
   toggle: ->
+    @turnOffSlowKeys()
     $('#status-bar-jumpy').html("Jumpy: Jump Mode!")
     @allPositions = {}
     that = this
