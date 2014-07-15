@@ -51,10 +51,13 @@ class JumpyView extends View
       if location == null
           console.log "Jumpy canceled jump.  No location found."
           return
-      editor = _.find atom.workspace.getEditors(), (editor) ->
-          editor.id == location.editor
-      editor.setCursorBufferPosition(location.position)
-      console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location.position.row},#{location.position.column})"
+      atom.workspaceView.eachEditorView (editorView) ->
+          currentEditor = editorView.getEditor()
+          if currentEditor.id == location.editor
+              pane = editorView.getPane()
+              pane.activate()
+              currentEditor.setCursorBufferPosition(location.position)
+              console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location.position.row},#{location.position.column})"
 
   findLocation: ->
       label = "#{@firstChar}#{@secondChar}"
