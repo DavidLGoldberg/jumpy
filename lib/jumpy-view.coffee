@@ -90,6 +90,12 @@ class JumpyView extends View
         editorView.addClass 'jumpy-jump-mode'
         editorView.find('.scroll-view .overlayer').append("<div class='jumpy labels'></div>")
 
+        activePane = editorView.getPane()
+        verticalScrollBar = activePane.find '.vertical-scrollbar'
+
+        verticalScrollBar.on 'scroll', (e) ->
+            that.clear()
+
         isScreenRowVisible = (lineNumber) ->
             return lineNumber > editorView.getFirstVisibleScreenRow() &&
                 lineNumber < editorView.getLastVisibleScreenRow()
