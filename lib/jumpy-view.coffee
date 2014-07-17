@@ -2,7 +2,8 @@
 {$} = require 'atom'
 _ = require 'lodash'
 
-characters = (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
+characters =
+    (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
 keys = []
 for c1 in characters
     for c2 in characters
@@ -57,7 +58,8 @@ class JumpyView extends View
                 pane = editorView.getPane()
                 pane.activate()
                 currentEditor.setCursorBufferPosition(location.position)
-                console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at (#{location.position.row},#{location.position.column})"
+                console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
+                    "(#{location.position.row},#{location.position.column})"
 
     findLocation: ->
         label = "#{@firstChar}#{@secondChar}"
@@ -81,14 +83,15 @@ class JumpyView extends View
 
     toggle: ->
         @turnOffSlowKeys()
-        $('#status-bar-jumpy').html("Jumpy: Jump Mode!")
+        $('#status-bar-jumpy').html "Jumpy: Jump Mode!"
         @allPositions = {}
         that = this
         nextKeys = _.clone keys
         atom.workspaceView.eachEditorView (editorView) ->
             return if !editorView.active
             editorView.addClass 'jumpy-jump-mode'
-            editorView.find('.scroll-view .overlayer').append("<div class='jumpy labels'></div>")
+            editorView.find '.scroll-view .overlayer'
+                .append "<div class='jumpy labels'></div>"
 
             activePane = editorView.getPane()
             verticalScrollBar = activePane.find '.vertical-scrollbar'
@@ -103,14 +106,25 @@ class JumpyView extends View
             for line, lineNumber in editorView.getEditor().buffer.lines
                 if line != ''
                     while ((word = wordsPattern.exec(line)) != null)
-                        if isScreenRowVisible(lineNumber + 1)
+                        if isScreenRowVisible lineNumber + 1
                             keyLabel = nextKeys.shift()
                             position = {row: lineNumber, column: word.index}
-                            that.allPositions[keyLabel] = { editor: editorView.getEditor().id, position: position } # creates a reference.
-                            pixelPosition = editorView.pixelPositionForBufferPosition([lineNumber, word.index])
-                            labelElement = $("<div class='jumpy label'>#{keyLabel}</div>")
-                                .css({left: pixelPosition.left, top: pixelPosition.top})
-                            editorView.find(".jumpy.labels").append(labelElement)
+                            # creates a reference:
+                            that.allPositions[keyLabel] = {
+                                editor: editorView.getEditor().id
+                                position: position
+                            }
+                            pixelPosition = editorView
+                                .pixelPositionForBufferPosition [lineNumber,
+                                word.index]
+                            labelElement =
+                                $("<div class='jumpy label'>#{keyLabel}</div>")
+                                    .css {
+                                        left: pixelPosition.left
+                                        top: pixelPosition.top
+                                    }
+                            editorView.find ".jumpy.labels"
+                                .append labelElement
 
     clear: ->
         @clearJumpMode()
