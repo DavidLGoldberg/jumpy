@@ -97,6 +97,9 @@ class JumpyView extends View
             activePane.find '.vertical-scrollbar'
                 .on 'scroll', (e) ->
                     that.clear()
+            atom.workspaceView.find '*'
+                .on 'click', (e) ->
+                    that.clear()
 
             isScreenRowVisible = (lineNumber) ->
                 return lineNumber > editorView.getFirstVisibleScreenRow() &&
