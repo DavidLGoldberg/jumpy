@@ -8,10 +8,12 @@
     from {
         opacity: 0;
         box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+        -webkit-transform: translate3d(100%, 100%, 0);
     }
     to {
         opacity: 1;
         box-shadow: 4px 8px 4px rgba(0, 0, 0, .6);
+        -webkit-transform: translate3d(0, 0, 0);
     }
 }
 
@@ -27,6 +29,8 @@
         margin-left: -3px;
         margin-top: -3px;
         box-shadow: 4px 8px 4px rgba(0, 0, 0, .6);
-        -webkit-animation: fadein .3s;
+    }
+    &.jump {
+        -webkit-animation: fadein .3s alternate;
     }
 }

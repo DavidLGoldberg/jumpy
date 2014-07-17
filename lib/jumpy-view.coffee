@@ -121,6 +121,7 @@ class JumpyView extends View
                                         left: pixelPosition.left
                                         top: pixelPosition.top
                                     }
+                                    .addClass 'jump'
                             editorView.find ".jumpy.labels"
                                 .append labelElement
 
