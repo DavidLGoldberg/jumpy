@@ -93,12 +93,8 @@ class JumpyView extends View
             editorView.find '.scroll-view .overlayer'
                 .append "<div class='jumpy labels'></div>"
 
-            activePane = editorView.getPane()
-            activePane.find '.vertical-scrollbar'
-                .on 'scroll', (e) ->
-                    that.clear()
             atom.workspaceView.find '*'
-                .on 'click', (e) ->
+                .on 'click scroll', (e) ->
                     that.clear()
 
             isScreenRowVisible = (lineNumber) ->
