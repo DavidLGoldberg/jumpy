@@ -51,7 +51,7 @@ class JumpyView extends View
         if location == null
             console.log "Jumpy canceled jump.  No location found."
             return
-        atom.workspaceView.eachEditorView (editorView) ->
+        atom.workspaceView.eachEditorView (editorView) =>
             currentEditor = editorView.getEditor()
             if currentEditor.id == location.editor
                 pane = editorView.getPane()
