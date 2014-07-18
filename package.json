@@ -6,7 +6,7 @@
   "activationEvents": [
     "jumpy:toggle"
   ],
-  "repository": "https://github.com/atom/jumpy",
+  "repository": "https://github.com/DavidLGoldberg/jumpy",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
