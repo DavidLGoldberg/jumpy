@@ -2,7 +2,7 @@
 An Atom plugin that creates dynamic hot keys to jump around files across visible panes.
 
 ## How to jump
-1. Hit <kbd>cmd</kbd> + <kbd>space</kbd>
+1. Hit <kbd>shift</kbd> + <kbd>space</kbd>
 2. Choose from your presented labels:
 3. Enter two characters.
 4. Keep coding!
@@ -22,7 +22,7 @@ An Atom plugin that creates dynamic hot keys to jump around files across visible
 
 ## Key Bindings
 ### Defaults
-* Enter jump mode (default): <kbd>alt</kbd> + <kbd>space</kbd>
+* Enter jump mode (default): <kbd>shift</kbd> + <kbd>space</kbd>
 * Cancel/exit jump mode (defualt): <kbd>esc</kbd> or <kbd>space</kbd>
 
 ## Notes

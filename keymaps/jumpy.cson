@@ -8,7 +8,7 @@
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
 '.editor':
-  'cmd-space': 'jumpy:toggle'
+  'shift-space': 'jumpy:toggle'
 
 '.editor.jumpy-jump-mode':
   'space': 'jumpy:clear'
