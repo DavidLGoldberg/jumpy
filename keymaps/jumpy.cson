@@ -13,7 +13,7 @@
 '.editor.jumpy-jump-mode':
   'space': 'jumpy:clear'
   'escape': 'jumpy:clear'
-  'cmd-space': 'jumpy:clear'
+  'shift-space': 'jumpy:clear'
   'a': 'jumpy:a'
   'b': 'jumpy:b'
   'c': 'jumpy:c'
