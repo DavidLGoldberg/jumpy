@@ -9,6 +9,12 @@ An Atom plugin that creates dynamic hot keys to jump around files across visible
 
 ![Jumpy in Action! - (gif made with recordit.co)](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/jumpy.gif)
 
+## Install
+On command line:
+```
+apm install jumpy
+```
+
 ## Settings
 ```less
 // Styles can be overridden in "Atom" -> "Open Your Stylesheets"
