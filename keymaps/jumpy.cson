@@ -8,12 +8,13 @@
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
 '.editor':
-  'shift-space': 'jumpy:toggle'
+  'shift-enter': 'jumpy:toggle'
 
 '.editor.jumpy-jump-mode':
+  'enter': 'jumpy:clear'
   'space': 'jumpy:clear'
   'escape': 'jumpy:clear'
-  'shift-space': 'jumpy:clear'
+  'shift-enter': 'jumpy:clear'
   'a': 'jumpy:a'
   'b': 'jumpy:b'
   'c': 'jumpy:c'

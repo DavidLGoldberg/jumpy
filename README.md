@@ -2,7 +2,7 @@
 An Atom plugin that creates dynamic hot keys to jump around files across visible panes.
 
 ## How to jump
-1. Hit <kbd>shift</kbd> + <kbd>space</kbd>
+1. Hit <kbd>shift</kbd> + <kbd>enter</kbd>
 2. Choose from your presented labels:
 3. Enter two characters.
 4. Keep coding!
@@ -29,8 +29,8 @@ apm install jumpy
 
 ## Key Bindings
 ### Defaults
-* Enter jump mode (default): <kbd>shift</kbd> + <kbd>space</kbd>
-* Cancel/exit jump mode (defualt): <kbd>esc</kbd> or <kbd>space</kbd>
+* Enter jump mode (default): <kbd>shift</kbd> + <kbd>enter</kbd>
+* Cancel/exit jump mode (defualt): <kbd>esc</kbd> or <kbd>space</kbd> or <kbd>enter</kbd>
 
 ## Notes
 * Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
