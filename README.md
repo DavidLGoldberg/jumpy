@@ -19,6 +19,7 @@ An Atom plugin that creates dynamic hot keys to jump around files across visible
     }
 }
 ```
+[Example orange labels](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a)
 
 ## Key Bindings
 ### Defaults
@@ -31,6 +32,7 @@ An Atom plugin that creates dynamic hot keys to jump around files across visible
         * command mode
         * insert mode
         * visual mode (sorry cancels select at the moment)
+* Recommended [custom green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist") does not need Jumpy installed! 
 
 ## TODO
 * Remove unreachable highlights after first character hit (to reduce noise).
