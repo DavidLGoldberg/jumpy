@@ -9,6 +9,8 @@ for c1 in characters
     for c2 in characters
         keys.push c1 + c2
 
+wordsPattern = /([\w]){2,}/g
+
 module.exports =
 class JumpyView extends View
 
@@ -83,6 +85,7 @@ class JumpyView extends View
             keymap.command.indexOf('jumpy') > -1
 
     toggle: ->
+        console.time('toggle')
         @turnOffSlowKeys()
         $('#status-bar-jumpy').html "Jumpy: Jump Mode!"
         @allPositions = {}
@@ -91,7 +94,7 @@ class JumpyView extends View
         atom.workspaceView.eachEditorView (editorView) ->
             return if !editorView.active
             editorView.addClass 'jumpy-jump-mode'
-            editorView.find '.scroll-view .overlayer'
+            $labels = editorView.find '.scroll-view .overlayer'
                 .append "<div class='jumpy labels'></div>"
 
             atom.workspaceView.find '*'
@@ -101,7 +104,6 @@ class JumpyView extends View
             isScreenRowVisible = (lineNumber) ->
                 return lineNumber > editorView.getFirstVisibleScreenRow() &&
                     lineNumber < editorView.getLastVisibleScreenRow()
-            wordsPattern = /([\w]){2,}/g
             for line, lineNumber in editorView.getEditor().buffer.lines
                 if line != ''
                     while ((word = wordsPattern.exec(line)) != null)
@@ -117,14 +119,14 @@ class JumpyView extends View
                                 .pixelPositionForBufferPosition [lineNumber,
                                 word.index]
                             labelElement =
-                                $("<div class='jumpy label'>#{keyLabel}</div>")
+                                $("<div class='jumpy label jump'>#{keyLabel}</div>")
                                     .css {
                                         left: pixelPosition.left
                                         top: pixelPosition.top
                                     }
-                                    .addClass 'jump'
-                            editorView.find ".jumpy.labels"
+                            $labels
                                 .append labelElement
+        console.timeEnd('toggle')
 
     clear: ->
         @clearJumpMode()
