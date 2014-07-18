@@ -96,6 +96,7 @@ class JumpyView extends View
             editorView.addClass 'jumpy-jump-mode'
             $labels = editorView.find '.scroll-view .overlayer'
                 .append "<div class='jumpy labels'></div>"
+            editorId = editorView.getEditor().id
 
             atom.workspaceView.find '*'
                 .on 'click scroll', (e) ->
@@ -112,7 +113,7 @@ class JumpyView extends View
                             position = {row: lineNumber, column: word.index}
                             # creates a reference:
                             that.allPositions[keyLabel] = {
-                                editor: editorView.getEditor().id
+                                editor: editorId
                                 position: position
                             }
                             pixelPosition = editorView
