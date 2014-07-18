@@ -21,6 +21,7 @@ class JumpyView extends View
         that = this
         for c in characters
             atom.workspaceView.command "jumpy:#{c}", (c) -> that.getKey(c)
+        # TODO: consider moving this into toggle for new bindings.
         @backedUpKeyBindings = _.clone(atom.keymap.keyBindings)
 
     getKey: (character) ->
