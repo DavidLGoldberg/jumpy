@@ -90,8 +90,8 @@ class JumpyView extends View
         @allPositions = {}
         that = this
         atom.workspaceView.find '*'
-            .on 'click scroll', (e) ->
-                that.clear()
+            .on 'click scroll', (e) =>
+                @clear()
         nextKeys = _.clone keys
         atom.workspaceView.eachEditorView (editorView) ->
             return if !editorView.active
