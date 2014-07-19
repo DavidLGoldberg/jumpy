@@ -84,7 +84,6 @@ class JumpyView extends View
             keymap.command.indexOf('jumpy') > -1
 
     toggle: ->
-        console.time('toggle')
         @turnOffSlowKeys()
         $('#status-bar-jumpy').html "Jumpy: Jump Mode!"
         @allPositions = {}
@@ -126,7 +125,6 @@ class JumpyView extends View
                             }
                     $labels
                         .append labelElement
-        console.timeEnd('toggle')
 
     clear: ->
         @clearJumpMode()
