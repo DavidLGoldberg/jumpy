@@ -102,28 +102,28 @@ class JumpyView extends View
             isScreenRowVisible = (lineNumber) ->
                 return lineNumber > editorView.getFirstVisibleScreenRow() &&
                     lineNumber < editorView.getLastVisibleScreenRow()
+
             for line, lineNumber in editorView.getEditor().buffer.lines
-                continue if line == ''
+                continue if line == '' || !isScreenRowVisible lineNumber + 1
                 while ((word = wordsPattern.exec(line)) != null)
-                    if isScreenRowVisible lineNumber + 1
-                        keyLabel = nextKeys.shift()
-                        position = {row: lineNumber, column: word.index}
-                        # creates a reference:
-                        @allPositions[keyLabel] = {
-                            editor: editorId
-                            position: position
-                        }
-                        pixelPosition = editorView
-                            .pixelPositionForBufferPosition [lineNumber,
-                            word.index]
-                        labelElement =
-                            $("<div class='jumpy label jump'>#{keyLabel}</div>")
-                                .css {
-                                    left: pixelPosition.left
-                                    top: pixelPosition.top
-                                }
-                        $labels
-                            .append labelElement
+                    keyLabel = nextKeys.shift()
+                    position = {row: lineNumber, column: word.index}
+                    # creates a reference:
+                    @allPositions[keyLabel] = {
+                        editor: editorId
+                        position: position
+                    }
+                    pixelPosition = editorView
+                        .pixelPositionForBufferPosition [lineNumber,
+                        word.index]
+                    labelElement =
+                        $("<div class='jumpy label jump'>#{keyLabel}</div>")
+                            .css {
+                                left: pixelPosition.left
+                                top: pixelPosition.top
+                            }
+                    $labels
+                        .append labelElement
         console.timeEnd('toggle')
 
     clear: ->
