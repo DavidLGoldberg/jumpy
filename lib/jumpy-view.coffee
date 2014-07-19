@@ -20,9 +20,8 @@ class JumpyView extends View
     initialize: (serializeState) ->
         atom.workspaceView.command "jumpy:toggle", => @toggle()
         atom.workspaceView.command "jumpy:clear", => @clear()
-        that = this
         for c in characters
-            atom.workspaceView.command "jumpy:#{c}", (c) -> that.getKey(c)
+            atom.workspaceView.command "jumpy:#{c}", (c) => @getKey(c)
         # TODO: consider moving this into toggle for new bindings.
         @backedUpKeyBindings = _.clone(atom.keymap.keyBindings)
 
