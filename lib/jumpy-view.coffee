@@ -99,12 +99,14 @@ class JumpyView extends View
                 .append "<div class='jumpy labels'></div>"
             editorId = editorView.getEditor().id
 
-            isScreenRowVisible = (lineNumber) ->
-                return lineNumber > editorView.getFirstVisibleScreenRow() &&
-                    lineNumber < editorView.getLastVisibleScreenRow()
-
             for line, lineNumber in editorView.getEditor().buffer.lines
-                continue if line == '' || !isScreenRowVisible lineNumber + 1
+                # break if at end of visible buffer:
+                return if lineNumber > editorView.getLastVisibleScreenRow()
+
+                # skip line if it's empty or above visible buffer
+                continue if line == '' ||
+                    lineNumber < editorView.getFirstVisibleScreenRow()
+
                 while ((word = wordsPattern.exec(line)) != null)
                     keyLabel = nextKeys.shift()
                     position = {row: lineNumber, column: word.index}
