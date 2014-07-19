@@ -7,7 +7,9 @@ An Atom plugin that creates dynamic hot keys to jump around files across visible
 3. Enter two characters.
 4. Keep coding!
 
-![Jumpy in Action! - (gif made with recordit.co)](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/jumpy.gif)
+[ ![Jumpy in Action! - (gif made with recordit.co)][1]](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/jumpy.gif)
+
+[1]: https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/jumpy.gif
 
 ## Install
 On command line:
