@@ -88,12 +88,11 @@ class JumpyView extends View
         @turnOffSlowKeys()
         $('#status-bar-jumpy').html "Jumpy: Jump Mode!"
         @allPositions = {}
-        that = this
         atom.workspaceView.find '*'
             .on 'click scroll', (e) =>
                 @clear()
         nextKeys = _.clone keys
-        atom.workspaceView.eachEditorView (editorView) ->
+        atom.workspaceView.eachEditorView (editorView) =>
             return if !editorView.active
             editorView.addClass 'jumpy-jump-mode'
             $labels = editorView.find '.scroll-view .overlayer'
@@ -110,7 +109,7 @@ class JumpyView extends View
                         keyLabel = nextKeys.shift()
                         position = {row: lineNumber, column: word.index}
                         # creates a reference:
-                        that.allPositions[keyLabel] = {
+                        @allPositions[keyLabel] = {
                             editor: editorId
                             position: position
                         }
