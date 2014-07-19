@@ -89,6 +89,9 @@ class JumpyView extends View
         $('#status-bar-jumpy').html "Jumpy: Jump Mode!"
         @allPositions = {}
         that = this
+        atom.workspaceView.find '*'
+            .on 'click scroll', (e) ->
+                that.clear()
         nextKeys = _.clone keys
         atom.workspaceView.eachEditorView (editorView) ->
             return if !editorView.active
@@ -96,10 +99,6 @@ class JumpyView extends View
             $labels = editorView.find '.scroll-view .overlayer'
                 .append "<div class='jumpy labels'></div>"
             editorId = editorView.getEditor().id
-
-            atom.workspaceView.find '*'
-                .on 'click scroll', (e) ->
-                    that.clear()
 
             isScreenRowVisible = (lineNumber) ->
                 return lineNumber > editorView.getFirstVisibleScreenRow() &&
