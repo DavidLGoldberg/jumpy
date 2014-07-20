@@ -96,26 +96,26 @@ class JumpyView extends View
             editorView.addClass 'jumpy-jump-mode'
             $labels = editorView.find '.scroll-view .overlayer'
                 .append "<div class='jumpy labels'></div>"
-            editorId = editorView.getEditor().id
 
-            for line, lineNumber in editorView.getEditor().buffer.lines
-                # break if at end of visible buffer:
-                return if lineNumber > editorView.getLastVisibleScreenRow()
-
-                # skip line if it's empty or above visible buffer
-                continue if line == '' ||
-                    lineNumber < editorView.getFirstVisibleScreenRow()
-
-                while ((word = wordsPattern.exec(line)) != null)
+            firstVisibleRow = editorView.getFirstVisibleScreenRow()
+            lastVisibleRow = editorView.getLastVisibleScreenRow()
+            editor = editorView.getEditor()
+            relevantLines = (editor.buffer.lines.map (line, lineNumber) ->
+                {contents: line, lineNumber} ).filter (line) ->
+                 line.contents != '' &&
+                 line.lineNumber >= firstVisibleRow &&
+                 line.lineNumber < lastVisibleRow
+            for line in relevantLines
+                while ((word = wordsPattern.exec(line.contents)) != null)
                     keyLabel = nextKeys.shift()
-                    position = {row: lineNumber, column: word.index}
+                    position = {row: line.lineNumber, column: word.index}
                     # creates a reference:
                     @allPositions[keyLabel] = {
-                        editor: editorId
+                        editor: editor.id
                         position: position
                     }
                     pixelPosition = editorView
-                        .pixelPositionForBufferPosition [lineNumber,
+                        .pixelPositionForBufferPosition [line.lineNumber,
                         word.index]
                     labelElement =
                         $("<div class='jumpy label jump'>#{keyLabel}</div>")
