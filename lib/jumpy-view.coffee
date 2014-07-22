@@ -19,6 +19,7 @@ class JumpyView extends View
 
     initialize: (serializeState) ->
         atom.workspaceView.command "jumpy:toggle", => @toggle()
+        atom.workspaceView.command "jumpy:reset", => @reset()
         atom.workspaceView.command "jumpy:clear", => @clear()
         for c in characters
             atom.workspaceView.command "jumpy:#{c}", (c) => @getKey(c)
@@ -40,9 +41,12 @@ class JumpyView extends View
         @firstChar = null
         @secondChar = null
 
+    reset: ->
+        @clearKeys()
+
     clear: ->
         @clearJumpMode()
-        
+
     turnOffSlowKeys: ->
         atom.keymap.keyBindings = atom.keymap.keyBindings.filter (keymap) ->
             keymap.command.indexOf('jumpy') > -1

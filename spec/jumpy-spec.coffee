@@ -64,3 +64,13 @@ describe "Jumpy", ->
         it "clears labels", ->
             editorView.trigger 'jumpy:clear'
             expect(editorView.find('.jumpy')).not.toExist()
+
+    describe "when the jumpy:reset event is triggered", ->
+        it "clears first entered key", ->
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:reset'
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:e'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toEqual 1
+            expect(cursorPosition.column).toEqual 5

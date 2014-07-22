@@ -11,6 +11,7 @@
   'shift-enter': 'jumpy:toggle'
 
 '.editor.jumpy-jump-mode':
+  'backspace': 'jumpy:reset'
   'enter': 'jumpy:clear'
   'space': 'jumpy:clear'
   'escape': 'jumpy:clear'
