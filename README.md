@@ -31,8 +31,13 @@ apm install jumpy
 
 ## Key Bindings
 ### Defaults
-* Enter jump mode (default): <kbd>shift</kbd> + <kbd>enter</kbd>
-* Cancel/exit jump mode (defualt): <kbd>esc</kbd> or <kbd>space</kbd> or <kbd>enter</kbd>
+* Enter jump mode
+    * <kbd>shift</kbd> + <kbd>enter</kbd>
+* Cancel/exit jump mode (any)
+    * <kbd>shift</kbd> + <kbd>enter</kbd>
+    * <kbd>enter</kbd>
+    * <kbd>esc</kbd>
+    * <kbd>space</kbd>
 
 ## Notes
 * Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
