@@ -40,45 +40,9 @@ class JumpyView extends View
         @firstChar = null
         @secondChar = null
 
-    clearJumpMode: ->
-        @clearKeys()
-        $('#status-bar-jumpy').html("")
-        atom.workspaceView.eachEditorView (e) ->
-            e.find('.jumpy').remove()
-            e.removeClass 'jumpy-jump-mode'
-        atom.keymap.keyBindings = @backedUpKeyBindings
-        @detach()
-
-    jump: ->
-        location = @findLocation()
-        if location == null
-            console.log "Jumpy canceled jump.  No location found."
-            return
-        atom.workspaceView.eachEditorView (editorView) =>
-            currentEditor = editorView.getEditor()
-            if currentEditor.id == location.editor
-                pane = editorView.getPane()
-                pane.activate()
-                currentEditor.setCursorBufferPosition(location.position)
-                console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
-                    "(#{location.position.row},#{location.position.column})"
-
-    findLocation: ->
-        label = "#{@firstChar}#{@secondChar}"
-        if label of @allPositions
-            return @allPositions[label]
-
-        return null
-
-    # Returns an object that can be retrieved when package is activated
-    serialize: ->
-
-    # Tear down any state and detach
-    destroy: ->
-        console.log 'Jumpy: "destroy" called. Detaching.'
+    clear: ->
         @clearJumpMode()
-        @detach()
-
+        
     turnOffSlowKeys: ->
         atom.keymap.keyBindings = atom.keymap.keyBindings.filter (keymap) ->
             keymap.command.indexOf('jumpy') > -1
@@ -126,5 +90,41 @@ class JumpyView extends View
                     $labels
                         .append labelElement
 
-    clear: ->
+    clearJumpMode: ->
+        @clearKeys()
+        $('#status-bar-jumpy').html("")
+        atom.workspaceView.eachEditorView (e) ->
+            e.find('.jumpy').remove()
+            e.removeClass 'jumpy-jump-mode'
+        atom.keymap.keyBindings = @backedUpKeyBindings
+        @detach()
+
+    jump: ->
+        location = @findLocation()
+        if location == null
+            console.log "Jumpy canceled jump.  No location found."
+            return
+        atom.workspaceView.eachEditorView (editorView) =>
+            currentEditor = editorView.getEditor()
+            if currentEditor.id == location.editor
+                pane = editorView.getPane()
+                pane.activate()
+                currentEditor.setCursorBufferPosition(location.position)
+                console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
+                    "(#{location.position.row},#{location.position.column})"
+
+    findLocation: ->
+        label = "#{@firstChar}#{@secondChar}"
+        if label of @allPositions
+            return @allPositions[label]
+
+        return null
+
+    # Returns an object that can be retrieved when package is activated
+    serialize: ->
+
+    # Tear down any state and detach
+    destroy: ->
+        console.log 'Jumpy: "destroy" called. Detaching.'
         @clearJumpMode()
+        @detach()
