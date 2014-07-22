@@ -33,6 +33,8 @@ apm install jumpy
 ### Defaults
 * Enter jump mode
     * <kbd>shift</kbd> + <kbd>enter</kbd>
+* Reset first character entered
+    * <kbd>backspace</kbd>
 * Cancel/exit jump mode (any)
     * <kbd>shift</kbd> + <kbd>enter</kbd>
     * <kbd>enter</kbd>
