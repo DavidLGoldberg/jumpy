@@ -53,7 +53,7 @@ describe "Jumpy", ->
 
     # describe "when the jumpy:toggle event is triggered", ->
     #     it "updates the status bar", ->
-    #         expect(atom.workspaceView.find('#status-bar-jumpy')).toExist()
+    #         expect(atom.workspaceView.statusBar?.find('#status-bar-jumpy')).toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws labels", ->

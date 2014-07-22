@@ -5,7 +5,6 @@ module.exports =
 
     activate: (state) ->
         @jumpyView = new JumpyView(state.jumpyViewState)
-        atom.workspaceView.statusBar?.prependLeft("<div id='status-bar-jumpy' class='inline-block' style='color:red;'></div>")
 
     deactivate: ->
         @jumpyView.destroy()
