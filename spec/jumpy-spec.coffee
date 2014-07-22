@@ -22,6 +22,21 @@ describe "Jumpy", ->
         waitsForPromise ->
             activationPromise
 
+    describe "when the jumpy:toggle event is triggered a click event is fired", ->
+        it "jumpy is cleared", ->
+            editorView.trigger 'click'
+            expect(editorView.find('.jumpy')).not.toExist()
+
+    describe "when the jumpy:toggle event is triggered a scroll event is fired", ->
+        it "jumpy is cleared", ->
+            editorView.trigger 'scroll'
+            expect(editorView.find('.jumpy')).not.toExist()
+
+    describe "when the jumpy:clear event is triggered", ->
+        it "clears labels", ->
+            editorView.trigger 'jumpy:clear'
+            expect(editorView.find('.jumpy')).not.toExist()
+
     describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
         it "jumpy is cleared", ->
             editor.setCursorBufferPosition [1,1]
@@ -59,11 +74,6 @@ describe "Jumpy", ->
         it "draws labels", ->
             # TODO: make this more thorough!
             expect(editorView.find('.jumpy')).toExist()
-
-    describe "when the jumpy:clear event is triggered", ->
-        it "clears labels", ->
-            editorView.trigger 'jumpy:clear'
-            expect(editorView.find('.jumpy')).not.toExist()
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key", ->
