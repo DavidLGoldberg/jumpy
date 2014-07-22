@@ -1,7 +1,7 @@
 {
   "name": "jumpy",
   "main": "./lib/jumpy",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "description": "An Atom plugin that creates dynamic hot keys to jump around files across visible panes.",
   "keywords": [
     "hot key",
