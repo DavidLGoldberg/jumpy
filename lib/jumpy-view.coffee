@@ -101,10 +101,10 @@ class JumpyView extends View
             lastVisibleRow = editorView.getLastVisibleScreenRow()
             editor = editorView.getEditor()
             relevantLines = (editor.buffer.lines.map (line, lineNumber) ->
-                {contents: line, lineNumber} ).filter (line) ->
-                 line.contents != '' &&
-                 line.lineNumber >= firstVisibleRow &&
-                 line.lineNumber < lastVisibleRow
+                {contents: line, lineNumber} )
+                    .slice(firstVisibleRow, lastVisibleRow)
+                    .filter (line) ->
+                        line.contents != ''
             for line in relevantLines
                 while ((word = wordsPattern.exec(line.contents)) != null)
                     keyLabel = nextKeys.shift()
