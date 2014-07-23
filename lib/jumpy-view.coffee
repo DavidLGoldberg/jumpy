@@ -128,6 +128,8 @@ class JumpyView extends View
                 pane = editorView.getPane()
                 pane.activate()
                 currentEditor.setCursorBufferPosition location.position
+                cursor = pane.find '.cursors .cursor'
+                cursor.addClass 'ripple'
                 console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
                     "(#{location.position.row},#{location.position.column})"
 
