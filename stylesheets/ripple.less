@@ -9,7 +9,6 @@
     width: 2px;
     height: 2px;
     -webkit-animation:rip .3s;
-    -moz-animation:rip .3s;
 }
 .ripple {
   position: absolute;
@@ -22,13 +21,11 @@
 }
 .ripple:before {
     -webkit-animation-delay: .1s;
-    -moz-animation-delay: .1s;
     top: 1px;
     left: 5px;
 }
 .ripple:after {
     -webkit-animation-delay: .1s;
-    -moz-animation-delay: .1s;
     top: 5px;
     left: 0;
 }
@@ -40,27 +37,6 @@
                    0 0 0 0 transparent,
                    0 0 0 0 transparent;
       }
-    5%  {
-        box-shadow:0 0 0 0 red,
-                   0 0 0 0 rgba(255,255,255,0.5),
-                   0 0 0 0 red,
-                   0 0 0 0 rgba(0,0,0,0.1);
-    }
-    100% {
-        box-shadow:0 0 4px 30px red,
-                   0 0 1px 31px transparent,
-                   0 0 3px 32px red,
-                   0 0 .5px 33px transparent;
-    }
-}
-@-moz-keyframes rip
-{
-    0%  {
-        box-shadow:0 0 0 0 transparent,
-                   0 0 0 0 transparent,
-                   0 0 0 0 transparent,
-                   0 0 0 0 transparent;
-    }
     5%  {
         box-shadow:0 0 0 0 red,
                    0 0 0 0 rgba(255,255,255,0.5),
