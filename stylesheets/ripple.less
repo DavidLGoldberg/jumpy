@@ -1,24 +1,16 @@
 // Original code / inspiration: http://codepen.io/daless14/pen/ELFgj/
 // Greatly modified of course...
 
-.ripple,
-.ripple:before,
-.ripple:after {
+.ripple {
     display: block;
+    position: absolute;
     border-radius: 1px;
     width: 2px;
     height: 2px;
-    -webkit-animation:rip .2s;
-}
-.ripple {
-    position: absolute;
     z-index: -1;
+    -webkit-animation:rip .2s;
     -webkit-animation-delay: .1s;
-}
-.ripple:before,
-.ripple:after {
     content: '';
-    position: absolute;
 }
 .ripple:before {
     top: 1px;
