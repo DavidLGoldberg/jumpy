@@ -25,6 +25,18 @@ describe "Jumpy", ->
         waitsForPromise ->
             statusBarPromise
 
+    describe "when the jumpy:toggle event is triggered", ->
+        it "draws labels", ->
+            # TODO: make this more thorough...check labels are correct!
+            expect(editorView.find('.jumpy')).toExist()
+        it "clears ripple effect", ->
+            expect(editorView.find('.ripple')).not.toExist()
+
+    describe "when the jumpy:clear event is triggered", ->
+        it "clears labels", ->
+            editorView.trigger 'jumpy:clear'
+            expect(editorView.find('.jumpy')).not.toExist()
+
     describe "when the jumpy:toggle event is triggered a mousedown event is fired", ->
         it "jumpy is cleared", ->
             editorView.trigger 'mousedown'
@@ -33,11 +45,6 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered a scroll event is fired", ->
         it "jumpy is cleared", ->
             editorView.trigger 'scroll'
-            expect(editorView.find('.jumpy')).not.toExist()
-
-    describe "when the jumpy:clear event is triggered", ->
-        it "clears labels", ->
-            editorView.trigger 'jumpy:clear'
             expect(editorView.find('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
@@ -53,8 +60,8 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
             cursorPosition = editor.getCursorBufferPosition()
-            expect(cursorPosition.row).toEqual 0
-            expect(cursorPosition.column).toEqual 10
+            expect(cursorPosition.row).toBe 0
+            expect(cursorPosition.column).toBe 10
 
     describe "when the jumpy:toggle event is triggered and hotkeys are entered
         in succession", ->
@@ -66,13 +73,14 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:e'
             cursorPosition = editor.getCursorBufferPosition()
-            expect(cursorPosition.row).toEqual 1
-            expect(cursorPosition.column).toEqual 5
+            expect(cursorPosition.row).toBe 1
+            expect(cursorPosition.column).toBe 5
 
-    describe "when the jumpy:toggle event is triggered", ->
-        it "draws labels", ->
-            # TODO: make this more thorough!
-            expect(editorView.find('.jumpy')).toExist()
+    describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
+        it "the ripple animation class is added", ->
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:c'
+            expect(editorView.find('.ripple')).toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
@@ -82,26 +90,26 @@ describe "Jumpy", ->
                 ?.find('#status-bar-jumpy #status').html()).toBe 'Jump Mode!'
 
     describe "when the jumpy:clear event is triggered", ->
-        it "updates the status bar", ->
+        it "clears the status bar", ->
             editorView.trigger 'jumpy:clear'
             expect(atom.workspaceView.statusBar
                 ?.find('#status-bar-jumpy').html()).toBe ''
 
     describe "when the jumpy:a event is triggered", ->
-        it "updates the status bar", ->
+        it "updates the status bar with a", ->
             editorView.trigger 'jumpy:a'
             expect(atom.workspaceView.statusBar
                 ?.find('#status-bar-jumpy #status').html()).toBe 'a'
 
     describe "when the jumpy:reset event is triggered", ->
-        it "clears first entered key", ->
+        it "clears first entered key and lets a new jump take place", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:e'
             cursorPosition = editor.getCursorBufferPosition()
-            expect(cursorPosition.row).toEqual 1
-            expect(cursorPosition.column).toEqual 5
+            expect(cursorPosition.row).toBe 1
+            expect(cursorPosition.column).toBe 5
 
     describe "when the jumpy:reset event is triggered", ->
         it "updates the status bar", ->
