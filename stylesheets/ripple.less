@@ -5,11 +5,11 @@
 .ripple:before,
 .ripple:after {
     display: block;
-    border-radius: 2px;
+    border-radius: 1px;
     width: 2px;
     height: 2px;
-    -webkit-animation:rip 1s;
-    -moz-animation:rip 1s;
+    -webkit-animation:rip .3s;
+    -moz-animation:rip .3s;
 }
 .ripple {
   position: absolute;
@@ -21,14 +21,14 @@
   position: absolute;
 }
 .ripple:before {
-    -webkit-animation-delay: .2s;
-    -moz-animation-delay: .2s;
+    -webkit-animation-delay: .1s;
+    -moz-animation-delay: .1s;
     top: 5px;
     left: 25px;
 }
 .ripple:after {
-    -webkit-animation-delay: .2s;
-    -moz-animation-delay: .2s;
+    -webkit-animation-delay: .1s;
+    -moz-animation-delay: .1s;
     top: 25px;
     left: 0;
 }
