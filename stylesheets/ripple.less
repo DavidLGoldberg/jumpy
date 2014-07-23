@@ -1,80 +1,78 @@
 // Original code / inspiration: http://codepen.io/daless14/pen/ELFgj/
 // Will be greatly modified of course...
 
-html, body {margin:0;background:#45c2c5;}
-
-h1 {
-  display:block;
-  font-size:50px;
-  font-family: 'Norican', cursive;
-  color:white;
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:40px;
-  line-height:40px;
-  margin:-20px 0 0 -20px;
-  text-shadow:0 2px 0 #8ed2d4,2px 3px 15px rgba(0,0,0,0.5);
-}
-.ripple,.ripple:before,.ripple:after {
-  display:block;
-  border-radius:2px;
-  width:2px;
-  height:2px;
-  -webkit-animation:rip 10s infinite;
-  -moz-animation:rip 10s infinite;
+.ripple,
+.ripple:before,
+.ripple:after {
+    display: block;
+    border-radius: 2px;
+    width: 2px;
+    height: 2px;
+    -webkit-animation:rip 1s;
+    -moz-animation:rip 1s;
 }
 .ripple {
-  position:absolute;
-  z-index:-1;
-  top:10px;
-  left:15px;
+  position: absolute;
+  z-index: -1;
+  top: 10px;
+  left: 15px;
 }
-.ripple:before,.ripple:after {
-  content:'';
-  position:absolute;
+.ripple:before,
+.ripple:after {
+  content: '';
+  position: absolute;
 }
-.ripple:before {-webkit-animation-delay:.2s;-moz-animation-delay:.2s;top:5px;left:25px;}
-.ripple:after {-webkit-animation-delay:.8s;-moz-animation-delay:.8s;top:25px;left:0;}
+.ripple:before {
+    -webkit-animation-delay: .2s;
+    -moz-animation-delay: .2s;
+    top: 5px;
+    left: 25px;
+}
+.ripple:after {
+    -webkit-animation-delay: .8s;
+    -moz-animation-delay: .8s;
+    top: 25px;
+    left: 0;
+}
 @-webkit-keyframes rip
 {
-  0%  {
-    box-shadow:0 0 0 0 transparent,
-               0 0 0 0 transparent,
-               0 0 0 0 transparent,
-               0 0 0 0 transparent;
-  }
-  5%  {
-    box-shadow:0 0 0 0 #45c2c5,
-               0 0 0 0 rgba(255,255,255,0.5),
-               0 0 0 0 #45c2c5,
-               0 0 0 0 rgba(0,0,0,0.1);
-  }
-  100% {
-    box-shadow:0 0 40px 300px #45c2c5,
-               0 0 10px 310px transparent,
-               0 0 30px 320px #45c2c5,
-               0 0 5px 330px transparent;
-  }
+    0% {
+        box-shadow:0 0 0 0 transparent,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent;
+      }
+    5%  {
+        box-shadow:0 0 0 0 red,
+                   0 0 0 0 rgba(255,255,255,0.5),
+                   0 0 0 0 red,
+                   0 0 0 0 rgba(0,0,0,0.1);
+    }
+    100% {
+        box-shadow:0 0 40px 300px red,
+                   0 0 10px 310px transparent,
+                   0 0 30px 320px red,
+                   0 0 5px 330px transparent;
+    }
 }
 @-moz-keyframes rip
 {
-  0%  {
-    box-shadow:0 0 0 0 transparent,
-               0 0 0 0 transparent,
-               0 0 0 0 transparent,
-               0 0 0 0 transparent;
-  }
-  5%  {
-    box-shadow:0 0 0 0 #45c2c5,
-               0 0 0 0 rgba(255,255,255,0.5),
-               0 0 0 0 #45c2c5,
-               0 0 0 0 rgba(0,0,0,0.1);
-  }
-  100% {
-    box-shadow:0 0 40px 300px #45c2c5,
-               0 0 10px 310px transparent,
-               0 0 30px 320px #45c2c5,
-               0 0 5px 330px transparent;
-  }
+    0%  {
+        box-shadow:0 0 0 0 transparent,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent,
+                   0 0 0 0 transparent;
+    }
+    5%  {
+        box-shadow:0 0 0 0 red,
+                   0 0 0 0 rgba(255,255,255,0.5),
+                   0 0 0 0 red,
+                   0 0 0 0 rgba(0,0,0,0.1);
+    }
+    100% {
+        box-shadow:0 0 40px 300px red,
+                   0 0 10px 310px transparent,
+                   0 0 30px 320px red,
+                   0 0 5px 330px transparent;
+    }
 }
