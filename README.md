@@ -54,3 +54,13 @@ apm install jumpy
 * Reset first character entered: <kbd>backspace</kbd> and repaint all
   labels to the screen.
 * Better highlighting in visual mode.
+
+## Keywords
+(A little SEO juice since "apm search" only searches package name at the moment)
+
+* Hot keys
+* Key bindings
+* Shortcuts
+* Navigation
+* Productivity
+* Mouseless
