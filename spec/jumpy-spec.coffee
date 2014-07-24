@@ -25,9 +25,9 @@ describe "Jumpy", ->
         waitsForPromise ->
             statusBarPromise
 
-    describe "when the jumpy:toggle event is triggered a click event is fired", ->
+    describe "when the jumpy:toggle event is triggered a mousedown event is fired", ->
         it "jumpy is cleared", ->
-            editorView.trigger 'click'
+            editorView.trigger 'mousedown'
             expect(editorView.find('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered a scroll event is fired", ->
