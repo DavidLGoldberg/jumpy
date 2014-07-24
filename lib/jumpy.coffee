@@ -5,6 +5,7 @@ module.exports =
     configDefaults:
         fontSize: .75
         highContrast: false
+        useHomingBeaconEffectOnJumps: true # Needs react editor
 
     activate: (state) ->
         @jumpyView = new JumpyView state.jumpyViewState
