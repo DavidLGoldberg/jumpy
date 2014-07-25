@@ -4,32 +4,28 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
-@-webkit-keyframes fadein {
+@-webkit-keyframes scalein {
     from {
         opacity: 0;
-        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+        -webkit-transform: scale(.1);
     }
     to {
         opacity: 1;
-        box-shadow: 4px 8px 4px rgba(0, 0, 0, .6);
+        -webkit-transform: scale(1);
     }
 }
 
 .jumpy {
     &.label {
-        display: inline;
+        color: @base-background-color;
+        background: @text-color;
         position: absolute;
-        z-index: 2147483647; /* Really high.  I always want this on top! */    
-        padding: .1em;
-        background-color: white;
-        color: black;
-        font-family: arial;
-        font-size: 70%;
-        margin-left: -3px;
-        margin-top: -3px;
-        box-shadow: 4px 8px 4px rgba(0, 0, 0, .6);
+        padding: 3px 6px;
+        border-radius: @component-border-radius;
+        font-size: @font-size;
+        font-family: @font-family;
     }
     &.jump {
-        -webkit-animation: fadein .25s alternate;
+        -webkit-animation: scalein .15s alternate;
     }
 }
