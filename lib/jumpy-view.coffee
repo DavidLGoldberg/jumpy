@@ -18,22 +18,22 @@ class JumpyView extends View
         @div ''
 
     initialize: (serializeState) ->
-        atom.workspaceView.command "jumpy:toggle", => @toggle()
-        atom.workspaceView.command "jumpy:reset", => @reset()
-        atom.workspaceView.command "jumpy:clear", => @clear()
+        atom.workspaceView.command 'jumpy:toggle', => @toggle()
+        atom.workspaceView.command 'jumpy:reset', => @reset()
+        atom.workspaceView.command 'jumpy:clear', => @clear()
         for c in characters
-            atom.workspaceView.command "jumpy:#{c}", (c) => @getKey(c)
+            atom.workspaceView.command "jumpy:#{c}", (c) => @getKey c
         # TODO: consider moving this into toggle for new bindings.
-        @backedUpKeyBindings = _.clone(atom.keymap.keyBindings)
+        @backedUpKeyBindings = _.clone atom.keymap.keyBindings
         atom.workspaceView.statusBar?.prependLeft(
-            "<div id='status-bar-jumpy' class='inline-block'></div>")
+            '<div id="status-bar-jumpy" class="inline-block"></div>')
 
     getKey: (character) ->
         character = character.type.charAt(character.type.length - 1)
         if not @firstChar
             @firstChar = character
-            atom.workspaceView.statusBar?.find('#status-bar-jumpy #status')
-                .html("#{@firstChar}")
+            atom.workspaceView.statusBar?.find '#status-bar-jumpy #status'
+                .html @firstChar
         else if not @secondChar
             @secondChar = character
 
@@ -47,8 +47,8 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        atom.workspaceView.statusBar?.find('#status-bar-jumpy #status')
-            .html("Jump Mode!")
+        atom.workspaceView.statusBar?.find '#status-bar-jumpy #status'
+            .html 'Jump Mode!'
 
     clear: ->
         @clearJumpMode()
@@ -59,8 +59,8 @@ class JumpyView extends View
 
     toggle: ->
         @turnOffSlowKeys()
-        atom.workspaceView.statusBar?.find('#status-bar-jumpy')
-            .html("Jumpy: <span id='status'>Jump Mode!</span>")
+        atom.workspaceView.statusBar?.find '#status-bar-jumpy'
+            .html 'Jumpy: <span id="status">Jump Mode!</span>'
 
         @allPositions = {}
         atom.workspaceView.find '*'
@@ -71,14 +71,14 @@ class JumpyView extends View
             return if !editorView.active
             editorView.addClass 'jumpy-jump-mode'
             $labels = editorView.find '.scroll-view .overlayer'
-                .append "<div class='jumpy labels'></div>"
+                .append '<div class="jumpy labels"></div>'
 
             firstVisibleRow = editorView.getFirstVisibleScreenRow()
             lastVisibleRow = editorView.getLastVisibleScreenRow()
             editor = editorView.getEditor()
             relevantLines = (editor.buffer.lines.map (line, lineNumber) ->
                 {contents: line, lineNumber} )
-                    .slice(firstVisibleRow, lastVisibleRow)
+                    .slice firstVisibleRow, lastVisibleRow
                     .filter (line) ->
                         line.contents != ''
             for line in relevantLines
@@ -93,7 +93,7 @@ class JumpyView extends View
                     pixelPosition = editorView
                         .pixelPositionForBufferPosition [line.lineNumber,
                         word.index]
-                    fontSize = atom.config.get('jumpy.fontSize')
+                    fontSize = atom.config.get 'jumpy.fontSize'
                     fontSize = .75 if isNaN(fontSize) or fontSize > 1
                     fontSize = (fontSize * 100) + '%'
                     labelElement =
@@ -110,7 +110,7 @@ class JumpyView extends View
 
     clearJumpMode: ->
         @clearKeys()
-        $('#status-bar-jumpy').html("")
+        $('#status-bar-jumpy').html ''
         atom.workspaceView.eachEditorView (e) ->
             e.find('.jumpy').remove()
             e.removeClass 'jumpy-jump-mode'
@@ -127,7 +127,7 @@ class JumpyView extends View
             if currentEditor.id == location.editor
                 pane = editorView.getPane()
                 pane.activate()
-                currentEditor.setCursorBufferPosition(location.position)
+                currentEditor.setCursorBufferPosition location.position
                 console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
                     "(#{location.position.row},#{location.position.column})"
 

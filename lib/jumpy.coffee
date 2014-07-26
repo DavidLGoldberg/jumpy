@@ -7,7 +7,7 @@ module.exports =
         highContrast: false
 
     activate: (state) ->
-        @jumpyView = new JumpyView(state.jumpyViewState)
+        @jumpyView = new JumpyView state.jumpyViewState
 
     deactivate: ->
         @jumpyView.destroy()
