@@ -1,5 +1,5 @@
 # Jumpy
-An Atom plugin that creates dynamic hot keys to jump around files across visible panes.
+An Atom plugin that creates dynamic hot keys to jump around files and across visible panes.
 
 ## How to jump
 1. Hit <kbd>shift</kbd> + <kbd>enter</kbd>
@@ -7,9 +7,9 @@ An Atom plugin that creates dynamic hot keys to jump around files across visible
 3. Enter two characters.
 4. Keep coding!
 
-[ ![Jumpy in Action! - (gif made with recordit.co)][1]](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/jumpy.gif)
+[ ![Jumpy in Action! - (gif made with recordit.co)][1]](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy.gif)
 
-[1]: https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/jumpy.gif
+[1]: https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy.gif
 
 ## Install
 On command line:
@@ -18,8 +18,13 @@ apm install jumpy
 ```
 
 ## Settings
+In your Jumpy preferences there is an option for font size.
+You must set this to a decimal value less than 1.
+![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
+
+Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
+(see examples below)
 ```less
-// Styles can be overridden in "Atom" -> "Open Your Stylesheets"
 .jumpy {
     &.label {
     }
@@ -27,7 +32,7 @@ apm install jumpy
     }
 }
 ```
-[Example orange labels](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a)
+[Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## Key Bindings
 ### Defaults
