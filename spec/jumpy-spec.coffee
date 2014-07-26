@@ -147,6 +147,7 @@ describe "Jumpy with non default settings on", ->
         atom.workspaceView = new WorkspaceView
         atom.project.setPath(path.join(__dirname, 'fixtures'))
         atom.config.set 'jumpy.highContrast', true
+        atom.config.set 'jumpy.fontSize', .50
 
         waitsForPromise ->
             atom.workspace.open 'test_text'
@@ -162,6 +163,8 @@ describe "Jumpy with non default settings on", ->
             jumpyPromise
 
     describe "when the jumpy:toggle event is triggered", ->
-        it "draws correct labels", ->
+        it "draws correctly colored labels", ->
             expect(editorView.find('.jumpy.label')[0].classList
                 .contains 'high-contrast').toBe true
+        it "draws labels of the right font size", ->
+            expect(editorView.find('.jumpy.label')[0].style.fontSize).toBe '50%'
