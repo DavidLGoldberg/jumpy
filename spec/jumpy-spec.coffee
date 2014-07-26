@@ -108,7 +108,7 @@ describe "Jumpy", ->
             waitsFor ->
                 setTimeout ->
                     editorView.trigger 'jumpy:c'
-                ,150 + 10
+                ,100 + 10 # max default I'd probably use + a buffer
             runs ->
                 expect(editorView.find('.beacon')).not.toExist()
 
