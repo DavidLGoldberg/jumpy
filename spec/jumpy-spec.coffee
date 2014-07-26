@@ -35,7 +35,7 @@ describe "Jumpy", ->
             expect(labels[4].innerHTML).toBe 'ae'
             expect(labels[5].innerHTML).toBe 'af'
         it "clears beacon effect", ->
-            expect(editorView.find('.beacon')).not.toExist()
+            expect(editorView.find('cursors .cursor.beacon')).not.toExist()
         it "only uses jumpy keymaps", ->
             expect(atom.keymap.keyBindings.length).toBe 26 + 5 + 1
 
@@ -103,6 +103,12 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
             expect(editorView.find('.beacon')).toExist()
+
+            #TODO add in wait and test for removal of class.
+            # waits 150 + 10 # adds a little buffer.
+            #
+            # runs ->
+            #     expect(editorView.find('.beacon')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
