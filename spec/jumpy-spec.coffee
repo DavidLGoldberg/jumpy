@@ -37,24 +37,28 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:clear'
             expect(editorView.find('.jumpy')).not.toExist()
 
-    describe "when the jumpy:toggle event is triggered a mousedown event is fired", ->
+    describe "when the jumpy:toggle event is triggered
+        and a mousedown event is fired", ->
         it "jumpy is cleared", ->
             editorView.trigger 'mousedown'
             expect(editorView.find('.jumpy')).not.toExist()
 
-    describe "when the jumpy:toggle event is triggered a scroll event is fired", ->
+    describe "when the jumpy:toggle event is triggered
+        and a scroll event is fired", ->
         it "jumpy is cleared", ->
             editorView.trigger 'scroll'
             expect(editorView.find('.jumpy')).not.toExist()
 
-    describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
+    describe "when the jumpy:toggle event is triggered
+        and hotkeys are entered", ->
         it "jumpy is cleared", ->
             editor.setCursorBufferPosition [1,1]
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
             expect(editorView.find('.jumpy')).not.toExist()
 
-    describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
+    describe "when the jumpy:toggle event is triggered
+        and hotkeys are entered", ->
         it "jumps the cursor", ->
             editor.setCursorBufferPosition [1,1]
             editorView.trigger 'jumpy:a'
@@ -63,8 +67,8 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 10
 
-    describe "when the jumpy:toggle event is triggered and hotkeys are entered
-        in succession", ->
+    describe "when the jumpy:toggle event is triggered
+        and hotkeys are entered in succession", ->
         it "jumps the cursor twice", ->
             editor.setCursorBufferPosition [1,1]
             editorView.trigger 'jumpy:a'
@@ -76,7 +80,8 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 5
 
-    describe "when the jumpy:toggle event is triggered and hotkeys are entered", ->
+    describe "when the jumpy:toggle event is triggered
+        and hotkeys are entered", ->
         it "the ripple animation class is added", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
