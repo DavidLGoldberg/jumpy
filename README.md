@@ -17,22 +17,13 @@ On command line:
 apm install jumpy
 ```
 
-## Settings
-In your Jumpy preferences there is an option for font size.
-You must set this to a decimal value less than 1.
-![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
-
-Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
-(see examples below)
-```less
-.jumpy {
-    &.label {
-    }
-    &.jump {
-    }
-}
-```
-[Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
+## Notes
+* Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
+    * Modes supported:
+        * command mode
+        * insert mode
+        * visual mode (sorry cancels select at the moment)
+* Recommended custom [slightly pulsing green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist") (does not need Jumpy installed!)
 
 ## Key Bindings
 ### Defaults
@@ -46,13 +37,23 @@ Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
     * <kbd>esc</kbd>
     * <kbd>space</kbd>
 
-## Notes
-* Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
-    * Modes supported:
-        * command mode
-        * insert mode
-        * visual mode (sorry cancels select at the moment)
-* Recommended [custom green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist") does not need Jumpy installed!
+## Settings
+In your Jumpy preferences there is an option for font size.
+You must set this to a decimal value less than 1.
+
+![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
+
+Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
+(see examples below)
+```less
+.jumpy {
+    &.label {
+    }
+    &.jump {
+    }
+}
+```
+[Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
 * Remove unreachable highlights after first character hit (to reduce noise).
