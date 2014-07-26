@@ -103,6 +103,8 @@ class JumpyView extends View
                                 top: pixelPosition.top
                                 fontSize: fontSize
                             }
+                    if atom.config.get 'jumpy.highContrast'
+                        labelElement.addClass 'high-contrast'
                     $labels
                         .append labelElement
 
