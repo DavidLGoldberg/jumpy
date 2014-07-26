@@ -38,8 +38,8 @@ describe "Jumpy with non default settings on", ->
         it "contains no beacon", ->
             editor.setCursorBufferPosition [1,1]
             expect(editorView.find('.cursors .cursor')[0].classList
-                .contains 'ripple').toBe true
+                .contains 'beacon').toBe true
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
             expect(editorView.find('.cursors .cursor')[0].classList
-                .contains 'ripple').toBe false
+                .contains 'beacon').toBe false

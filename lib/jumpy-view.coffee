@@ -69,8 +69,8 @@ class JumpyView extends View
         nextKeys = _.clone keys
         atom.workspaceView.eachEditorView (editorView) =>
             return if !editorView.active
-            editorView.find '.cursors .cursor.ripple'
-                .removeClass 'ripple'
+            editorView.find '.cursors .cursor.beacon'
+                .removeClass 'beacon'
             editorView.addClass 'jumpy-jump-mode'
             $labels = editorView.find '.scroll-view .overlayer'
                 .append '<div class="jumpy labels"></div>'
@@ -133,7 +133,7 @@ class JumpyView extends View
             pane.activate()
             currentEditor.setCursorBufferPosition location.position
             pane.find '.cursors .cursor'
-                .addClass 'ripple'
+                .addClass 'beacon'
             console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
                 "(#{location.position.row},#{location.position.column})"
 

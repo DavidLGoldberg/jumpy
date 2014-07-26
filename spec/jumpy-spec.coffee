@@ -34,8 +34,8 @@ describe "Jumpy", ->
             expect(labels[1].innerHTML).toBe 'ab'
             expect(labels[4].innerHTML).toBe 'ae'
             expect(labels[5].innerHTML).toBe 'af'
-        it "clears ripple effect", ->
-            expect(editorView.find('.ripple')).not.toExist()
+        it "clears beacon effect", ->
+            expect(editorView.find('.beacon')).not.toExist()
         it "only uses jumpy keymaps", ->
             expect(atom.keymap.keyBindings.length).toBe 26 + 5 + 1
 
@@ -99,10 +99,10 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
-        it "the ripple animation class is added", ->
+        it "the beacon animation class is added", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
-            expect(editorView.find('.ripple')).toExist()
+            expect(editorView.find('.beacon')).toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
