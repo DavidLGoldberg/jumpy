@@ -26,11 +26,18 @@ describe "Jumpy", ->
             statusBarPromise
 
     describe "when the jumpy:toggle event is triggered", ->
-        it "draws labels", ->
-            # TODO: make this more thorough...check labels are correct!
-            expect(editorView.find('.jumpy')).toExist()
+        it "draws correct labels", ->
+            expect(editorView.find('.jumpy.labels')).toExist()
+            labels = editorView.find('.jumpy.label')
+            expect(labels.length).toBe 6
+            expect(labels[0].innerHTML).toBe 'aa'
+            expect(labels[1].innerHTML).toBe 'ab'
+            expect(labels[4].innerHTML).toBe 'ae'
+            expect(labels[5].innerHTML).toBe 'af'
         it "clears ripple effect", ->
             expect(editorView.find('.ripple')).not.toExist()
+        it "only uses jumpy keymaps", ->
+            expect(atom.keymap.keyBindings.length).toBe 26 + 5 + 1
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears labels", ->
@@ -56,6 +63,16 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
             expect(editorView.find('.jumpy')).not.toExist()
+
+    describe "when the jumpy:toggle event is triggered
+        and invalid hotkeys are entered", ->
+        it "jumpy is cleared", ->
+            editor.setCursorBufferPosition [1,1]
+            editorView.trigger 'jumpy:z'
+            editorView.trigger 'jumpy:z'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toBe 1
+            expect(cursorPosition.column).toBe 1
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
