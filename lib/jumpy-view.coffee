@@ -97,7 +97,7 @@ class JumpyView extends View
                     fontSize = .75 if isNaN(fontSize) or fontSize > 1
                     fontSize = (fontSize * 100) + '%'
                     labelElement =
-                        $("<div class='jumpy label jump'>#{keyLabel}</div>")
+                        $("<div class='jumpy label'>#{keyLabel}</div>")
                             .css {
                                 left: pixelPosition.left
                                 top: pixelPosition.top
