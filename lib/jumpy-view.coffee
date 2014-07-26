@@ -91,11 +91,15 @@ class JumpyView extends View
                     pixelPosition = editorView
                         .pixelPositionForBufferPosition [line.lineNumber,
                         word.index]
+                    fontSize = atom.config.get('jumpy.fontSize')
+                    fontSize = .75 if isNaN(fontSize) or fontSize > 1
+                    fontSize = (fontSize * 100) + '%'
                     labelElement =
                         $("<div class='jumpy label jump'>#{keyLabel}</div>")
                             .css {
                                 left: pixelPosition.left
                                 top: pixelPosition.top
+                                fontSize: fontSize
                             }
                     $labels
                         .append labelElement
