@@ -126,14 +126,16 @@ class JumpyView extends View
             return
         atom.workspaceView.eachEditorView (editorView) =>
             currentEditor = editorView.getEditor()
-            if currentEditor.id == location.editor
-                pane = editorView.getPane()
-                pane.activate()
-                currentEditor.setCursorBufferPosition location.position
-                pane.find '.cursors .cursor'
-                    .addClass 'ripple'
-                console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
-                    "(#{location.position.row},#{location.position.column})"
+            if currentEditor.id != location.editor
+                return
+
+            pane = editorView.getPane()
+            pane.activate()
+            currentEditor.setCursorBufferPosition location.position
+            pane.find '.cursors .cursor'
+                .addClass 'ripple'
+            console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
+                "(#{location.position.row},#{location.position.column})"
 
     findLocation: ->
         label = "#{@firstChar}#{@secondChar}"
