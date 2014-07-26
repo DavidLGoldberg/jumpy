@@ -26,13 +26,14 @@ class JumpyView extends View
         # TODO: consider moving this into toggle for new bindings.
         @backedUpKeyBindings = _.clone(atom.keymap.keyBindings)
         atom.workspaceView.statusBar?.prependLeft(
-            "<div id='status-bar-jumpy' class='inline-block' style='color:red;'></div>")
+            "<div id='status-bar-jumpy' class='inline-block'></div>")
 
     getKey: (character) ->
         character = character.type.charAt(character.type.length - 1)
         if not @firstChar
             @firstChar = character
-            atom.workspaceView.statusBar?.find('#status-bar-jumpy #status').html("#{@firstChar}")
+            atom.workspaceView.statusBar?.find('#status-bar-jumpy #status')
+                .html("#{@firstChar}")
         else if not @secondChar
             @secondChar = character
 
@@ -46,7 +47,8 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        atom.workspaceView.statusBar?.find('#status-bar-jumpy #status').html("Jump Mode!")
+        atom.workspaceView.statusBar?.find('#status-bar-jumpy #status')
+            .html("Jump Mode!")
 
     clear: ->
         @clearJumpMode()
