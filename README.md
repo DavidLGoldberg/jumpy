@@ -38,11 +38,20 @@ apm install jumpy
     * <kbd>space</kbd>
 
 ## Settings
-In your Jumpy preferences there is an option for font size.
-You must set this to a decimal value less than 1.
+
+### Jumpy preferences
+( Preferences <kbd>cmd</kbd>+<kbd>,</kbd> ) -> search for 'jumpy'
+
+* <b>Font Size</b>:
+If set, must be a decimal value less than 1.
+* <b>High Contrast</b>:
+If checked, uses a more colorful and fun (usually green) label.
+* <b>Use Homing Beacon Effect On Jumps</b>:
+If left on, will display a homing beacon after jumps are performed (usually red).
 
 ![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
 
+### Jumpy Styles
 Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
 (see examples below)
 ```less
