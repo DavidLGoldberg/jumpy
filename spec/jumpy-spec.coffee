@@ -103,12 +103,14 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
             expect(editorView.find('.beacon')).toExist()
-
-            #TODO add in wait and test for removal of class.
-            # waits 150 + 10 # adds a little buffer.
-            #
-            # runs ->
-            #     expect(editorView.find('.beacon')).not.toExist()
+        it "the beacon animation class is removed", ->
+            editorView.trigger 'jumpy:a'
+            waitsFor ->
+                setTimeout ->
+                    editorView.trigger 'jumpy:c'
+                ,150 + 10
+            runs ->
+                expect(editorView.find('.beacon')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
