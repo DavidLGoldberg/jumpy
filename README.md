@@ -46,8 +46,13 @@ apm install jumpy
 If set, must be a decimal value less than 1.
 * <b>High Contrast</b>:
 If checked, uses a more colorful and fun (usually green) label.
-* <b>Use Homing Beacon Effect On Jumps</b>:
-If left on, will display a homing beacon after jumps are performed (usually red).
+* <b>Use Homing Beacon Effect On Jumps</b>
+*(needs React Editor enabled, see below)*:
+If left on, will display a homing beacon (usually red) after all jumps.
+
+*Note*: After selecting <b>'Use React Editor'</b> in Preferences -> Settings you will have to either restart Atom
+or enter ctrl+alt+cmd+l (lower case L).
+
 
 ![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
 
