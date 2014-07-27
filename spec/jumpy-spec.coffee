@@ -29,11 +29,11 @@ describe "Jumpy", ->
         it "draws correct labels", ->
             expect(editorView.find('.jumpy.labels')).toExist()
             labels = editorView.find('.jumpy.label')
-            expect(labels.length).toBe 6
+            expect(labels.length).toBe 84 # 2 less for the 'a's.
             expect(labels[0].innerHTML).toBe 'aa'
             expect(labels[1].innerHTML).toBe 'ab'
-            expect(labels[4].innerHTML).toBe 'ae'
-            expect(labels[5].innerHTML).toBe 'af'
+            expect(labels[82].innerHTML).toBe 'de'
+            expect(labels[83].innerHTML).toBe 'df'
         it "clears beacon effect", ->
             expect(editorView.find('cursors .cursor.beacon')).not.toExist()
         it "only uses jumpy keymaps", ->
@@ -82,7 +82,7 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:c'
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
-            expect(cursorPosition.column).toBe 10
+            expect(cursorPosition.column).toBe 6
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered in succession", ->
@@ -91,11 +91,11 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
             editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:b'
             editorView.trigger 'jumpy:e'
             cursorPosition = editor.getCursorBufferPosition()
-            expect(cursorPosition.row).toBe 1
-            expect(cursorPosition.column).toBe 5
+            expect(cursorPosition.row).toBe 6
+            expect(cursorPosition.column).toBe 12
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
@@ -138,8 +138,8 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:e'
             cursorPosition = editor.getCursorBufferPosition()
-            expect(cursorPosition.row).toBe 1
-            expect(cursorPosition.column).toBe 5
+            expect(cursorPosition.row).toBe 0
+            expect(cursorPosition.column).toBe 12
 
     describe "when the jumpy:reset event is triggered", ->
         it "updates the status bar", ->
@@ -147,3 +147,8 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:reset'
             expect(atom.workspaceView.statusBar
                 ?.find('#status-bar-jumpy #status').html()).toBe 'Jump Mode!'
+
+    describe "when the jumpy:a event is triggered", ->
+        it "removes all labels that don't begin with a", ->
+            editorView.trigger 'jumpy:a'
+            expect(editorView.find('.jumpy.label').length).toBe 26
