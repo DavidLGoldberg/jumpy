@@ -90,6 +90,14 @@ describe "Jumpy", ->
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
+        it "jumps the cursor in folded regions", ->
+            editor.setCursorBufferPosition [23, 10]
+            # fold
+            editorView.trigger 'jumpy:d'
+            editorView.trigger 'jumpy:j'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toBe 24
+            expect(cursorPosition.column).toBe 2
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered in succession", ->
