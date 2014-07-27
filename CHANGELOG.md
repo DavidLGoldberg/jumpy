@@ -11,3 +11,6 @@
 ## 1.3.0
 * Adds new homing beacon feature with setting to disable.
 * Adds some missing spec tests.
+
+## 1.3.1
+* Fixes shift-enter (backward search) on find and replace's mini pane.
