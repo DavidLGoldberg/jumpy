@@ -1,5 +1,5 @@
 # Jumpy
-An Atom plugin that creates dynamic hot keys to jump around files and across visible panes.
+An Atom package that creates dynamic hot keys to jump around files and across visible panes.
 
 ## How to jump
 1. Hit <kbd>shift</kbd> + <kbd>enter</kbd>
@@ -84,3 +84,5 @@ Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
 * Navigation
 * Productivity
 * Mouseless
+* Plugin
+* Extension
