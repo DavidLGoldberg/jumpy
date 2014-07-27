@@ -130,6 +130,9 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             expect(atom.workspaceView.statusBar
                 ?.find('#status-bar-jumpy #status').html()).toBe 'a'
+        it "removes all labels that don't begin with a", ->
+            editorView.trigger 'jumpy:a'
+            expect(editorView.find('.jumpy.label').length).toBe 26
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
@@ -147,8 +150,7 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:reset'
             expect(atom.workspaceView.statusBar
                 ?.find('#status-bar-jumpy #status').html()).toBe 'Jump Mode!'
-
-    describe "when the jumpy:a event is triggered", ->
-        it "removes all labels that don't begin with a", ->
+        it "resets all labels even those that don't begin with a", ->
             editorView.trigger 'jumpy:a'
-            expect(editorView.find('.jumpy.label').length).toBe 26
+            editorView.trigger 'jumpy:reset'
+            expect(editorView.find('.jumpy.label').length).toBe 84
