@@ -2,6 +2,12 @@ path = require 'path'
 {WorkspaceView} = require 'atom'
 Jumpy = require '../lib/jumpy'
 
+NUM_ALPHA_TEST_WORDS = 26 * 3
+NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
+NUM_COLLAPSIBLE_WORDS = 19
+NUM_TOTAL_WORDS =
+    NUM_ALPHA_TEST_WORDS + NUM_ENGLISH_TEXT + NUM_COLLAPSIBLE_WORDS
+
 describe "Jumpy", ->
     [editorView, editor, jumpyPromise, statusBarPromise] = []
 
@@ -10,7 +16,7 @@ describe "Jumpy", ->
         atom.project.setPath(path.join(__dirname, 'fixtures'))
 
         waitsForPromise ->
-            atom.workspace.open 'test_text'
+            atom.workspace.open 'test_text.MD'
 
         runs ->
             atom.workspaceView.attachToDom()
@@ -29,7 +35,8 @@ describe "Jumpy", ->
         it "draws correct labels", ->
             expect(editorView.find('.jumpy.labels')).toExist()
             labels = editorView.find('.jumpy.label')
-            expect(labels.length).toBe 84 # 2 less for the 'a's.
+            expect(labels.length)
+                .toBe NUM_TOTAL_WORDS
             expect(labels[0].innerHTML).toBe 'aa'
             expect(labels[1].innerHTML).toBe 'ab'
             expect(labels[82].innerHTML).toBe 'de'
@@ -132,7 +139,8 @@ describe "Jumpy", ->
                 ?.find('#status-bar-jumpy #status').html()).toBe 'a'
         it "removes all labels that don't begin with a", ->
             editorView.trigger 'jumpy:a'
-            expect(editorView.find('.jumpy.label:not(.irrelevant)').length).toBe 26
+            expect(editorView.find('.jumpy.label:not(.irrelevant)')
+                .length).toBe 26
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
@@ -153,4 +161,5 @@ describe "Jumpy", ->
         it "resets all labels even those that don't begin with a", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
-            expect(editorView.find('.jumpy.label:not(.irrelevant)').length).toBe 84
+            expect(editorView.find('.jumpy.label:not(.irrelevant)')
+                .length).toBe NUM_TOTAL_WORDS

@@ -13,7 +13,7 @@ describe "Jumpy with non default settings on", ->
         atom.config.set 'jumpy.useHomingBeaconEffectOnJumps', false
 
         waitsForPromise ->
-            atom.workspace.open 'test_text'
+            atom.workspace.open 'test_text.md'
 
         runs ->
             atom.workspaceView.attachToDom()
