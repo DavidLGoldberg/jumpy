@@ -14,3 +14,7 @@
 
 ## 1.3.1
 * Fixes shift-enter (backward search) on find and replace's mini pane.
+
+## 1.4.0
+* Jumpy now clears irrelevant labels after the firs character is
+  entered.  This helps home in on your target.

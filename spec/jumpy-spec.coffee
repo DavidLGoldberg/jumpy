@@ -132,7 +132,7 @@ describe "Jumpy", ->
                 ?.find('#status-bar-jumpy #status').html()).toBe 'a'
         it "removes all labels that don't begin with a", ->
             editorView.trigger 'jumpy:a'
-            expect(editorView.find('.jumpy.label').length).toBe 26
+            expect(editorView.find('.jumpy.label:not(.irrelevant)').length).toBe 26
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
@@ -153,4 +153,4 @@ describe "Jumpy", ->
         it "resets all labels even those that don't begin with a", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
-            expect(editorView.find('.jumpy.label').length).toBe 84
+            expect(editorView.find('.jumpy.label:not(.irrelevant)').length).toBe 84

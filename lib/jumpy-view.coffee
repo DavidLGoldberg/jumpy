@@ -34,6 +34,10 @@ class JumpyView extends View
             @firstChar = character
             atom.workspaceView.statusBar?.find '#status-bar-jumpy #status'
                 .html @firstChar
+            atom.workspaceView.eachEditorView (editorView) =>
+                for label in editorView.find '.jumpy.label'
+                    if label.innerHTML.indexOf(@firstChar) != 0
+                        label.classList.add 'irrelevant'
         else if not @secondChar
             @secondChar = character
 
@@ -47,6 +51,9 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
+        atom.workspaceView.eachEditorView (editorView) ->
+            editorView.find '.irrelevant'
+                .removeClass 'irrelevant'
         atom.workspaceView.statusBar?.find '#status-bar-jumpy #status'
             .html 'Jump Mode!'
 
