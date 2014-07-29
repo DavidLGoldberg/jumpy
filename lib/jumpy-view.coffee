@@ -83,22 +83,18 @@ class JumpyView extends View
             firstVisibleRow = editorView.getFirstVisibleScreenRow()
             lastVisibleRow = editorView.getLastVisibleScreenRow()
             editor = editorView.getEditor()
-            relevantLines = (editor.buffer.lines.map (line, lineNumber) ->
-                {contents: line, lineNumber} )
-                    .slice firstVisibleRow, lastVisibleRow
-                    .filter (line) ->
-                        line.contents != ''
-            for line in relevantLines
-                while ((word = wordsPattern.exec(line.contents)) != null)
+            for lineNumber in [firstVisibleRow...lastVisibleRow]
+                lineContents = editor.lineForScreenRow(lineNumber).text
+                while ((word = wordsPattern.exec(lineContents)) != null)
                     keyLabel = nextKeys.shift()
-                    position = {row: line.lineNumber, column: word.index}
+                    position = {row: lineNumber, column: word.index}
                     # creates a reference:
                     @allPositions[keyLabel] = {
                         editor: editor.id
                         position: position
                     }
                     pixelPosition = editorView
-                        .pixelPositionForBufferPosition [line.lineNumber,
+                        .pixelPositionForScreenPosition [lineNumber,
                         word.index]
                     fontSize = atom.config.get 'jumpy.fontSize'
                     fontSize = .75 if isNaN(fontSize) or fontSize > 1
@@ -136,7 +132,7 @@ class JumpyView extends View
 
             pane = editorView.getPane()
             pane.activate()
-            currentEditor.setCursorBufferPosition location.position
+            currentEditor.setCursorScreenPosition location.position
             if atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
                 cursor = pane.find '.cursors .cursor'
                 cursor.addClass 'beacon'

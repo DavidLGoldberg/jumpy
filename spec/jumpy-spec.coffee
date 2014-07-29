@@ -90,7 +90,7 @@ describe "Jumpy", ->
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
-        it "jumps the cursor in folded regions", ->
+        fit "jumps the cursor in folded regions", ->
             editor.setCursorBufferPosition [23, 10]
             editor.foldCurrentRow()
             editorView.trigger 'jumpy:d'
