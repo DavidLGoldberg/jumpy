@@ -88,30 +88,37 @@ class JumpyView extends View
             firstVisibleRow = editorView.getFirstVisibleScreenRow()
             lastVisibleRow = editorView.getLastVisibleScreenRow()
             editor = editorView.getEditor()
+
+            drawLabels = (column) =>
+                keyLabel = nextKeys.shift()
+                position = {row: lineNumber, column: column}
+                # creates a reference:
+                @allPositions[keyLabel] = {
+                    editor: editor.id
+                    position: position
+                }
+                pixelPosition = editorView
+                    .pixelPositionForScreenPosition [lineNumber,
+                    column]
+                labelElement =
+                    $("<div class='jumpy label'>#{keyLabel}</div>")
+                        .css {
+                            left: pixelPosition.left
+                            top: pixelPosition.top
+                            fontSize: fontSize
+                        }
+                if highContrast
+                    labelElement.addClass 'high-contrast'
+                $labels
+                    .append labelElement
+
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineForScreenRow(lineNumber).text
-                while ((word = wordsPattern.exec(lineContents)) != null)
-                    keyLabel = nextKeys.shift()
-                    position = {row: lineNumber, column: word.index}
-                    # creates a reference:
-                    @allPositions[keyLabel] = {
-                        editor: editor.id
-                        position: position
-                    }
-                    pixelPosition = editorView
-                        .pixelPositionForScreenPosition [lineNumber,
-                        word.index]
-                    labelElement =
-                        $("<div class='jumpy label'>#{keyLabel}</div>")
-                            .css {
-                                left: pixelPosition.left
-                                top: pixelPosition.top
-                                fontSize: fontSize
-                            }
-                    if highContrast
-                        labelElement.addClass 'high-contrast'
-                    $labels
-                        .append labelElement
+                if editor.isFoldedAtScreenRow(lineNumber)
+                    drawLabels 0
+                else
+                    while ((word = wordsPattern.exec(lineContents)) != null)
+                        drawLabels word.index
 
     clearJumpMode: ->
         @clearKeys()
