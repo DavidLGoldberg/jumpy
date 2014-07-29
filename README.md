@@ -19,10 +19,11 @@ apm install jumpy
 
 ## Notes
 * Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
-    * Modes supported:
+    * Vim modes supported:
         * command mode
         * insert mode
         * visual mode (sorry cancels select at the moment)
+    * Recommended key mappings to replace 'f' in vim-mode see 'Settings' below.
 * Recommended custom [slightly pulsing green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist") (does not need Jumpy installed!)
 
 ## Key Bindings
@@ -56,6 +57,19 @@ or enter ctrl+alt+cmd+l (lower case L).
 
 ![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
 
+### 'vim-mode' Users (Strongly Recommended Override)
+Put this override in your **'Atom'** -> **'Open Your Stylesheet'** settings:
+
+    '.editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode)':
+        'f': 'jumpy:toggle'
+
+This will **bind 'f' to toggle Jumpy**.
+
+This has not been made the default because it **changes vim's native behavior**.
+With Jumpy, however, after jumping to the nearest word, you can probably word or character jump over to it quickly.
+The [Vimium chrome extension](https://chrome.google.com/webstore/detail/vimium/dbepggeogbaibhgnhhndojpepiihcmeb?hl=en) chose this binding.
+Please let me know what you think about this binding for Jumpy!
+
 ### Jumpy Styles
 Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
 (see examples below)
@@ -70,9 +84,7 @@ Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
-* Remove unreachable highlights after first character hit (to reduce noise).
-* Reset first character entered: <kbd>backspace</kbd> and repaint all
-  labels to the screen.
+* Fix labels on soft wraps (word wrap) and code folding (code collapse)
 * Better highlighting in visual mode.
 
 ## Keywords
