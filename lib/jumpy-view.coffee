@@ -65,6 +65,10 @@ class JumpyView extends View
             keymap.command.indexOf('jumpy') > -1
 
     toggle: ->
+        fontSize = atom.config.get 'jumpy.fontSize'
+        fontSize = .75 if isNaN(fontSize) or fontSize > 1
+        fontSize = (fontSize * 100) + '%'
+
         @turnOffSlowKeys()
         atom.workspaceView.statusBar?.find '#status-bar-jumpy'
             .html 'Jumpy: <span id="status">Jump Mode!</span>'
@@ -96,9 +100,6 @@ class JumpyView extends View
                     pixelPosition = editorView
                         .pixelPositionForScreenPosition [lineNumber,
                         word.index]
-                    fontSize = atom.config.get 'jumpy.fontSize'
-                    fontSize = .75 if isNaN(fontSize) or fontSize > 1
-                    fontSize = (fontSize * 100) + '%'
                     labelElement =
                         $("<div class='jumpy label'>#{keyLabel}</div>")
                             .css {
