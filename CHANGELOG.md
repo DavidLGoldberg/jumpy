@@ -18,3 +18,7 @@
 ## 1.4.0
 * Jumpy now clears irrelevant labels after the firs character is
   entered.  This helps home in on your target.
+
+## 1.4.1
+* Added some very useful instructions about how to bind 'f' to
+  jumpy:toggle.  This of course replaces native 'f' functionality.
