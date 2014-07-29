@@ -68,6 +68,7 @@ class JumpyView extends View
         fontSize = atom.config.get 'jumpy.fontSize'
         fontSize = .75 if isNaN(fontSize) or fontSize > 1
         fontSize = (fontSize * 100) + '%'
+        highContrast = atom.config.get 'jumpy.highContrast'
 
         @turnOffSlowKeys()
         atom.workspaceView.statusBar?.find '#status-bar-jumpy'
@@ -107,7 +108,7 @@ class JumpyView extends View
                                 top: pixelPosition.top
                                 fontSize: fontSize
                             }
-                    if atom.config.get 'jumpy.highContrast'
+                    if highContrast
                         labelElement.addClass 'high-contrast'
                     $labels
                         .append labelElement
@@ -126,6 +127,7 @@ class JumpyView extends View
         if location == null
             console.log "Jumpy canceled jump.  No location found."
             return
+        useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
         atom.workspaceView.eachEditorView (editorView) =>
             currentEditor = editorView.getEditor()
             if currentEditor.id != location.editor
@@ -134,7 +136,7 @@ class JumpyView extends View
             pane = editorView.getPane()
             pane.activate()
             currentEditor.setCursorScreenPosition location.position
-            if atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
+            if useHomingBeacon
                 cursor = pane.find '.cursors .cursor'
                 cursor.addClass 'beacon'
                 setTimeout ->
