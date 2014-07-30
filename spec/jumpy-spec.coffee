@@ -91,16 +91,18 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
         it "jumps the cursor in folded regions", ->
-            editor.setCursorBufferPosition [1, 1]
-            editor.foldBufferRow(24)
+            editorView.trigger 'jumpy:clear'
+            editor.setCursorBufferPosition [23, 20]
+            editor.foldCurrentRow()
+            editorView.trigger 'jumpy:toggle'
             editorView.trigger 'jumpy:d'
             editorView.trigger 'jumpy:i'
-            cursorPosition = editor.getCursorBufferPosition()
-            expect(cursorPosition.row).toBe 22
+            cursorPosition = editor.getCursorScreenPosition()
+            expect(cursorPosition.row).toBe 23
             expect(cursorPosition.column).toBe 2
             editorView.trigger 'jumpy:d'
             editorView.trigger 'jumpy:h'
-            cursorPosition = editor.getCursorBufferPosition()
+            cursorPosition = editor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 22
             expect(cursorPosition.column).toBe 0
 
