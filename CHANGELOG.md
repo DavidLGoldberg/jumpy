@@ -29,3 +29,4 @@
   word wraps (even with Jumpy disabled).  Better behavior in insert mode!
 * Although there are a few more features in the pipeline planned.
   This completes the last of the known unexpected behavior (bugs).
+
