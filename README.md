@@ -84,7 +84,6 @@ Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
-* Fix labels on soft wraps (word wrap) and code folding (code collapse)
 * Better highlighting in visual mode.
 
 ## Keywords

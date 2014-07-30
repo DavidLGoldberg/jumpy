@@ -22,3 +22,10 @@
 ## 1.4.1
 * Added some very useful instructions about how to bind 'f' to
   jumpy:toggle.  This of course replaces native 'f' functionality.
+
+## 1.5.0
+* Jumpy now works with code folding and soft wraps (word wraps).
+* NOTE: vim-mode seems to have very unexpected behavior with toggles and
+  word wraps (even with Jumpy disabled).  Better behavior in insert mode!
+* Although there are a few more features in the pipeline planned.
+  This completes the last of the known unexpected behavior (bugs).
