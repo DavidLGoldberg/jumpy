@@ -68,7 +68,7 @@ This will **bind 'f' to toggle Jumpy**.
 This has not been made the default because it **changes vim's native behavior**.
 With Jumpy, however, after jumping to the nearest word, you can probably word or character jump over to your target quickly.
 The [Vimium chrome extension](https://chrome.google.com/webstore/detail/vimium/dbepggeogbaibhgnhhndojpepiihcmeb?hl=en) chose this binding.
-Please let me know what you think about this binding for Jumpy!
+Please let me know what you think about this binding for Jumpy [here](https://discuss.atom.io/t/introducing-jumpy-new-package/10980/28)!
 
 ### Jumpy Styles
 Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
