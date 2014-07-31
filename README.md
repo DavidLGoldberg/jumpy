@@ -24,7 +24,9 @@ apm install jumpy
         * insert mode
         * visual mode (sorry cancels select at the moment)
     * Recommended key mappings to replace 'f' in vim-mode see 'Settings' below.
-* Recommended custom [slightly pulsing green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist") (does not need Jumpy installed!)
+* Recommended custom cursors:
+    * [slightly pulsing green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist")
+    * [neon-cursor](https://atom.io/packages/neon-cursor)
 
 ## Key Bindings
 ### Defaults
