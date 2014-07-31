@@ -177,3 +177,18 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:reset'
             expect(editorView.find('.jumpy.label:not(.irrelevant)')
                 .length).toBe NUM_TOTAL_WORDS
+
+    # Working RED test.
+    # describe "when the a text selection has begun
+    #     before a jumpy:toggle event is triggered", ->
+    #     it "keeps the selection for subsequent jumps", ->
+    #         editorView.trigger 'jumpy:clear'
+    #         editorView.trigger 'jumpy:toggle'
+    #         editorView.trigger 'jumpy:a'
+    #         editorView.trigger 'jumpy:a'
+    #         editor.selectRight()
+    #         editor.selectRight()
+    #         editorView.trigger 'jumpy:toggle'
+    #         editorView.trigger 'jumpy:a'
+    #         editorView.trigger 'jumpy:e'
+    #         expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad ae'
