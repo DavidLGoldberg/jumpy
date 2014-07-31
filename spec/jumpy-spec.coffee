@@ -89,6 +89,7 @@ describe "Jumpy", ->
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
+            expect(editor.getSelectedText()).toBe ''
         it "jumps the cursor in folded regions", ->
             editorView.trigger 'jumpy:clear'
             editor.setCursorBufferPosition [23, 20]
@@ -178,17 +179,31 @@ describe "Jumpy", ->
             expect(editorView.find('.jumpy.label:not(.irrelevant)')
                 .length).toBe NUM_TOTAL_WORDS
 
-    # Working RED test.
-    # describe "when the a text selection has begun
-    #     before a jumpy:toggle event is triggered", ->
-    #     it "keeps the selection for subsequent jumps", ->
-    #         editorView.trigger 'jumpy:clear'
-    #         editorView.trigger 'jumpy:toggle'
-    #         editorView.trigger 'jumpy:a'
-    #         editorView.trigger 'jumpy:a'
-    #         editor.selectRight()
-    #         editor.selectRight()
-    #         editorView.trigger 'jumpy:toggle'
-    #         editorView.trigger 'jumpy:a'
-    #         editorView.trigger 'jumpy:e'
-    #         expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad ae'
+    describe "when the a text selection has begun
+        before a jumpy:toggle event is triggered", ->
+        it "keeps the selection for subsequent jumps", ->
+            editorView.trigger 'jumpy:clear'
+            editorView.trigger 'jumpy:toggle'
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:a'
+            editor.selectRight()
+            editor.selectRight()
+            editorView.trigger 'jumpy:toggle'
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:e'
+            expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
+
+    # RED test.
+    describe "when the a text selection has begun
+        before a jumpy:toggle event is triggered", ->
+        it "keeps the selection for subsequent jumps", ->
+            editorView.trigger 'jumpy:clear'
+            editorView.trigger 'jumpy:toggle'
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:a'
+            editor.selectRight()
+            editor.selectRight()
+            editorView.trigger 'jumpy:toggle'
+            editorView.trigger 'jumpy:a'
+            editorView.trigger 'jumpy:e'
+            expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '

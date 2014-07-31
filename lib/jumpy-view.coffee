@@ -142,7 +142,11 @@ class JumpyView extends View
 
             pane = editorView.getPane()
             pane.activate()
-            currentEditor.setCursorScreenPosition location.position
+            isVisualMode = editorView.view().hasClass 'visual-mode'
+            if isVisualMode || (currentEditor.getSelections().length == 1 && currentEditor.getSelectedText() != '')
+                currentEditor.selectToScreenPosition(location.position)
+            else
+                currentEditor.setCursorScreenPosition location.position
             if useHomingBeacon
                 cursor = pane.find '.cursors .cursor'
                 cursor.addClass 'beacon'
