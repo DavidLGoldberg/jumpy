@@ -102,11 +102,10 @@ class JumpyView extends View
                     column]
                 labelElement =
                     $("<div class='jumpy label'>#{keyLabel}</div>")
-                        .css {
+                        .css
                             left: pixelPosition.left
                             top: pixelPosition.top
                             fontSize: fontSize
-                        }
                 if highContrast
                     labelElement.addClass 'high-contrast'
                 $labels
