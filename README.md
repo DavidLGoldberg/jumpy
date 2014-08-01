@@ -86,7 +86,10 @@ Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
-* Better highlighting in visual mode.
+* Better highlighting in visual mode (coming soon).
+* Why not block invalid first characters entered? (visual bell too)
+* Provide custom regex searches.
+    * Experiment with camel labels that detect camel case.
 
 ## Keywords
 (A little SEO juice since "apm search" only searches package name at the moment)
