@@ -193,7 +193,6 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:e'
             expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
 
-    # RED test.
     describe "when the a text selection has begun
         before a jumpy:toggle event is triggered", ->
         it "keeps the selection for subsequent jumps", ->
