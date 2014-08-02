@@ -9,7 +9,7 @@ for c1 in characters
     for c2 in characters
         keys.push c1 + c2
 
-wordsPattern = /([\w]){2,}/g
+wordsPattern = new RegExp atom.config.get 'jumpy.matchPattern', 'g'
 
 module.exports =
 class JumpyView extends View
