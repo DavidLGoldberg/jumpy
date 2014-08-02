@@ -100,6 +100,7 @@ describe "Jumpy", ->
             cursorPosition = editor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 23
             expect(cursorPosition.column).toBe 2
+            editorView.trigger 'jumpy:toggle'
             editorView.trigger 'jumpy:d'
             editorView.trigger 'jumpy:h'
             cursorPosition = editor.getCursorScreenPosition()

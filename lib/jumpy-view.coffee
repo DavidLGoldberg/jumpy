@@ -28,12 +28,19 @@ class JumpyView extends View
         atom.workspaceView.statusBar?.prependLeft(
             '<div id="status-bar-jumpy" class="inline-block"></div>')
 
-    getKey: (character) ->
+    getKey: (character, labelPosition) ->
         character = character.type.charAt(character.type.length - 1)
-        isMatchOfCurrentLabels = (character)->
-            #TODO: implement
-            false
-        if isMatchOfCurrentLabels character
+        isMatchOfCurrentLabels = (character, labelPosition) ->
+            found = false
+            atom.workspaceView.eachEditorView (editorView) ->
+                editorView.find('.label:not(.irrelevant)').each (i, label) ->
+                    if label.innerHTML[labelPosition] == character
+                        found = true
+                        return false
+            return found
+
+        labelPosition = (if not @firstChar then 0 else 1)
+        if !isMatchOfCurrentLabels character, labelPosition
             #TODO: display visual bell
             return
 
