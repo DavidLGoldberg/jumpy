@@ -60,7 +60,7 @@ or enter ctrl+alt+cmd+l (lower case L).
 ![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
 
 ### 'vim-mode' Users (Strongly Recommended Override)
-Put this override in your **'Atom'** -> **'Open Your Stylesheet'** settings:
+Put this override in your **'Atom'** -> **'Open Your Keymap'** settings:
 
     '.editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode)':
         'f': 'jumpy:toggle'
@@ -73,7 +73,7 @@ The [Vimium chrome extension](https://chrome.google.com/webstore/detail/vimium/d
 Please let me know what you think about this binding for Jumpy [here](https://discuss.atom.io/t/introducing-jumpy-new-package/10980/28)!
 
 ### Jumpy Styles
-Note: Styles can be overridden in "Atom" -> "Open Your Stylesheets"
+Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheets'**
 (see examples below)
 ```less
 .jumpy {
