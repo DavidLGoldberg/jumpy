@@ -41,12 +41,19 @@ class JumpyView extends View
 
         labelPosition = (if not @firstChar then 0 else 1)
         if !isMatchOfCurrentLabels character, labelPosition
-            #TODO: display visual bell
+            atom.workspaceView.statusBar?.find '#status-bar-jumpy'
+                .addClass 'no-match'
+                .find '.status'
+                    .html 'No match!'
             return
+        else
+            atom.workspaceView.statusBar?.find '#status-bar-jumpy'
+                .removeClass 'no-match'
+
 
         if not @firstChar
             @firstChar = character
-            atom.workspaceView.statusBar?.find '#status-bar-jumpy #status'
+            atom.workspaceView.statusBar?.find '#status-bar-jumpy .status'
                 .html @firstChar
             atom.workspaceView.eachEditorView (editorView) =>
                 for label in editorView.find '.jumpy.label'
@@ -68,8 +75,10 @@ class JumpyView extends View
         atom.workspaceView.eachEditorView (editorView) ->
             editorView.find '.irrelevant'
                 .removeClass 'irrelevant'
-        atom.workspaceView.statusBar?.find '#status-bar-jumpy #status'
-            .html 'Jump Mode!'
+        atom.workspaceView.statusBar?.find '#status-bar-jumpy'
+            .removeClass 'no-match'
+            .find '.status'
+                .html 'Jump Mode!'
 
     clear: ->
         @clearJumpMode()
@@ -86,7 +95,8 @@ class JumpyView extends View
 
         @turnOffSlowKeys()
         atom.workspaceView.statusBar?.find '#status-bar-jumpy'
-            .html 'Jumpy: <span id="status">Jump Mode!</span>'
+            .removeClass 'no-match'
+            .html 'Jumpy: <span class="status">Jump Mode!</span>'
 
         @allPositions = {}
         atom.workspaceView.find '*'

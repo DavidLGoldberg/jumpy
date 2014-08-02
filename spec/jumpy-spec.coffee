@@ -140,7 +140,7 @@ describe "Jumpy", ->
             expect(atom.workspaceView.statusBar
                 ?.find('#status-bar-jumpy')).toExist()
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy #status').html()).toBe 'Jump Mode!'
+                ?.find('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears the status bar", ->
@@ -152,7 +152,7 @@ describe "Jumpy", ->
         it "updates the status bar with a", ->
             editorView.trigger 'jumpy:a'
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy #status').html()).toBe 'a'
+                ?.find('#status-bar-jumpy .status').html()).toBe 'a'
         it "removes all labels that don't begin with a", ->
             editorView.trigger 'jumpy:a'
             expect(editorView.find('.jumpy.label:not(.irrelevant)')
@@ -173,7 +173,7 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy #status').html()).toBe 'Jump Mode!'
+                ?.find('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
         it "resets all labels even those that don't begin with a", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
@@ -209,12 +209,24 @@ describe "Jumpy", ->
             expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
 
     describe "when a character is entered that no label has a match for", ->
-        it "displays a visual bell", ->
-            # ??? doable? probably not with built in?
-            editor.setCursorBufferPosition [1,1]
+        it "displays a status bar error message", ->
             editorView.trigger 'jumpy:z'
-            expect(editorView.find('.overlayer')
-                .hasClass 'visual_bell').toBeTruthy()
+            expect(atom.workspaceView.statusBar
+                ?.find('#status-bar-jumpy')
+                    .hasClass 'no-match').toBeTruthy()
+            expect(atom.workspaceView.statusBar
+                ?.find('#status-bar-jumpy .status')
+                    .html() == 'No match!').toBeTruthy()
+        it "eventually clears the status bar error message", ->
+            editorView.trigger 'jumpy:toggle'
+            editorView.trigger 'jumpy:z'
+            editorView.trigger 'jumpy:a'
+            expect(atom.workspaceView.statusBar
+                ?.find '#status-bar-jumpy'
+                    .hasClass 'no-match').toBeFalsy()
+            expect(atom.workspaceView.statusBar
+                ?.find('#status-bar-jumpy .status')
+                    .html() == 'a').toBeTruthy()
         it "does not jump", ->
             editor.setCursorBufferPosition [1,1]
             editorView.trigger 'jumpy:z'

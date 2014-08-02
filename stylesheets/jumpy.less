@@ -17,6 +17,10 @@
 
 #status-bar-jumpy {
     color: @text-color-info;
+    &.no-match,
+    &.no-match .status {
+        color: @text-color-warning;
+    }
 }
 
 .jumpy {
