@@ -1,3 +1,7 @@
+## 1.6.0
+* Jump while highlighted selection.
+* Works with 'v' (visual mode) in vim-mode.
+
 ## 1.5.0
 * Jumpy now works with code folding and soft wraps (word wraps).
 * NOTE: vim-mode seems to have very unexpected behavior with toggles and
