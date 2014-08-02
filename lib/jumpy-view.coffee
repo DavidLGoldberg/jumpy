@@ -30,6 +30,13 @@ class JumpyView extends View
 
     getKey: (character) ->
         character = character.type.charAt(character.type.length - 1)
+        isMatchOfCurrentLabels = (character)->
+            #TODO: implement
+            false
+        if isMatchOfCurrentLabels character
+            #TODO: display visual bell
+            return
+
         if not @firstChar
             @firstChar = character
             atom.workspaceView.statusBar?.find '#status-bar-jumpy #status'

@@ -206,3 +206,22 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:e'
             expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
+
+    describe "when a character is entered that no label has a match for", ->
+        it "displays a visual bell", ->
+            # ??? doable? probably not with built in?
+            editor.setCursorBufferPosition [1,1]
+            editorView.trigger 'jumpy:z'
+            expect(editorView.find('.overlayer')
+                .hasClass 'visual_bell').toBeTruthy()
+        it "does not jump", ->
+            editor.setCursorBufferPosition [1,1]
+            editorView.trigger 'jumpy:z'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toBe 1
+            expect(cursorPosition.column).toBe 1
+        it "leaves the labels up", ->
+            editor.setCursorBufferPosition [1,1]
+            editorView.trigger 'jumpy:z'
+            relevantLabels = editorView.find('.label:not(.irrelevant)')
+            expect(relevantLabels.length > 0).toBeTruthy()
