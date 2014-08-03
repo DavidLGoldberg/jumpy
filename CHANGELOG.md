@@ -1,3 +1,12 @@
+## 1.7.0
+* Adds a warning message (usually orange) to the status bar if
+  input does not match any labels (ie: zz, probably not on the page).
+  This works at the input of first or second character.
+  Effectively, Jumpy no longer clears the labels with invalid entries,
+  but rather lets you try again.  A reset (usually backspace) is only
+  necessary if you want to undo the first entered character and restore
+  to all of the labels.
+
 ## 1.6.0
 * Jump while highlighted selection.
 * Works with 'v' (visual mode) in vim-mode.
