@@ -86,7 +86,6 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
-* Why not block invalid first characters entered? (visual bell too)
 * Provide custom regex searches.
     * Experiment with camel labels that detect camel case.
 
