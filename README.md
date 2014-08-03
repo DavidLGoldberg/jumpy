@@ -22,7 +22,7 @@ apm install jumpy
     * Vim modes supported:
         * command mode
         * insert mode
-        * visual mode (sorry cancels select at the moment)
+        * visual mode (expands selections with <kbd>v</kbd> or <kbd>V</kbd>)
     * Recommended key mappings to replace 'f' in vim-mode see 'Settings' below.
 * Recommended custom cursors:
     * [slightly pulsing green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist")
@@ -86,7 +86,6 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
-* Better highlighting in visual mode (coming soon).
 * Why not block invalid first characters entered? (visual bell too)
 * Provide custom regex searches.
     * Experiment with camel labels that detect camel case.
