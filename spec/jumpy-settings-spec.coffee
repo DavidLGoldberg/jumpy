@@ -2,6 +2,16 @@ path = require 'path'
 {WorkspaceView} = require 'atom'
 Jumpy = require '../lib/jumpy'
 
+NUM_ALPHA_TEST_WORDS = 26 * 3
+NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
+NUM_COLLAPSIBLE_WORDS = 19
+NUM_CAMEL_MATCHES = 15 # 5 + 6 + 4 (camel matches)
+NUM_TOTAL_WORDS =
+    NUM_ALPHA_TEST_WORDS +
+    NUM_ENGLISH_TEXT +
+    NUM_COLLAPSIBLE_WORDS +
+    NUM_CAMEL_MATCHES
+
 describe "Jumpy with non default settings on", ->
     [editorView, editor, jumpyPromise] = []
 

@@ -4,8 +4,12 @@ path = require 'path'
 NUM_ALPHA_TEST_WORDS = 26 * 3
 NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
 NUM_COLLAPSIBLE_WORDS = 19
+NUM_CAMEL_WORDS = 3
 NUM_TOTAL_WORDS =
-    NUM_ALPHA_TEST_WORDS + NUM_ENGLISH_TEXT + NUM_COLLAPSIBLE_WORDS
+    NUM_ALPHA_TEST_WORDS +
+    NUM_ENGLISH_TEXT +
+    NUM_COLLAPSIBLE_WORDS +
+    NUM_CAMEL_WORDS
 
 describe "Jumpy", ->
     [editorView, editor, jumpyPromise, statusBarPromise] = []

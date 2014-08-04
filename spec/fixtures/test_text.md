@@ -27,3 +27,7 @@ this is a test
 * C1 C1x
 * D1 D1x
 * E1
+
+hereIsSomeCamelCase
+hereIsSomeMoreCamelCase
+here_is_some_underscores
