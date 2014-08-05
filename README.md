@@ -91,10 +91,8 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 * Experiment with custom regex to detect camel case humps and label them.
 
 ## Keywords
-(A little SEO juice since "apm search" only searches package name at the moment)
+(A little SEO juice)
 
-* Hot keys
-* Key bindings
 * Shortcuts
 * Navigation
 * Productivity
