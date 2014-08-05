@@ -1,3 +1,10 @@
+## 1.8.0
+* Adds custom match patterns.  I am not sure how useful this is yet.
+    * Will be interesting to see if people find some good use cases.
+      maybe for very particular programming languages or spoken languages etc.
+* Adds a placeholder spec test for camel case matching.
+    * I would really like jumpy to detect all camel humps (and underscores) and print a label there!
+
 ## 1.7.0
 * Adds a warning message (usually orange) to the status bar if
   input does not match any labels (ie: zz, probably not on the page).
