@@ -16,8 +16,6 @@ class JumpyView extends View
         @div ''
 
     initialize: (serializeState) ->
-        @wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
-
         atom.workspaceView.command 'jumpy:toggle', => @toggle()
         atom.workspaceView.command 'jumpy:reset', => @reset()
         atom.workspaceView.command 'jumpy:clear', => @clear()
@@ -90,6 +88,8 @@ class JumpyView extends View
             keymap.command.indexOf('jumpy') > -1
 
     toggle: ->
+        wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
+
         fontSize = atom.config.get 'jumpy.fontSize'
         fontSize = .75 if isNaN(fontSize) or fontSize > 1
         fontSize = (fontSize * 100) + '%'
@@ -142,7 +142,7 @@ class JumpyView extends View
                 if editor.isFoldedAtScreenRow(lineNumber)
                     drawLabels 0
                 else
-                    while ((word = @wordsPattern.exec(lineContents)) != null)
+                    while ((word = wordsPattern.exec(lineContents)) != null)
                         drawLabels word.index
 
     clearJumpMode: ->
