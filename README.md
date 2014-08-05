@@ -49,6 +49,8 @@ apm install jumpy
 If set, must be a decimal value less than 1.
 * <b>High Contrast</b>:
 If checked, uses a more colorful and fun (usually green) label.
+* <b>Match Pattern</b>:
+Provide a custom regex to match labels with.
 * <b>Use Homing Beacon Effect On Jumps</b>
 *(needs React Editor enabled, see below)*:
 If left on, will display a homing beacon (usually red) after all jumps.
@@ -86,8 +88,7 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
-* Provide custom regex searches.
-    * Experiment with camel labels that detect camel case.
+* Experiment with custom regex to detect camel case humps and label them.
 
 ## Keywords
 (A little SEO juice since "apm search" only searches package name at the moment)

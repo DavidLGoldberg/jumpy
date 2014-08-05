@@ -1,3 +1,6 @@
+## 1.8.1
+* Updating README.md and settings image.
+
 ## 1.8.0
 * Adds custom match patterns.  I am not sure how useful this is yet.
     * Will be interesting to see if people find some good use cases.
@@ -30,7 +33,7 @@
   jumpy:toggle.  This of course replaces native 'f' functionality.
 
 ## 1.4.0
-* Jumpy now clears irrelevant labels after the firs character is
+* Jumpy now clears irrelevant labels after the first character is
   entered.  This helps home in on your target.
 
 ## 1.3.1
