@@ -24,7 +24,6 @@ describe "Jumpy with non default settings on", ->
         atom.config.set 'jumpy.fontSize', .50
         atom.config.set 'jumpy.useHomingBeaconEffectOnJumps', false
         atom.config.set 'jumpy.matchPattern', '([\\w]){2,}' # also the default
-        #atom.config.set 'jumpy.matchPattern', '[A-Z]+[0-9a-z]|([a-z])*' # NOT YET DONE.
 
         waitsForPromise ->
             atom.workspace.open 'test_text.md'
@@ -70,8 +69,11 @@ describe "Jumpy with non default settings on", ->
             expect(labels[83].innerHTML).toBe 'df'
 
     # Do not have the regex to make this work yet.
-    xdescribe "when a custom match is used (camel case)", ->
-        it "draws correct labels", ->
+    describe "when a custom match is used (camel case)", ->
+        fit "draws correct labels", ->
+            editorView.trigger 'jumpy:clear'
+            atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z]{2,}' # NOT YET DONE.
+            editorView.trigger 'jumpy:toggle'
             expect(editorView.find('.jumpy.labels')).toExist()
             labels = editorView.find('.jumpy.label')
             expect(labels.length)
