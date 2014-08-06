@@ -68,11 +68,10 @@ describe "Jumpy with non default settings on", ->
             expect(labels[82].innerHTML).toBe 'de'
             expect(labels[83].innerHTML).toBe 'df'
 
-    # Do not have the regex to make this work yet.
     describe "when a custom match is used (camel case)", ->
-        fit "draws correct labels", ->
+        it "draws correct labels and jumps appropriately", ->
             editorView.trigger 'jumpy:clear'
-            atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z]{2,}' # NOT YET DONE.
+            atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
             editorView.trigger 'jumpy:toggle'
             expect(editorView.find('.jumpy.labels')).toExist()
             labels = editorView.find('.jumpy.label')
@@ -85,3 +84,16 @@ describe "Jumpy with non default settings on", ->
             expect(labels[83].innerHTML).toBe 'df'
 
             #CAMELS:
+            editorView.trigger 'jumpy:e'
+            editorView.trigger 'jumpy:a'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toBe 30
+            expect(cursorPosition.column).toBe 4
+
+            #UNDERSCORES:
+            editorView.trigger 'jumpy:toggle'
+            editorView.trigger 'jumpy:e'
+            editorView.trigger 'jumpy:l'
+            cursorPosition = editor.getCursorBufferPosition()
+            expect(cursorPosition.row).toBe 32
+            expect(cursorPosition.column).toBe 5

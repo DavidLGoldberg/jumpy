@@ -1,3 +1,11 @@
+## 1.8.2
+* Updating README.md with new suggested match pattern regex override.
+    * This regex pattern can detect camel casing and underscore separated variable names.
+    * It has some dedicated spec tests as well.
+    * More labels do not seem to get in the way.
+    * It may become the default at some point!
+* Updates spec tests to test published camel case and underscore pattern.
+
 ## 1.8.1
 * Updating README.md and settings image.
 

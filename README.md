@@ -51,6 +51,12 @@ If set, must be a decimal value less than 1.
 If checked, uses a more colorful and fun (usually green) label.
 * <b>Match Pattern</b>:
 Provide a custom regex to match labels with.
+**Recommended camel case + underscore** pattern *(still in testing)*:
+
+```regex
+([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}
+```
+
 * <b>Use Homing Beacon Effect On Jumps</b>
 *(needs React Editor enabled, see below)*:
 If left on, will display a homing beacon (usually red) after all jumps.
@@ -88,7 +94,7 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## TODO
-* Experiment with custom regex to detect camel case humps and label them.
+* Provide a command to restore previous cursor position after performing a jump.
 
 ## Keywords
 (A little SEO juice)
