@@ -2,11 +2,23 @@
 {$} = require 'atom'
 _ = require 'lodash'
 
-characters =
+lowerCharacters =
     (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
+upperCharacters =
+    (String.fromCharCode(a) for a in ['A'.charCodeAt()..'Z'.charCodeAt()])
 keys = []
-for c1 in characters
-    for c2 in characters
+
+# A little ugly.
+# I used itertools.permutation in python.
+# Couldn't find a good one in npm.  Don't worry this takes < 1ms once.
+for c1 in lowerCharacters
+    for c2 in lowerCharacters
+        keys.push c1 + c2
+for c1 in upperCharacters
+    for c2 in lowerCharacters
+        keys.push c1 + c2
+for c1 in lowerCharacters
+    for c2 in upperCharacters
         keys.push c1 + c2
 
 module.exports =
@@ -20,7 +32,9 @@ class JumpyView extends View
         atom.workspaceView.command 'jumpy:reset', => @reset()
         atom.workspaceView.command 'jumpy:clear', => @clear()
 
-        for c in characters
+        for c in lowerCharacters
+            atom.workspaceView.command "jumpy:#{c}", (c) => @getKey c
+        for c in upperCharacters
             atom.workspaceView.command "jumpy:#{c}", (c) => @getKey c
 
         # TODO: consider moving this into toggle for new bindings.
@@ -116,6 +130,8 @@ class JumpyView extends View
             editor = editorView.getEditor()
 
             drawLabels = (column) =>
+                return unless nextKeys.length
+                
                 keyLabel = nextKeys.shift()
                 position = {row: lineNumber, column: column}
                 # creates a reference:

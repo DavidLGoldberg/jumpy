@@ -47,7 +47,7 @@ describe "Jumpy", ->
         it "clears beacon effect", ->
             expect(editorView.find('cursors .cursor.beacon')).not.toExist()
         it "only uses jumpy keymaps", ->
-            expect(atom.keymap.keyBindings.length).toBe 26 + 5 + 1
+            expect(atom.keymap.keyBindings.length).toBe (26 * 2) + 5 + 1
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears labels", ->

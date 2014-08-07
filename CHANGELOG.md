@@ -1,3 +1,7 @@
+## 1.8.3
+* Fixes a bug where labels after zz were getting labeled as 'undefined'.
+* Uses patterns like Aa-> Zz for the next 676 and then aA -> zZ for the next.
+
 ## 1.8.2
 * Updating README.md with new suggested match pattern regex override.
     * This regex pattern can detect camel casing and underscore separated variable names.
