@@ -67,6 +67,12 @@ or enter ctrl+alt+cmd+l (lower case L).
 
 ![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
 
+*Example*:
+
+![Jumpy example](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-high-contrast-font-camel.png)
+
+(image after settings set to .85 font size, high contrast, and ([A-Z]+([0-9a-z])*)|[a-z0-9]{2,} a camel case matching pattern)
+
 ### 'vim-mode' Users (Strongly Recommended Override)
 Put this override in your **'Atom'** -> **'Open Your Keymap'** settings:
 

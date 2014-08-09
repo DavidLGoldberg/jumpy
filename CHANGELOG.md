@@ -2,6 +2,8 @@
 * Fixes a bug where labels after zz were getting labeled as 'undefined'.
 * Uses patterns like Aa-> Zz for the next 676 and then aA -> zZ for the next.
 * Updates README.md's jumpy.gif.
+* Adds new settings example image that contains .85 font, high contrast,
+  and camel case match pattern.
 
 ## 1.8.2
 * Updating README.md with new suggested match pattern regex override.
