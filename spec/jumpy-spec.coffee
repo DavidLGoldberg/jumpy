@@ -26,7 +26,7 @@ describe "Jumpy", ->
             editorView = atom.workspaceView.getActiveView()
             editor = editorView.getEditor()
             jumpyPromise = atom.packages.activatePackage 'jumpy'
-            statusBarPromise = atom.packages.activatePackage('status-bar')
+            statusBarPromise = atom.packages.activatePackage 'status-bar'
             editorView.trigger 'jumpy:toggle'
 
         waitsForPromise ->
