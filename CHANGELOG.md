@@ -1,3 +1,11 @@
+## 1.9.3
+* Makes the camel case + underscore regex match pattern the new default for Jumpy!
+* This affords much better jump accuracy at no cost.
+* If you prefer the old default (can't imagine why) set the old pattern with the custom match pattern setting to:
+  '([\\w]){2,}'
+* In the future I will probably support {}'s and other similar operators that need jumping to.
+  Let me know if you have a tested regex that I can use!
+
 ## 1.8.3
 * Fixes a bug where labels after zz were getting labeled as 'undefined'.
 * Uses patterns like Aa-> Zz for the next 676 and then aA -> zZ for the next.
