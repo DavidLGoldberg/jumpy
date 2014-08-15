@@ -51,12 +51,6 @@ If set, must be a decimal value less than 1.
 If checked, uses a more colorful and fun (usually green) label.
 * <b>Match Pattern</b>:
 Provide a custom regex to match labels with.
-**Recommended camel case + underscore** pattern *(still in testing)*:
-
-```regex
-([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}
-```
-
 * <b>Use Homing Beacon Effect On Jumps</b>
 *(needs React Editor enabled, see below)*:
 If left on, will display a homing beacon (usually red) after all jumps.
