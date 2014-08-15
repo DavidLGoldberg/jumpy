@@ -11,6 +11,8 @@ NUM_TOTAL_WORDS =
     NUM_COLLAPSIBLE_WORDS +
     NUM_CAMEL_WORDS
 
+NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
+
 describe "Jumpy", ->
     [editorView, editor, jumpyPromise, statusBarPromise] = []
 
@@ -39,7 +41,7 @@ describe "Jumpy", ->
             expect(editorView.find('.jumpy.labels')).toExist()
             labels = editorView.find('.jumpy.label')
             expect(labels.length)
-                .toBe NUM_TOTAL_WORDS
+                .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
             expect(labels[0].innerHTML).toBe 'aa'
             expect(labels[1].innerHTML).toBe 'ab'
             expect(labels[82].innerHTML).toBe 'de'
@@ -182,7 +184,7 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
             expect(editorView.find('.jumpy.label:not(.irrelevant)')
-                .length).toBe NUM_TOTAL_WORDS
+                .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
 
     describe "when the a text selection has begun
         before a jumpy:toggle event is triggered", ->

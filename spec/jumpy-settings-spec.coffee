@@ -23,7 +23,7 @@ describe "Jumpy with non default settings on", ->
         atom.config.set 'jumpy.highContrast', true
         atom.config.set 'jumpy.fontSize', .50
         atom.config.set 'jumpy.useHomingBeaconEffectOnJumps', false
-        atom.config.set 'jumpy.matchPattern', '([\\w]){2,}' # also the default
+        atom.config.set 'jumpy.matchPattern', '([\\w]){2,}' # old Jumpy default
 
         waitsForPromise ->
             atom.workspace.open 'test_text.md'
