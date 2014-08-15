@@ -26,7 +26,7 @@ apm install jumpy
     * Recommended key mappings to replace 'f' in vim-mode see 'Settings' below.
 * Recommended custom cursors:
     * [slightly pulsing green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist")
-    * [neon-cursor](https://atom.io/packages/neon-cursor)
+    * [neon-cursor](https://atom.io/packages/neon-cursor) (This conflicts with the Jumpy homing beacon effect, but you *probably* won't need the beacon anymore!)
 
 ## Key Bindings
 ### Defaults
@@ -65,7 +65,7 @@ or enter ctrl+alt+cmd+l (lower case L).
 
 ![Jumpy example](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-high-contrast-font-camel.png)
 
-(image after settings set to .85 font size, high contrast, and ([A-Z]+([0-9a-z])*)|[a-z0-9]{2,} a camel case matching pattern)
+(image after settings set to .85 font size, high contrast, and default camel case matching pattern)
 
 ### 'vim-mode' Users (Strongly Recommended Override)
 Put this override in your **'Atom'** -> **'Open Your Keymap'** settings:
