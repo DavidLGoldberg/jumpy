@@ -1,3 +1,6 @@
+## 1.9.1
+* Fixing CHANGELOG.md.  Had wrong versions.
+
 ## 1.9.0
 * Makes the camel case + underscore regex match pattern the new default for Jumpy!
 * This affords much better jump accuracy at no cost.
