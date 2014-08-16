@@ -1,4 +1,4 @@
-## 1.9.3
+## 1.9.0
 * Makes the camel case + underscore regex match pattern the new default for Jumpy!
 * This affords much better jump accuracy at no cost.
 * If you prefer the old default (can't imagine why) set the old pattern with the custom match pattern setting to:
