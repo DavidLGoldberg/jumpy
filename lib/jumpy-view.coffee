@@ -131,7 +131,7 @@ class JumpyView extends View
 
             drawLabels = (column) =>
                 return unless nextKeys.length
-                
+
                 keyLabel = nextKeys.shift()
                 position = {row: lineNumber, column: column}
                 # creates a reference:
@@ -184,8 +184,9 @@ class JumpyView extends View
             pane = editorView.getPane()
             pane.activate()
             isVisualMode = editorView.view().hasClass 'visual-mode'
-            if isVisualMode || (currentEditor.getSelections().length == 1 && currentEditor.getSelectedText() != '')
-                currentEditor.selectToScreenPosition(location.position)
+            if isVisualMode || (currentEditor.getSelections().length == 1 &&
+                currentEditor.getSelectedText() != '')
+                    currentEditor.selectToScreenPosition(location.position)
             else
                 currentEditor.setCursorScreenPosition location.position
             if useHomingBeacon
