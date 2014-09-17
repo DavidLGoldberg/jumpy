@@ -125,9 +125,9 @@ class JumpyView extends View
             $labels = editorView.find '.scroll-view .overlayer'
                 .append '<div class="jumpy labels"></div>'
 
-            firstVisibleRow = editorView.getFirstVisibleScreenRow()
-            lastVisibleRow = editorView.getLastVisibleScreenRow()
-            editor = editorView.getEditor()
+            editor = editorView.getModel()
+            firstVisibleRow = editor.getFirstVisibleScreenRow()
+            lastVisibleRow = editor.getLastVisibleScreenRow()
 
             drawLabels = (column) =>
                 return unless nextKeys.length
@@ -139,7 +139,7 @@ class JumpyView extends View
                     editor: editor.id
                     position: position
                 }
-                pixelPosition = editorView
+                pixelPosition = editor
                     .pixelPositionForScreenPosition [lineNumber,
                     column]
                 labelElement =
@@ -154,7 +154,7 @@ class JumpyView extends View
                     .append labelElement
 
             for lineNumber in [firstVisibleRow...lastVisibleRow]
-                lineContents = editor.lineForScreenRow(lineNumber).text
+                lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
                     drawLabels 0
                 else
@@ -181,7 +181,7 @@ class JumpyView extends View
             if currentEditor.id != location.editor
                 return
 
-            pane = editorView.getPane()
+            pane = editorView.getPaneView()
             pane.activate()
             isVisualMode = editorView.view().hasClass 'visual-mode'
             if isVisualMode || (currentEditor.getSelections().length == 1 &&

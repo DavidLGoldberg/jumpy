@@ -1,3 +1,9 @@
+## 1.9.2
+* Fixed some deprecated calls to restore performance times.
+* Toggles were taking as long as 1 second to load with the deprecation
+  stack.
+* This fix restores toggle times back down to 15-40ms!
+
 ## 1.9.1
 * Fixing CHANGELOG.md.  Had wrong versions.
 * I goofed the branches up a bit.
