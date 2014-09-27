@@ -1,3 +1,10 @@
+## 1.9.3
+* Fixed default keymap to handle new editions to mac bindings in core
+  Atom as of atom 0.131.0.
+* New Atom default uses shift-enter for inserting a new line.
+  * They added it for consistency.
+  * You probably don't *need* it.
+
 ## 1.9.2
 * Fixed some deprecated calls to restore performance times.
 * Toggles were taking as long as 1 second to load with the deprecation
