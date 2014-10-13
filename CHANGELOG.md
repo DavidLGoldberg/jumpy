@@ -1,3 +1,6 @@
+## 1.9.4
+* Fixed #37 - No labels printed when tab dragged from different pane.
+
 ## 1.9.3
 * Fixed default keymap to handle new editions to mac bindings in core
   Atom as of atom 0.131.0.

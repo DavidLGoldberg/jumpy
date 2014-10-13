@@ -120,7 +120,7 @@ class JumpyView extends View
                 @clear()
         nextKeys = _.clone keys
         atom.workspaceView.eachEditorView (editorView) =>
-            return if !editorView.active
+            return if editorView.is(':hidden')
             editorView.addClass 'jumpy-jump-mode'
             $labels = editorView.find '.scroll-view .overlayer'
                 .append '<div class="jumpy labels"></div>'
