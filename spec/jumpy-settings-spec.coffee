@@ -19,7 +19,7 @@ describe "Jumpy with non default settings on", ->
 
     beforeEach ->
         atom.workspaceView = new WorkspaceView
-        atom.project.setPath(path.join(__dirname, 'fixtures'))
+        atom.project.setPaths([path.join(__dirname, 'fixtures')])
         atom.config.set 'jumpy.highContrast', true
         atom.config.set 'jumpy.fontSize', .50
         atom.config.set 'jumpy.useHomingBeaconEffectOnJumps', false
