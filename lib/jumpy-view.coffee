@@ -159,7 +159,14 @@ class JumpyView extends View
                     drawLabels 0
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels word.index
+                        if word.length == 1
+                            drawLabels word.index
+                        else
+                            matchStr = word[0]
+                            for i in [1...word.length]
+                                offset = matchStr.indexOf(word[i])
+                                if offset != -1
+                                    drawLabels(word.index + offset)
 
     clearJumpMode: ->
         @clearKeys()
