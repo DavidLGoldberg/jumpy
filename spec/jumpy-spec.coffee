@@ -61,30 +61,30 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
         and a mousedown event is fired", ->
         it "jumpy is cleared", ->
-            textEditorElement.trigger 'mousedown'
+            atom.commands.dispatch workspaceElement, 'mousedown'
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and a scroll event is fired", ->
         it "jumpy is cleared", ->
-            textEditorElement.trigger 'scroll'
+            atom.commands.dispatch workspaceElement, 'scroll'
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
         it "jumpy is cleared", ->
-            editor.setCursorBufferPosition [1,1]
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:c'
+            textEditor.setCursorBufferPosition [1,1]
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            atom.commands.dispatch workspaceElement, 'jumpy:c'
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and invalid hotkeys are entered", ->
         it "jumpy is cleared", ->
-            editor.setCursorBufferPosition [1,1]
-            textEditorElement.trigger 'jumpy:z'
-            textEditorElement.trigger 'jumpy:z'
-            cursorPosition = editor.getCursorBufferPosition()
+            textEditor.setCursorBufferPosition [1,1]
+            atom.commands.dispatch workspaceElement, 'jumpy:z'
+            atom.commands.dispatch workspaceElement, 'jumpy:z'
+            cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
 
