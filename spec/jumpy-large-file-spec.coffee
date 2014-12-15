@@ -1,5 +1,5 @@
 path = require 'path'
-{WorkspaceView} = require 'atom'
+{Views} = require 'atom'
 
 NUM_TOTAL_WORDS = 676 + 676 + 676 + 2 # 2 extra
 
@@ -7,7 +7,7 @@ describe "Jumpy", ->
     [editorView, editor, jumpyPromise] = []
 
     beforeEach ->
-        atom.workspaceView = new WorkspaceView
+        atom.views.getView(atom.workspace)
         atom.project.setPaths([path.join(__dirname, 'fixtures')])
 
         waitsForPromise ->

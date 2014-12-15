@@ -17,15 +17,16 @@
     "productivity",
     "mouseless"
   ],
-  "activationEvents": [
-    "jumpy:toggle"
-  ],
+  "activationCommands": {
+    "atom-text-editor": ["jumpy:toggle"]
+  },
   "repository": "https://github.com/DavidLGoldberg/jumpy",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "lodash": "^2.4.1"
+    "lodash": "^2.4.1",
+    "space-pen": "^4.2.2"
   }
 }

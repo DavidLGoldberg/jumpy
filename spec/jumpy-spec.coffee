@@ -1,5 +1,5 @@
 path = require 'path'
-{WorkspaceView} = require 'atom'
+{Views, Commands} = require 'atom'
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
 NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
@@ -14,22 +14,24 @@ NUM_TOTAL_WORDS =
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
 describe "Jumpy", ->
-    [editorView, editor, jumpyPromise, statusBarPromise] = []
+    [workspaceElement, textEditorElement, textEditor, jumpyPromise, statusBarPromise] = []
 
     beforeEach ->
-        atom.workspaceView = new WorkspaceView
         atom.project.setPaths([path.join(__dirname, 'fixtures')])
+        workspaceElement = atom.views.getView(atom.workspace)
+        workspaceElement.style.height = "5000px" # big enough
+        workspaceElement.style.width = "5000px"
+        jasmine.attachToDOM(workspaceElement)
 
         waitsForPromise ->
             atom.workspace.open 'test_text.MD'
 
         runs ->
-            atom.workspaceView.attachToDom()
-            editorView = atom.workspaceView.getActiveView()
-            editor = editorView.getEditor()
+            textEditor = atom.workspace.getActiveTextEditor()
+            textEditorElement = atom.views.getView(textEditor)
             jumpyPromise = atom.packages.activatePackage 'jumpy'
             statusBarPromise = atom.packages.activatePackage 'status-bar'
-            editorView.trigger 'jumpy:toggle'
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
 
         waitsForPromise ->
             jumpyPromise
@@ -37,9 +39,8 @@ describe "Jumpy", ->
             statusBarPromise
 
     describe "when the jumpy:toggle event is triggered", ->
-        it "draws correct labels", ->
-            expect(editorView.find('.jumpy.labels')).toExist()
-            labels = editorView.find('.jumpy.label')
+        fit "draws correct labels", ->
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
             expect(labels[0].innerHTML).toBe 'aa'
@@ -47,26 +48,26 @@ describe "Jumpy", ->
             expect(labels[82].innerHTML).toBe 'de'
             expect(labels[83].innerHTML).toBe 'df'
         it "clears beacon effect", ->
-            expect(editorView.find('cursors .cursor.beacon')).not.toExist()
+            expect(editorView.querySelectorAll('cursors .cursor.beacon')).not.toExist()
         it "only uses jumpy keymaps", ->
             expect(atom.keymap.keyBindings.length).toBe (26 * 2) + 5 + 1
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears labels", ->
             editorView.trigger 'jumpy:clear'
-            expect(editorView.find('.jumpy')).not.toExist()
+            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and a mousedown event is fired", ->
         it "jumpy is cleared", ->
             editorView.trigger 'mousedown'
-            expect(editorView.find('.jumpy')).not.toExist()
+            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and a scroll event is fired", ->
         it "jumpy is cleared", ->
             editorView.trigger 'scroll'
-            expect(editorView.find('.jumpy')).not.toExist()
+            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
@@ -74,7 +75,7 @@ describe "Jumpy", ->
             editor.setCursorBufferPosition [1,1]
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
-            expect(editorView.find('.jumpy')).not.toExist()
+            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and invalid hotkeys are entered", ->
@@ -131,7 +132,7 @@ describe "Jumpy", ->
         it "the beacon animation class is added", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:c'
-            expect(editorView.find('.beacon')).toExist()
+            expect(editorView.querySelectorAll('.beacon')).toExist()
         it "the beacon animation class is removed", ->
             editorView.trigger 'jumpy:a'
             waitsFor ->
@@ -139,29 +140,29 @@ describe "Jumpy", ->
                     editorView.trigger 'jumpy:c'
                 ,100 + 10 # max default I'd probably use + a buffer
             runs ->
-                expect(editorView.find('.beacon')).not.toExist()
+                expect(editorView.querySelectorAll('.beacon')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy')).toExist()
+                ?.querySelectorAll('#status-bar-jumpy')).toExist()
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
+                ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears the status bar", ->
             editorView.trigger 'jumpy:clear'
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy').html()).toBe ''
+                ?.querySelectorAll('#status-bar-jumpy').html()).toBe ''
 
     describe "when the jumpy:a event is triggered", ->
         it "updates the status bar with a", ->
             editorView.trigger 'jumpy:a'
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy .status').html()).toBe 'a'
+                ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'a'
         it "removes all labels that don't begin with a", ->
             editorView.trigger 'jumpy:a'
-            expect(editorView.find('.jumpy.label:not(.irrelevant)')
+            expect(editorView.querySelectorAll('.jumpy.label:not(.irrelevant)')
                 .length).toBe 26
 
     describe "when the jumpy:reset event is triggered", ->
@@ -179,11 +180,11 @@ describe "Jumpy", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
+                ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
         it "resets all labels even those that don't begin with a", ->
             editorView.trigger 'jumpy:a'
             editorView.trigger 'jumpy:reset'
-            expect(editorView.find('.jumpy.label:not(.irrelevant)')
+            expect(editorView.querySelectorAll('.jumpy.label:not(.irrelevant)')
                 .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
 
     describe "when the a text selection has begun
@@ -218,20 +219,20 @@ describe "Jumpy", ->
         it "displays a status bar error message", ->
             editorView.trigger 'jumpy:z'
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy')
+                ?.querySelectorAll('#status-bar-jumpy')
                     .hasClass 'no-match').toBeTruthy()
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy .status')
+                ?.querySelectorAll('#status-bar-jumpy .status')
                     .html() == 'No match!').toBeTruthy()
         it "eventually clears the status bar error message", ->
             editorView.trigger 'jumpy:toggle'
             editorView.trigger 'jumpy:z'
             editorView.trigger 'jumpy:a'
             expect(atom.workspaceView.statusBar
-                ?.find '#status-bar-jumpy'
+                ?.querySelectorAll '#status-bar-jumpy'
                     .hasClass 'no-match').toBeFalsy()
             expect(atom.workspaceView.statusBar
-                ?.find('#status-bar-jumpy .status')
+                ?.querySelectorAll('#status-bar-jumpy .status')
                     .html() == 'a').toBeTruthy()
         it "does not jump", ->
             editor.setCursorBufferPosition [1,1]
@@ -242,5 +243,5 @@ describe "Jumpy", ->
         it "leaves the labels up", ->
             editor.setCursorBufferPosition [1,1]
             editorView.trigger 'jumpy:z'
-            relevantLabels = editorView.find('.label:not(.irrelevant)')
+            relevantLabels = editorView.querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()

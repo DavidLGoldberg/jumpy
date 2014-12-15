@@ -1,5 +1,5 @@
 path = require 'path'
-{WorkspaceView} = require 'atom'
+{Views} = require 'atom'
 Jumpy = require '../lib/jumpy'
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
@@ -18,7 +18,7 @@ describe "Jumpy with non default settings on", ->
     [editorView, editor, jumpyPromise] = []
 
     beforeEach ->
-        atom.workspaceView = new WorkspaceView
+        atom.views.getView(atom.workspace)
         atom.project.setPaths([path.join(__dirname, 'fixtures')])
         atom.config.set 'jumpy.highContrast', true
         atom.config.set 'jumpy.fontSize', .50
