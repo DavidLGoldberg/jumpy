@@ -91,57 +91,59 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
         it "jumps the cursor", ->
-            editor.setCursorBufferPosition [1,1]
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:c'
-            cursorPosition = editor.getCursorBufferPosition()
+            textEditor.setCursorBufferPosition [1,1]
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
-            expect(editor.getSelectedText()).toBe ''
+            expect(textEditor.getSelectedText()).toBe ''
         it "jumps the cursor in folded regions", ->
-            textEditorElement.trigger 'jumpy:clear'
-            editor.setCursorBufferPosition [23, 20]
-            editor.foldCurrentRow()
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:d'
-            textEditorElement.trigger 'jumpy:i'
-            cursorPosition = editor.getCursorScreenPosition()
+            atom.commands.dispatch workspaceElement, 'jumpy:clear'
+            textEditor.setCursorBufferPosition [23, 20]
+            textEditor.foldCurrentRow()
+            atom.commands.dispatch workspaceElement, 'jumpy:toggle'
+            atom.commands.dispatch workspaceElement, 'jumpy:d'
+            atom.commands.dispatch workspaceElement, 'jumpy:i'
+            cursorPosition = textEditor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 23
             expect(cursorPosition.column).toBe 2
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:d'
-            textEditorElement.trigger 'jumpy:h'
-            cursorPosition = editor.getCursorScreenPosition()
+            atom.commands.dispatch workspaceElement, 'jumpy:toggle'
+            atom.commands.dispatch workspaceElement, 'jumpy:d'
+            atom.commands.dispatch workspaceElement, 'jumpy:h'
+            cursorPosition = textEditor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 22
             expect(cursorPosition.column).toBe 0
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered in succession", ->
         it "jumps the cursor twice", ->
-            editor.setCursorBufferPosition [1,1]
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:c'
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:b'
-            textEditorElement.trigger 'jumpy:e'
-            cursorPosition = editor.getCursorBufferPosition()
+            textEditor.setCursorBufferPosition [1,1]
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            atom.commands.dispatch workspaceElement, 'jumpy:toggle'
+            atom.commands.dispatch workspaceElement, 'jumpy:b'
+            atom.commands.dispatch workspaceElement, 'jumpy:e'
+            cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 6
             expect(cursorPosition.column).toBe 12
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
         it "the beacon animation class is added", ->
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:c'
-            expect(textEditorElement.querySelectorAll('.beacon')).toExist()
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            expect(textEditorElement.querySelectorAll('.beacon'))
+                .toExist()
         it "the beacon animation class is removed", ->
-            textEditorElement.trigger 'jumpy:a'
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
             waitsFor ->
                 setTimeout ->
-                    textEditorElement.trigger 'jumpy:c'
+                    atom.commands.dispatch workspaceElement, 'jumpy:c'
                 ,100 + 10 # max default I'd probably use + a buffer
             runs ->
-                expect(textEditorElement.querySelectorAll('.beacon')).not.toExist()
+                expect(textEditorElement.querySelectorAll('.beacon'))
+                    .not.toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
