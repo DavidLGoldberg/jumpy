@@ -39,7 +39,7 @@ describe "Jumpy", ->
             statusBarPromise
 
     describe "when the jumpy:toggle event is triggered", ->
-        fit "draws correct labels", ->
+        it "draws correct labels", ->
             labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
@@ -48,7 +48,8 @@ describe "Jumpy", ->
             expect(labels[82].innerHTML).toBe 'de'
             expect(labels[83].innerHTML).toBe 'df'
         it "clears beacon effect", ->
-            expect(editorView.querySelectorAll('cursors .cursor.beacon')).not.toExist()
+            expect(textEditorElement.
+                querySelectorAll('cursors .cursor.beacon')).not.toExist()
         it "only uses jumpy keymaps", ->
             expect(atom.keymap.keyBindings.length).toBe (26 * 2) + 5 + 1
 
