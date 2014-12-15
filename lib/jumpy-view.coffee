@@ -155,8 +155,7 @@ class JumpyView extends View
                 $labels
                     .append labelElement
 
-            firstVisibleRow = editor.getFirstVisibleScreenRow()
-            lastVisibleRow = editor.getLastVisibleScreenRow()
+            [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
