@@ -55,35 +55,35 @@ describe "Jumpy", ->
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears labels", ->
-            editorView.trigger 'jumpy:clear'
-            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
+            atom.commands.dispatch workspaceElement, 'jumpy:clear'
+            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and a mousedown event is fired", ->
         it "jumpy is cleared", ->
-            editorView.trigger 'mousedown'
-            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
+            textEditorElement.trigger 'mousedown'
+            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and a scroll event is fired", ->
         it "jumpy is cleared", ->
-            editorView.trigger 'scroll'
-            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
+            textEditorElement.trigger 'scroll'
+            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
         it "jumpy is cleared", ->
             editor.setCursorBufferPosition [1,1]
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:c'
-            expect(editorView.querySelectorAll('.jumpy')).not.toExist()
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:c'
+            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
         and invalid hotkeys are entered", ->
         it "jumpy is cleared", ->
             editor.setCursorBufferPosition [1,1]
-            editorView.trigger 'jumpy:z'
-            editorView.trigger 'jumpy:z'
+            textEditorElement.trigger 'jumpy:z'
+            textEditorElement.trigger 'jumpy:z'
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
@@ -92,25 +92,25 @@ describe "Jumpy", ->
         and hotkeys are entered", ->
         it "jumps the cursor", ->
             editor.setCursorBufferPosition [1,1]
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:c'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:c'
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
             expect(editor.getSelectedText()).toBe ''
         it "jumps the cursor in folded regions", ->
-            editorView.trigger 'jumpy:clear'
+            textEditorElement.trigger 'jumpy:clear'
             editor.setCursorBufferPosition [23, 20]
             editor.foldCurrentRow()
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:d'
-            editorView.trigger 'jumpy:i'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:d'
+            textEditorElement.trigger 'jumpy:i'
             cursorPosition = editor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 23
             expect(cursorPosition.column).toBe 2
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:d'
-            editorView.trigger 'jumpy:h'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:d'
+            textEditorElement.trigger 'jumpy:h'
             cursorPosition = editor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 22
             expect(cursorPosition.column).toBe 0
@@ -119,11 +119,11 @@ describe "Jumpy", ->
         and hotkeys are entered in succession", ->
         it "jumps the cursor twice", ->
             editor.setCursorBufferPosition [1,1]
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:c'
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:b'
-            editorView.trigger 'jumpy:e'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:c'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:b'
+            textEditorElement.trigger 'jumpy:e'
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 6
             expect(cursorPosition.column).toBe 12
@@ -131,17 +131,17 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
         it "the beacon animation class is added", ->
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:c'
-            expect(editorView.querySelectorAll('.beacon')).toExist()
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:c'
+            expect(textEditorElement.querySelectorAll('.beacon')).toExist()
         it "the beacon animation class is removed", ->
-            editorView.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:a'
             waitsFor ->
                 setTimeout ->
-                    editorView.trigger 'jumpy:c'
+                    textEditorElement.trigger 'jumpy:c'
                 ,100 + 10 # max default I'd probably use + a buffer
             runs ->
-                expect(editorView.querySelectorAll('.beacon')).not.toExist()
+                expect(textEditorElement.querySelectorAll('.beacon')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
@@ -152,73 +152,73 @@ describe "Jumpy", ->
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears the status bar", ->
-            editorView.trigger 'jumpy:clear'
+            textEditorElement.trigger 'jumpy:clear'
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy').html()).toBe ''
 
     describe "when the jumpy:a event is triggered", ->
         it "updates the status bar with a", ->
-            editorView.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:a'
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'a'
         it "removes all labels that don't begin with a", ->
-            editorView.trigger 'jumpy:a'
-            expect(editorView.querySelectorAll('.jumpy.label:not(.irrelevant)')
+            textEditorElement.trigger 'jumpy:a'
+            expect(textEditorElement.querySelectorAll('.jumpy.label:not(.irrelevant)')
                 .length).toBe 26
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:reset'
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:e'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:reset'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:e'
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 12
 
     describe "when the jumpy:reset event is triggered", ->
         it "updates the status bar", ->
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:reset'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:reset'
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
         it "resets all labels even those that don't begin with a", ->
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:reset'
-            expect(editorView.querySelectorAll('.jumpy.label:not(.irrelevant)')
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:reset'
+            expect(textEditorElement.querySelectorAll('.jumpy.label:not(.irrelevant)')
                 .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
 
     describe "when the a text selection has begun
         before a jumpy:toggle event is triggered", ->
         it "keeps the selection for subsequent jumps", ->
-            editorView.trigger 'jumpy:clear'
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:clear'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:a'
             editor.selectRight()
             editor.selectRight()
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:e'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:e'
             expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
 
     describe "when the a text selection has begun
         before a jumpy:toggle event is triggered", ->
         it "keeps the selection for subsequent jumps", ->
-            editorView.trigger 'jumpy:clear'
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:clear'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:a'
             editor.selectRight()
             editor.selectRight()
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:e'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:e'
             expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
 
     describe "when a character is entered that no label has a match for", ->
         it "displays a status bar error message", ->
-            editorView.trigger 'jumpy:z'
+            textEditorElement.trigger 'jumpy:z'
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy')
                     .hasClass 'no-match').toBeTruthy()
@@ -226,9 +226,9 @@ describe "Jumpy", ->
                 ?.querySelectorAll('#status-bar-jumpy .status')
                     .html() == 'No match!').toBeTruthy()
         it "eventually clears the status bar error message", ->
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:z'
-            editorView.trigger 'jumpy:a'
+            textEditorElement.trigger 'jumpy:toggle'
+            textEditorElement.trigger 'jumpy:z'
+            textEditorElement.trigger 'jumpy:a'
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll '#status-bar-jumpy'
                     .hasClass 'no-match').toBeFalsy()
@@ -237,12 +237,12 @@ describe "Jumpy", ->
                     .html() == 'a').toBeTruthy()
         it "does not jump", ->
             editor.setCursorBufferPosition [1,1]
-            editorView.trigger 'jumpy:z'
+            textEditorElement.trigger 'jumpy:z'
             cursorPosition = editor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
         it "leaves the labels up", ->
             editor.setCursorBufferPosition [1,1]
-            editorView.trigger 'jumpy:z'
-            relevantLabels = editorView.querySelectorAll('.label:not(.irrelevant)')
+            textEditorElement.trigger 'jumpy:z'
+            relevantLabels = textEditorElement.querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()
