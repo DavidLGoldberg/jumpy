@@ -18,12 +18,14 @@ describe "Jumpy", ->
 
     beforeEach ->
         atom.project.setPaths([path.join(__dirname, 'fixtures')])
+        # TODO: Abstract the following out, (DRY) --------------
         workspaceElement = atom.views.getView(atom.workspace)
         # @leedohm helped me with this idiom of workspace size.
         # He found it in the wrap-guide.
         workspaceElement.style.height = "5000px" # big enough
         workspaceElement.style.width = "5000px"
         jasmine.attachToDOM(workspaceElement)
+        # TODO: Abstract the following out, (DRY) --------------
 
         waitsForPromise ->
             atom.workspace.open 'test_text.MD'
@@ -210,7 +212,7 @@ describe "Jumpy", ->
             textEditorElement.trigger 'jumpy:e'
             expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
 
-    describe "when the a text selection has begun
+    xdescribe "when the a text selection has begun
         before a jumpy:toggle event is triggered", ->
         it "keeps the selection for subsequent jumps", ->
             textEditorElement.trigger 'jumpy:clear'
