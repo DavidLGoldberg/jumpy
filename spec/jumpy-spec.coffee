@@ -243,5 +243,11 @@ describe "Jumpy", ->
             relevantLabels = textEditorElement.querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()
 
+    # TODO: IMPLEMENT THIS.  Line 192 `pane.activate()` in jumpy-view.coffee
+    # should be enough to make this red to green.
     describe "when jumpy jumps to another pane", ->
         it "focuses the new pane", ->
+
+    # TODO: IMPLEMENT THIS.
+    describe "when jumpy jumps", ->
+        it "clears hotkeys", ->
