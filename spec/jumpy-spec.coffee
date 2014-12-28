@@ -212,8 +212,8 @@ describe "Jumpy", ->
             atom.commands.dispatch textEditorElement, 'jumpy:e'
             expect(textEditor.getSelections()[0].getText()).toBe 'aa ab ac ad '
 
-    xdescribe "when a character is entered that no label has a match for", ->
-        it "displays a status bar error message", ->
+    describe "when a character is entered that no label has a match for", ->
+        xit "displays a status bar error message", ->
             textEditorElement.trigger 'jumpy:z'
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy')
@@ -221,7 +221,7 @@ describe "Jumpy", ->
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy .status')
                     .html() == 'No match!').toBeTruthy()
-        it "eventually clears the status bar error message", ->
+        xit "eventually clears the status bar error message", ->
             textEditorElement.trigger 'jumpy:toggle'
             textEditorElement.trigger 'jumpy:z'
             textEditorElement.trigger 'jumpy:a'
@@ -232,13 +232,13 @@ describe "Jumpy", ->
                 ?.querySelectorAll('#status-bar-jumpy .status')
                     .html() == 'a').toBeTruthy()
         it "does not jump", ->
-            editor.setCursorBufferPosition [1,1]
-            textEditorElement.trigger 'jumpy:z'
-            cursorPosition = editor.getCursorBufferPosition()
+            textEditor.setCursorBufferPosition [1,1]
+            atom.commands.dispatch textEditorElement, 'jumpy:z'
+            cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
         it "leaves the labels up", ->
-            editor.setCursorBufferPosition [1,1]
-            textEditorElement.trigger 'jumpy:z'
+            textEditor.setCursorBufferPosition [1,1]
+            atom.commands.dispatch textEditorElement, 'jumpy:z'
             relevantLabels = textEditorElement.querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()
