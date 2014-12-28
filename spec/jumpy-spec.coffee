@@ -242,3 +242,6 @@ describe "Jumpy", ->
             atom.commands.dispatch textEditorElement, 'jumpy:z'
             relevantLabels = textEditorElement.querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()
+
+    describe "when jumpy jumps to another pane", ->
+        it "focuses the new pane", ->

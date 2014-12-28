@@ -182,20 +182,23 @@ class JumpyView extends View
         if location == null
             console.log "Jumpy canceled jump.  No location found."
             return
-        useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
         atom.workspace.observeTextEditors (currentEditor) =>
             editorView = atom.views.getView(currentEditor)
-            if currentEditor.id != location.editor
+            if currentEditor.id != location.editor # TODO: make a test for this.
+                # Prevents other editors from jumping cursors as well
                 return
 
-            pane = atom.workspace.getActivePaneItem()
-            #pane.activate() # TODO: Do I not anything like this anymore?
+            pane = atom.workspace.paneForItem(currentEditor)
+            pane.activate()
+
+            # TODO: switch to declarative function selection...
             isVisualMode = editorView.classList.contains 'visual-mode'
             if isVisualMode || (currentEditor.getSelections().length == 1 &&
                 currentEditor.getSelectedText() != '')
                     currentEditor.selectToScreenPosition(location.position)
             else
                 currentEditor.setCursorScreenPosition location.position
+            # useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
             # if useHomingBeacon
             #     debugger
             #     cursor = pane.querySelector '.cursors .cursor'
