@@ -212,20 +212,6 @@ describe "Jumpy", ->
             atom.commands.dispatch textEditorElement, 'jumpy:e'
             expect(textEditor.getSelections()[0].getText()).toBe 'aa ab ac ad '
 
-    xdescribe "when the a text selection has begun
-        before a jumpy:toggle event is triggered", ->
-        it "keeps the selection for subsequent jumps", ->
-            textEditorElement.trigger 'jumpy:clear'
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:a'
-            editor.selectRight()
-            editor.selectRight()
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:e'
-            expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
-
     xdescribe "when a character is entered that no label has a match for", ->
         it "displays a status bar error message", ->
             textEditorElement.trigger 'jumpy:z'
