@@ -53,9 +53,9 @@ describe "Jumpy with non default settings on", ->
             expect(textEditorElement.querySelectorAll('.jumpy.label')[0]
                 .style.fontSize).toBe '50%'
 
-    xdescribe "when the jumpy:toggle event is triggered
+    describe "when the jumpy:toggle event is triggered
         and a jump is performed", ->
-        it "contains no beacon", ->
+        xit "contains no beacon", ->
             textEditor.setCursorBufferPosition [1,1]
             expect(textEditorElement.find('.cursors .cursor')[0].classList
                 .contains 'beacon').toBe false
@@ -74,7 +74,7 @@ describe "Jumpy with non default settings on", ->
             expect(labels[82].innerHTML).toBe 'de'
             expect(labels[83].innerHTML).toBe 'df'
 
-    xdescribe "when a custom match is used (camel case)", ->
+    describe "when a custom match is used (camel case)", ->
         it "draws correct labels and jumps appropriately", ->
             atom.commands.dispatch textEditorElement, 'jumpy:clear'
             atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
