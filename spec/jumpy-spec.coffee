@@ -176,7 +176,7 @@ describe "Jumpy", ->
             expect(textEditorElement.querySelectorAll('.jumpy.label:not(.irrelevant)')
                 .length).toBe 26
 
-    xdescribe "when the jumpy:reset event is triggered", ->
+    describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
