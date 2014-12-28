@@ -166,13 +166,13 @@ describe "Jumpy", ->
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy').html()).toBe ''
 
-    xdescribe "when the jumpy:a event is triggered", ->
-        it "updates the status bar with a", ->
-            textEditorElement.trigger 'jumpy:a'
+    describe "when the jumpy:a event is triggered", ->
+        xit "updates the status bar with a", ->
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
             expect(atom.workspaceView.statusBar
                 ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'a'
         it "removes all labels that don't begin with a", ->
-            textEditorElement.trigger 'jumpy:a'
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
             expect(textEditorElement.querySelectorAll('.jumpy.label:not(.irrelevant)')
                 .length).toBe 26
 
