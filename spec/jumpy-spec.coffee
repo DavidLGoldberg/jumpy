@@ -96,7 +96,7 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
 
-    xdescribe "when the jumpy:toggle event is triggered
+    describe "when the jumpy:toggle event is triggered
         and hotkeys are entered", ->
         it "jumps the cursor", ->
             textEditor.setCursorBufferPosition [1,1]
@@ -123,7 +123,7 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 22
             expect(cursorPosition.column).toBe 0
 
-    xdescribe "when the jumpy:toggle event is triggered
+    describe "when the jumpy:toggle event is triggered
         and hotkeys are entered in succession", ->
         it "jumps the cursor twice", ->
             textEditor.setCursorBufferPosition [1,1]

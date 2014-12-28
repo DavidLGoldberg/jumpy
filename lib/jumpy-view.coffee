@@ -32,10 +32,11 @@ class JumpyView extends View
             'jumpy:reset': => @reset()
             'jumpy:clear': => @clear()
 
+        commands = {}
         for characterSet in [lowerCharacters, upperCharacters]
             for c in characterSet
-                atom.commands.add 'atom-workspace',
-                    'jumpy:' + c: (c) => @getKey c
+                do (c) => commands['jumpy:' + c] = => @getKey(c)
+        atom.commands.add 'atom-workspace', commands
 
         # TODO: consider moving this into toggle for new bindings.
         @backedUpKeyBindings = _.clone atom.keymap.keyBindings
@@ -44,8 +45,7 @@ class JumpyView extends View
         @workspaceElement.statusBar?.prependLeft(
             '<div id="status-bar-jumpy" class="inline-block"></div>')
 
-    getKey: (character, labelPosition) ->
-        character = character.type.charAt(character.type.length - 1)
+    getKey: (character) ->
         isMatchOfCurrentLabels = (character, labelPosition) ->
             found = false
             atom.workspace.observeTextEditors (editor) ->
@@ -56,6 +56,7 @@ class JumpyView extends View
                         return false
             return found
 
+        # Assert: labelPosition will start at 0!
         labelPosition = (if not @firstChar then 0 else 1)
         if !isMatchOfCurrentLabels character, labelPosition
             @workspaceElement.statusBar?.find '#status-bar-jumpy'
@@ -63,7 +64,7 @@ class JumpyView extends View
                 .find '.status'
                     .html 'No match!'
             return
-        else
+        else # TODO: Test removing this and shifting back next 2 lines?
             @workspaceElement.statusBar?.find '#status-bar-jumpy'
                 .removeClass 'no-match'
 
@@ -73,7 +74,7 @@ class JumpyView extends View
                 .html @firstChar
             atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
-                for label in editorView.find '.jumpy.label'
+                for label in editorView.querySelectorAll '.jumpy.label'
                     if label.innerHTML.indexOf(@firstChar) != 0
                         label.classList.add 'irrelevant'
         else if not @secondChar
@@ -182,26 +183,26 @@ class JumpyView extends View
             console.log "Jumpy canceled jump.  No location found."
             return
         useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-        atom.workspace.observeTextEditors (editor) ->
-            editorView = atom.views.getView(editor)
-            currentEditor = editorView.getEditor()
+        atom.workspace.observeTextEditors (currentEditor) =>
+            editorView = atom.views.getView(currentEditor)
             if currentEditor.id != location.editor
                 return
 
-            pane = editorView.getPaneView()
-            pane.activate()
-            isVisualMode = editorView.view().hasClass 'visual-mode'
+            pane = atom.workspace.getActivePaneItem()
+            #pane.activate() # TODO: Do I not anything like this anymore?
+            isVisualMode = editorView.classList.contains 'visual-mode'
             if isVisualMode || (currentEditor.getSelections().length == 1 &&
                 currentEditor.getSelectedText() != '')
                     currentEditor.selectToScreenPosition(location.position)
             else
                 currentEditor.setCursorScreenPosition location.position
-            if useHomingBeacon
-                cursor = pane.find '.cursors .cursor'
-                cursor.addClass 'beacon'
-                setTimeout ->
-                    cursor.removeClass 'beacon'
-                , 150
+            # if useHomingBeacon
+            #     debugger
+            #     cursor = pane.querySelector '.cursors .cursor'
+            #     cursor.classList.add 'beacon'
+            #     setTimeout ->
+            #         cursor.classList.remove 'beacon'
+            #     , 150
             console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
                 "(#{location.position.row},#{location.position.column})"
 
