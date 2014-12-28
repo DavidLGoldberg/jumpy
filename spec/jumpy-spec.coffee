@@ -198,19 +198,19 @@ describe "Jumpy", ->
             expect(textEditorElement.querySelectorAll('.jumpy.label:not(.irrelevant)')
                 .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
 
-    xdescribe "when the a text selection has begun
+    describe "when the a text selection has begun
         before a jumpy:toggle event is triggered", ->
         it "keeps the selection for subsequent jumps", ->
-            textEditorElement.trigger 'jumpy:clear'
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:a'
-            editor.selectRight()
-            editor.selectRight()
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:e'
-            expect(editor.getSelection(0).getText()).toBe 'aa ab ac ad '
+            atom.commands.dispatch textEditorElement, 'jumpy:clear'
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            textEditor.selectRight()
+            textEditor.selectRight()
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            atom.commands.dispatch textEditorElement, 'jumpy:e'
+            expect(textEditor.getSelections()[0].getText()).toBe 'aa ab ac ad '
 
     xdescribe "when the a text selection has begun
         before a jumpy:toggle event is triggered", ->
