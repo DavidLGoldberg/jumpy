@@ -191,13 +191,14 @@ class JumpyView extends View
             pane = atom.workspace.paneForItem(currentEditor)
             pane.activate()
 
-            # TODO: switch to declarative function selection...
             isVisualMode = editorView.classList.contains 'visual-mode'
-            if isVisualMode || (currentEditor.getSelections().length == 1 &&
+            isSelected = (currentEditor.getSelections().length == 1 &&
                 currentEditor.getSelectedText() != '')
-                    currentEditor.selectToScreenPosition(location.position)
+            if (isVisualMode || isSelected)
+                currentEditor.selectToScreenPosition location.position
             else
                 currentEditor.setCursorScreenPosition location.position
+
             # useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
             # if useHomingBeacon
             #     debugger
