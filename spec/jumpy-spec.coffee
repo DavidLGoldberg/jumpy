@@ -37,10 +37,6 @@ describe "Jumpy", ->
             jumpyPromise = atom.packages.activatePackage 'jumpy'
             statusBarPromise = atom.packages.activatePackage 'status-bar'
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            # do waitForStatusBar = =>
-            #     if not (sb = atom.workspaceView.statusBar)
-            #         setTimeout waitForStatusBar, 100
-            #         return
 
         waitsForPromise ->
             jumpyPromise
@@ -161,25 +157,24 @@ describe "Jumpy", ->
                 expect(textEditorElement.querySelectorAll('.beacon'))
                     .not.toExist()
 
-    xdescribe "when the jumpy:toggle event is triggered", ->
+    describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
-            expect(workspaceElement.statusBar
-                ?.querySelectorAll('#status-bar-jumpy')).toExist()
-            expect(workspaceElement.statusBar
-                ?.querySelectorAll('#status-bar-jumpy .status').html())
-                    .toBe 'Jump Mode!'
+            expect(document.querySelector('#status-bar-jumpy')).toExist()
+            expect(document.querySelector('#status-bar-jumpy .status').innerHTML)
+                .toBe 'Jump Mode!'
 
-    xdescribe "when the jumpy:clear event is triggered", ->
+    describe "when the jumpy:clear event is triggered", ->
         it "clears the status bar", ->
-            textEditorElement.trigger 'jumpy:clear'
-            expect(atom.workspaceView.statusBar
-                ?.querySelectorAll('#status-bar-jumpy').html()).toBe ''
+            atom.commands.dispatch workspaceElement, 'jumpy:clear'
+            expect(document
+                .querySelector('#status-bar-jumpy').innerHTML).toBe ''
 
     describe "when the jumpy:a event is triggered", ->
-        xit "updates the status bar with a", ->
+        it "updates the status bar with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
-            expect(atom.workspaceView.statusBar
-                ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'a'
+            expect(document
+                .querySelector '#status-bar-jumpy .status'
+                    .innerHTML).toBe 'a'
         it "removes all labels that don't begin with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
             expect(textEditorElement
@@ -197,12 +192,12 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 12
 
     describe "when the jumpy:reset event is triggered", ->
-        xit "updates the status bar", ->
-            textEditorElement.trigger 'jumpy:a'
-            textEditorElement.trigger 'jumpy:reset'
-            expect(atom.workspaceView.statusBar
-                ?.querySelectorAll('#status-bar-jumpy .status').html())
-                    .toBe 'Jump Mode!'
+        it "updates the status bar", ->
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            atom.commands.dispatch textEditorElement, 'jumpy:reset'
+            expect(document
+                .querySelector('#status-bar-jumpy .status')
+                    .innerHTML).toBe 'Jump Mode!'
         it "resets all labels even those that don't begin with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
@@ -225,24 +220,24 @@ describe "Jumpy", ->
             expect(textEditor.getSelections()[0].getText()).toBe 'aa ab ac ad '
 
     describe "when a character is entered that no label has a match for", ->
-        xit "displays a status bar error message", ->
-            textEditorElement.trigger 'jumpy:z'
-            expect(atom.workspaceView.statusBar
-                ?.querySelectorAll('#status-bar-jumpy')
-                    .hasClass 'no-match').toBeTruthy()
-            expect(atom.workspaceView.statusBar
-                ?.querySelectorAll('#status-bar-jumpy .status')
-                    .html() == 'No match!').toBeTruthy()
-        xit "eventually clears the status bar error message", ->
-            textEditorElement.trigger 'jumpy:toggle'
-            textEditorElement.trigger 'jumpy:z'
-            textEditorElement.trigger 'jumpy:a'
-            expect(atom.workspaceView.statusBar
-                ?.querySelectorAll '#status-bar-jumpy'
-                    .hasClass 'no-match').toBeFalsy()
-            expect(atom.workspaceView.statusBar
-                ?.querySelectorAll('#status-bar-jumpy .status')
-                    .html() == 'a').toBeTruthy()
+        it "displays a status bar error message", ->
+            atom.commands.dispatch textEditorElement, 'jumpy:z'
+            expect(document
+                .querySelector '#status-bar-jumpy'
+                    .classList.contains 'no-match').toBeTruthy()
+            expect(document
+                .querySelector '#status-bar-jumpy .status'
+                    .innerHTML == 'No match!').toBeTruthy()
+        it "eventually clears the status bar error message", ->
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            atom.commands.dispatch textEditorElement, 'jumpy:z'
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            expect(document
+                .querySelector '#status-bar-jumpy'
+                    .classList.contains 'no-match').toBeFalsy()
+            expect(document
+                .querySelector '#status-bar-jumpy .status'
+                    .innerHTML == 'a').toBeTruthy()
         it "does not jump", ->
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:z'

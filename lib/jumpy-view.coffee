@@ -52,8 +52,10 @@ class JumpyView extends View
         @backedUpKeyBindings = _.clone atom.keymap.keyBindings
 
         @workspaceElement = atom.views.getView(atom.workspace)
-        @workspaceElement.statusBar?.prependLeft(
+        @statusBar = document.querySelector 'status-bar'
+        @statusBar?.prependLeft(
             '<div id="status-bar-jumpy" class="inline-block"></div>')
+        @statusBarJumpy = document.getElementById 'status-bar-jumpy'
 
     getKey: (character) ->
         isMatchOfCurrentLabels = (character, labelPosition) ->
@@ -69,19 +71,15 @@ class JumpyView extends View
         # Assert: labelPosition will start at 0!
         labelPosition = (if not @firstChar then 0 else 1)
         if !isMatchOfCurrentLabels character, labelPosition
-            @workspaceElement.statusBar?.find '#status-bar-jumpy'
-                .addClass 'no-match'
-                .find '.status'
-                    .html 'No match!'
+            @statusBarJumpy?.classList.add 'no-match'
+            @statusBarJumpyStatus?.innerHTML = 'No match!'
             return
         else # TODO: Test removing this and shifting back next 2 lines?
-            @workspaceElement.statusBar?.find '#status-bar-jumpy'
-                .removeClass 'no-match'
+            @statusBarJumpy?.classList.remove 'no-match'
 
         if not @firstChar
             @firstChar = character
-            @workspaceElement.statusBar?.find '#status-bar-jumpy .status'
-                .html @firstChar
+            @statusBarJumpyStatus?.innerHTML = @firstChar
             atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
                 for label in editorView.querySelectorAll '.jumpy.label'
@@ -104,10 +102,8 @@ class JumpyView extends View
             editorView = atom.views.getView(editor)
             $(editorView).find '.irrelevant'
                 .removeClass 'irrelevant'
-        @workspaceElement.statusBar?.find '#status-bar-jumpy'
-            .removeClass 'no-match'
-            .find '.status'
-                .html 'Jump Mode!'
+        @statusBarJumpy?.classList.remove 'no-match'
+        @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
     clear: ->
         @clearJumpMode()
@@ -125,9 +121,11 @@ class JumpyView extends View
         highContrast = atom.config.get 'jumpy.highContrast'
 
         @turnOffSlowKeys()
-        @workspaceElement.statusBar?.find '#status-bar-jumpy'
-            .removeClass 'no-match'
-            .html 'Jumpy: <span class="status">Jump Mode!</span>'
+        @statusBarJumpy?.classList.remove 'no-match'
+        @statusBarJumpy?.innerHTML =
+            'Jumpy: <span class="status">Jump Mode!</span>'
+        @statusBarJumpyStatus =
+            document.querySelector '#status-bar-jumpy .status'
 
         @allPositions = {}
         $(@workspaceElement).find '*'
@@ -177,7 +175,7 @@ class JumpyView extends View
 
     clearJumpMode: ->
         @clearKeys()
-        $('#status-bar-jumpy').html ''
+        @statusBarJumpy?.innerHTML = ''
         atom.workspace.observeTextEditors (editor) ->
             editorView = atom.views.getView(editor)
             $(editorView).find('.jumpy').remove()
@@ -192,8 +190,10 @@ class JumpyView extends View
             return
         atom.workspace.observeTextEditors (currentEditor) =>
             editorView = atom.views.getView(currentEditor)
+
             # Prevent other editors from jumping cursors as well
-            return if currentEditor.id != location.editor # TODO: make a test for this.
+            # TODO: make a test for this return if
+            return if currentEditor.id != location.editor
 
             pane = atom.workspace.paneForItem(currentEditor)
             pane.activate()
