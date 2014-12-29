@@ -58,6 +58,8 @@ class JumpyView extends View
         @statusBarJumpy = document.getElementById 'status-bar-jumpy'
 
     getKey: (character) ->
+        @statusBarJumpy?.classList.remove 'no-match'
+
         isMatchOfCurrentLabels = (character, labelPosition) ->
             found = false
             atom.workspace.observeTextEditors (editor) ->
@@ -74,8 +76,6 @@ class JumpyView extends View
             @statusBarJumpy?.classList.add 'no-match'
             @statusBarJumpyStatus?.innerHTML = 'No match!'
             return
-        else # TODO: Test removing this and shifting back next 2 lines?
-            @statusBarJumpy?.classList.remove 'no-match'
 
         if not @firstChar
             @firstChar = character
