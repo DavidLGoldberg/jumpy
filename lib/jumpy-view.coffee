@@ -182,9 +182,8 @@ class JumpyView extends View
             return
         atom.workspace.observeTextEditors (currentEditor) =>
             editorView = atom.views.getView(currentEditor)
-            if currentEditor.id != location.editor # TODO: make a test for this.
-                # Prevents other editors from jumping cursors as well
-                return
+            # Prevent other editors from jumping cursors as well
+            return if currentEditor.id != location.editor # TODO: make a test for this.
 
             pane = atom.workspace.paneForItem(currentEditor)
             pane.activate()
