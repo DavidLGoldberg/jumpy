@@ -45,3 +45,4 @@ describe "Jumpy", ->
     # should be enough to make this red to green.
     describe "when jumpy jumps to another pane", ->
         it "focuses the new pane", ->
+        it "does not move cursor of original pane", ->
