@@ -3,7 +3,6 @@
 # Currently shadow dom mode works!
 
 # MAJOR Before 2.0
-# TODO: Status bar code
 # TODO: Beacon code
 # TODO: Merge in @willdady's code for better accuracy.
 # TODO: Investigate using markers (if time permitting)
@@ -53,8 +52,9 @@ class JumpyView extends View
 
         @workspaceElement = atom.views.getView(atom.workspace)
         @statusBar = document.querySelector 'status-bar'
-        @statusBar?.prependLeft(
-            '<div id="status-bar-jumpy" class="inline-block"></div>')
+        @statusBar?.addLeftTile
+            item: $('<div id="status-bar-jumpy" class="inline-block"></div>')
+            priority: -1
         @statusBarJumpy = document.getElementById 'status-bar-jumpy'
 
     getKey: (character) ->
