@@ -42,6 +42,7 @@ class JumpyView extends View
         @backedUpKeyBindings = _.clone atom.keymap.keyBindings
 
         @workspaceElement = atom.views.getView(atom.workspace)
+        # TODO: Fix status bar code!
         @workspaceElement.statusBar?.prependLeft(
             '<div id="status-bar-jumpy" class="inline-block"></div>')
 
@@ -196,6 +197,7 @@ class JumpyView extends View
             else
                 currentEditor.setCursorScreenPosition location.position
 
+            # TODO: Restore homing beacon code below!
             # useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
             # if useHomingBeacon
             #     debugger
