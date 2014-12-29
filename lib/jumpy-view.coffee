@@ -1,3 +1,13 @@
+#TODO: Do a final test through of all features with shadow turned on and off
+# before launching.
+# Currently shadow dom mode works!
+
+# MAJOR Before 2.0
+# TODO: Status bar code
+# TODO: Beacon code
+# TODO: Merge in @willdady's code for better accuracy.
+# TODO: Investigate using markers (if time permitting)
+
 {View, $} = require 'space-pen'
 _ = require 'lodash'
 
@@ -42,7 +52,6 @@ class JumpyView extends View
         @backedUpKeyBindings = _.clone atom.keymap.keyBindings
 
         @workspaceElement = atom.views.getView(atom.workspace)
-        # TODO: Fix status bar code!
         @workspaceElement.statusBar?.prependLeft(
             '<div id="status-bar-jumpy" class="inline-block"></div>')
 
