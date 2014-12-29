@@ -170,10 +170,8 @@ class JumpyView extends View
         $('#status-bar-jumpy').html ''
         atom.workspace.observeTextEditors (editor) ->
             editorView = atom.views.getView(editor)
-            $(editorView)
-                .find('.jumpy')
-                .remove()
-                .removeClass 'jumpy-jump-mode'
+            $(editorView).find('.jumpy').remove()
+            editorView.classList.remove 'jumpy-jump-mode'
         atom.keymap.keyBindings = @backedUpKeyBindings
         @detach()
 

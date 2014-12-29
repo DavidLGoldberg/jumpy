@@ -14,7 +14,8 @@ NUM_TOTAL_WORDS =
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
 describe "Jumpy", ->
-    [workspaceElement, textEditorElement, textEditor, jumpyPromise, statusBarPromise] = []
+    [workspaceElement, textEditorElement, textEditor, jumpyPromise,
+        statusBarPromise] = []
 
     beforeEach ->
         atom.project.setPaths([path.join(__dirname, 'fixtures')])
@@ -67,19 +68,19 @@ describe "Jumpy", ->
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
-        and a mousedown event is fired", ->
+    and a mousedown event is fired", ->
         it "jumpy is cleared", ->
             atom.commands.dispatch workspaceElement, 'mousedown'
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
-        and a scroll event is fired", ->
+    and a scroll event is fired", ->
         it "jumpy is cleared", ->
             atom.commands.dispatch workspaceElement, 'scroll'
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
-        and hotkeys are entered", ->
+    and hotkeys are entered", ->
         it "jumpy is cleared", ->
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:a'
@@ -87,7 +88,7 @@ describe "Jumpy", ->
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
     describe "when the jumpy:toggle event is triggered
-        and invalid hotkeys are entered", ->
+    and invalid hotkeys are entered", ->
         it "jumpy is cleared", ->
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:z'
@@ -97,7 +98,7 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 1
 
     describe "when the jumpy:toggle event is triggered
-        and hotkeys are entered", ->
+    and hotkeys are entered", ->
         it "jumps the cursor", ->
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:a'
@@ -106,6 +107,13 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
             expect(textEditor.getSelectedText()).toBe ''
+        it "clears jumpy mode", ->
+            expect(textEditorElement.
+                classList.contains('jumpy-jump-mode')).toBeTruthy()
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            expect(textEditorElement.
+                classList.contains('jumpy-jump-mode')).not.toBeTruthy()
         it "jumps the cursor in folded regions", ->
             atom.commands.dispatch workspaceElement, 'jumpy:clear'
             textEditor.setCursorBufferPosition [23, 20]
@@ -124,7 +132,7 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 0
 
     describe "when the jumpy:toggle event is triggered
-        and hotkeys are entered in succession", ->
+    and hotkeys are entered in succession", ->
         it "jumps the cursor twice", ->
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:a'
@@ -137,7 +145,7 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 12
 
     xdescribe "when the jumpy:toggle event is triggered
-        and hotkeys are entered", ->
+    and hotkeys are entered", ->
         it "the beacon animation class is added", ->
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
@@ -158,7 +166,8 @@ describe "Jumpy", ->
             expect(workspaceElement.statusBar
                 ?.querySelectorAll('#status-bar-jumpy')).toExist()
             expect(workspaceElement.statusBar
-                ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
+                ?.querySelectorAll('#status-bar-jumpy .status').html())
+                    .toBe 'Jump Mode!'
 
     xdescribe "when the jumpy:clear event is triggered", ->
         it "clears the status bar", ->
@@ -173,8 +182,9 @@ describe "Jumpy", ->
                 ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'a'
         it "removes all labels that don't begin with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
-            expect(textEditorElement.querySelectorAll('.jumpy.label:not(.irrelevant)')
-                .length).toBe 26
+            expect(textEditorElement
+                .querySelectorAll('.jumpy.label:not(.irrelevant)').length)
+                    .toBe 26
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
@@ -191,15 +201,17 @@ describe "Jumpy", ->
             textEditorElement.trigger 'jumpy:a'
             textEditorElement.trigger 'jumpy:reset'
             expect(atom.workspaceView.statusBar
-                ?.querySelectorAll('#status-bar-jumpy .status').html()).toBe 'Jump Mode!'
+                ?.querySelectorAll('#status-bar-jumpy .status').html())
+                    .toBe 'Jump Mode!'
         it "resets all labels even those that don't begin with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
-            expect(textEditorElement.querySelectorAll('.jumpy.label:not(.irrelevant)')
-                .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
+            expect(textEditorElement
+                .querySelectorAll('.jumpy.label:not(.irrelevant)')
+                    .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
 
     describe "when the a text selection has begun
-        before a jumpy:toggle event is triggered", ->
+    before a jumpy:toggle event is triggered", ->
         it "keeps the selection for subsequent jumps", ->
             atom.commands.dispatch textEditorElement, 'jumpy:clear'
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
@@ -240,14 +252,11 @@ describe "Jumpy", ->
         it "leaves the labels up", ->
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:z'
-            relevantLabels = textEditorElement.querySelectorAll('.label:not(.irrelevant)')
+            relevantLabels = textEditorElement
+                .querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()
 
     # TODO: IMPLEMENT THIS.  Line 192 `pane.activate()` in jumpy-view.coffee
     # should be enough to make this red to green.
     describe "when jumpy jumps to another pane", ->
         it "focuses the new pane", ->
-
-    # TODO: IMPLEMENT THIS.
-    describe "when jumpy jumps", ->
-        it "clears hotkeys", ->
