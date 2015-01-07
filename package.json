@@ -1,7 +1,7 @@
 {
   "name": "jumpy",
   "main": "./lib/jumpy",
-  "version": "1.9.4",
+  "version": "2.0.0",
   "description": "An Atom package that creates dynamic hot keys to jump around files across visible panes.",
   "keywords": [
     "hot key",
@@ -18,7 +18,9 @@
     "mouseless"
   ],
   "activationCommands": {
-    "atom-text-editor": ["jumpy:toggle"]
+    "atom-text-editor": [
+      "jumpy:toggle"
+    ]
   },
   "repository": "https://github.com/DavidLGoldberg/jumpy",
   "license": "MIT",
