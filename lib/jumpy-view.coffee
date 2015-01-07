@@ -126,15 +126,21 @@ class JumpyView extends View
         @statusBarJumpyStatus =
             document.querySelector '#status-bar-jumpy .status'
 
-        @allPositions = {}
         $(@workspaceElement).find '*'
-            .on 'mousedown scroll', (e) =>
+            .on 'mousedown', =>
                 @clear()
 
+        @allPositions = {}
         nextKeys = _.clone keys
         atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
             return if editorView.hidden
+
+            editor.onDidChangeScrollTop =>
+                @clear()
+            editor.onDidChangeScrollLeft =>
+                @clear()
+
             $(editorView).addClass 'jumpy-jump-mode'
             $labels = $(editorView).find '.overlayer'
                 .append '<div class="jumpy labels"></div>'

@@ -63,17 +63,22 @@ describe "Jumpy", ->
             atom.commands.dispatch workspaceElement, 'jumpy:clear'
             expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
 
-    describe "when the jumpy:toggle event is triggered
+    xdescribe "when the jumpy:toggle event is triggered
     and a mousedown event is fired", ->
         it "jumpy is cleared", ->
-            atom.commands.dispatch workspaceElement, 'mousedown'
-            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
+            # TODO: Finish test for mousedown
+            expect(textEditorElement.classList.contains('jumpy-jump-mode'))
+                .toBe 'false'
 
-    describe "when the jumpy:toggle event is triggered
+    xdescribe "when the jumpy:toggle event is triggered
     and a scroll event is fired", ->
         it "jumpy is cleared", ->
-            atom.commands.dispatch workspaceElement, 'scroll'
-            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
+            # TODO: Finish test for scroll-to-top
+            expect(textEditorElement.classList.contains('jumpy-jump-mode'))
+                .toBe 'false'
+            # TODO: Finish test for scroll-to-left
+            expect(textEditorElement.classList.contains('jumpy-jump-mode'))
+                .toBe 'false'
 
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
