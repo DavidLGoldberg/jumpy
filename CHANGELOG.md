@@ -1,3 +1,13 @@
+## 2.0.0
+* 2.0.0 for reasons listed below:
+* Almost every LOC changed to support new Atom APIs.  All tests passing with no deprecations!
+* "Breaking" 2.0 changes because of shadow dom architectural changes.
+  NOTE: Expect your user custom styling approaches to be defunct.
+  Nothing I could have done here sorry, blame Atom (JK). New suggestions of how to style in an updated README.md coming soon!
+* Planned 2.1 release will include @willdady's pull request (technically adds to the "breaking" change in functionality to improve "accuracy" - that is more labels!)
+* Temporarily disabled "homing beacon" feature as this broke with the new shadow dom architecture.  Will need further investigation.
+* Closes #42. (Doesn't work with the "Shadow DOM" flag enabled)
+
 ## 1.9.4
 * Fixed #37 - No labels printed when tab dragged from different pane.
 
