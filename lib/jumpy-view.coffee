@@ -112,6 +112,7 @@ class JumpyView extends View
             keymap.command.indexOf('jumpy') > -1
 
     toggle: ->
+        @clear()
         wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
 
         fontSize = atom.config.get 'jumpy.fontSize'
@@ -178,7 +179,7 @@ class JumpyView extends View
                     while ((word = wordsPattern.exec(lineContents)) != null)
                         drawLabels word.index
 
-    clearJumpMode: ->
+    clearJumpMode: -> # TODO: Why not just move this into @clear?
         @clearKeys()
         @statusBarJumpy?.innerHTML = ''
         atom.workspace.observeTextEditors (editor) ->

@@ -255,3 +255,36 @@ describe "Jumpy", ->
             relevantLabels = textEditorElement
                 .querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()
+
+    describe "when toggle is called with a split tab", ->
+        it "continues to label consecutively", ->
+            pane = atom.workspace.paneForItem(textEditor)
+            pane.splitRight
+                copyActiveItem: true
+
+            # NOTE: This also ensures that I shouldn't have to clear the labels
+            # In the test, but rather the code does that! (Because the test
+            # setup does one toggle always)
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+
+            labels = []
+            atom.workspace.observeTextEditors (editor) ->
+                currentTextEditorElement = atom.views.getView(editor)
+                labels = labels.concat(
+                    [].slice.call(
+                        currentTextEditorElement.querySelectorAll('.jumpy.label')))
+            expectedTotalNumberWith2Panes =
+                (NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES) * 2
+            expect(labels.length)
+                .toBe (expectedTotalNumberWith2Panes)
+            # Beginning of first file
+            expect(labels[0].innerHTML).toBe 'aa'
+            expect(labels[1].innerHTML).toBe 'ab'
+
+            # End of first file
+            expect(labels[116].innerHTML).toBe 'em'
+            expect(labels[117].innerHTML).toBe 'en'
+
+            # Beginning of second file
+            expect(labels[118].innerHTML).toBe 'eo'
+            expect(labels[119].innerHTML).toBe 'ep'
