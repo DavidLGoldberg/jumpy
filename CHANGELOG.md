@@ -1,3 +1,9 @@
+## 2.0.2
+* Fixed regression: restore consecutive labels across open tabs.
+
+## 2.0.1
+* Fixed regression: scroll event was no longer clearing jump-mode.
+
 ## 2.0.0
 * 2.0.0 for reasons listed below:
 * Almost every LOC changed to support new Atom APIs.  All tests passing with no deprecations!

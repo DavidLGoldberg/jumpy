@@ -13,6 +13,15 @@ NUM_TOTAL_WORDS =
 
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
+getLabelsArrayFromAllEditors = ->
+    labels = []
+    atom.workspace.observeTextEditors (editor) ->
+        currentTextEditorElement = atom.views.getView(editor)
+        labels = labels.concat([].slice.call(
+            currentTextEditorElement.querySelectorAll('.jumpy.label')))
+    return labels
+
+
 describe "Jumpy", ->
     [workspaceElement, textEditorElement, textEditor, jumpyPromise,
         statusBarPromise] = []
@@ -29,7 +38,7 @@ describe "Jumpy", ->
         # TODO: Abstract the following out, (DRY) --------------
 
         waitsForPromise ->
-            atom.workspace.open 'test_text.MD'
+            atom.workspace.open 'test_text.md'
 
         runs ->
             textEditor = atom.workspace.getActiveTextEditor()
@@ -267,12 +276,7 @@ describe "Jumpy", ->
             # setup does one toggle always)
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
 
-            labels = []
-            atom.workspace.observeTextEditors (editor) ->
-                currentTextEditorElement = atom.views.getView(editor)
-                labels = labels.concat(
-                    [].slice.call(
-                        currentTextEditorElement.querySelectorAll('.jumpy.label')))
+            labels = getLabelsArrayFromAllEditors()
             expectedTotalNumberWith2Panes =
                 (NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES) * 2
             expect(labels.length)
@@ -288,3 +292,25 @@ describe "Jumpy", ->
             # Beginning of second file
             expect(labels[118].innerHTML).toBe 'eo'
             expect(labels[119].innerHTML).toBe 'ep'
+
+    describe "when toggle is called with 2 tabs open in same pane", ->
+        it "continues to label consecutively", ->
+            waitsForPromise ->
+                atom.workspace.open 'test_text2.md',
+                    activatePane: true # Just to be clear!
+
+            runs ->
+                # TODO: For this test case, these 2 new instances *MIGHT* be crucial.
+                # Or become crucial.  I think it's best to leave these.
+                currentTextEditor = atom.workspace.getActiveTextEditor()
+                currentTextEditorElement = atom.views.getView(currentTextEditor)
+
+                # This Should clear the first jumpy:toggle and re run it
+                # now that we're on the 2nd file.
+                atom.commands.dispatch currentTextEditorElement, 'jumpy:toggle'
+
+                labels = getLabelsArrayFromAllEditors()
+                expectedTotalNumberWith2TabsOpenInOnePane =
+                    (NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES + 3)
+                expect(labels.length)
+                    .toBe (expectedTotalNumberWith2TabsOpenInOnePane)

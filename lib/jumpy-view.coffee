@@ -63,6 +63,8 @@ class JumpyView extends View
             found = false
             atom.workspace.observeTextEditors (editor) ->
                 editorView = atom.views.getView(editor)
+                return if editorView.style.display is 'none'
+
                 $(editorView).find('.label:not(.irrelevant)').each (i, label) ->
                     if label.innerHTML[labelPosition] == character
                         found = true
@@ -81,6 +83,8 @@ class JumpyView extends View
             @statusBarJumpyStatus?.innerHTML = @firstChar
             atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
+                return if editorView.style.display is 'none'
+
                 for label in editorView.querySelectorAll '.jumpy.label'
                     if label.innerHTML.indexOf(@firstChar) != 0
                         label.classList.add 'irrelevant'
@@ -135,7 +139,7 @@ class JumpyView extends View
         nextKeys = _.clone keys
         atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            return if editorView.hidden
+            return if editorView.style.display is 'none'
 
             editor.onDidChangeScrollTop =>
                 @clear()
