@@ -70,7 +70,8 @@ describe "Jumpy", ->
     describe "when the jumpy:clear event is triggered", ->
         it "clears labels", ->
             atom.commands.dispatch workspaceElement, 'jumpy:clear'
-            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
+            expect(textEditorElement.classList.contains('jumpy-jump-mode')).toBe false
+            expect(textEditorElement.parentElement.querySelectorAll('.jumpy')).toHaveLength 0
 
     xdescribe "when the jumpy:toggle event is triggered
     and a mousedown event is fired", ->
@@ -95,7 +96,8 @@ describe "Jumpy", ->
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
-            expect(textEditorElement.querySelectorAll('.jumpy')).not.toExist()
+            expect(textEditorElement.classList.contains('jumpy-jump-mode')).toBe false
+            expect(textEditorElement.parentElement.querySelectorAll('.jumpy')).toHaveLength 0
 
     describe "when the jumpy:toggle event is triggered
     and invalid hotkeys are entered", ->
@@ -314,3 +316,9 @@ describe "Jumpy", ->
                     (NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES + 3)
                 expect(labels.length)
                     .toBe (expectedTotalNumberWith2TabsOpenInOnePane)
+
+    describe "when a jump mode is enabled", ->
+        xit "clears when a mini pane is opened", ->
+            atom.commands.dispatch textEditorElement, 'find-and-replace:show'
+            expect(textEditorElement.classList.contains('jumpy-jump-mode')).toBe false
+            expect(textEditorElement.parentElement.querySelectorAll('.jumpy')).toHaveLength 0
