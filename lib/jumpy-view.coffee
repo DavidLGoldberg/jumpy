@@ -131,20 +131,12 @@ class JumpyView extends View
         @statusBarJumpyStatus =
             document.querySelector '#status-bar-jumpy .status'
 
-        $(@workspaceElement).find '*'
-            .on 'mousedown', =>
-                @clear()
-
         @allPositions = {}
         nextKeys = _.clone keys
         atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
             return if editorView.style.display is 'none'
 
-            editor.onDidChangeScrollTop =>
-                @clear()
-            editor.onDidChangeScrollLeft =>
-                @clear()
 
             $(editorView).addClass 'jumpy-jump-mode'
             $labels = $(editorView).find '.overlayer'
@@ -182,6 +174,15 @@ class JumpyView extends View
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
                         drawLabels word.index
+
+            $(@workspaceElement).find '*'
+                .on 'mousedown', =>
+                    @clear()
+
+            editor.onDidChangeScrollTop =>
+                @clear()
+            editor.onDidChangeScrollLeft =>
+                @clear()
 
     clearJumpMode: -> # TODO: Why not just move this into @clear?
         @clearKeys()
