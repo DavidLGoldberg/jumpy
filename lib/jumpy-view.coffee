@@ -152,7 +152,7 @@ class JumpyView extends View
                     editor: editor.id
                     position: position
                 }
-                pixelPosition = editor
+                pixelPosition = editorView
                     .pixelPositionForScreenPosition [lineNumber,
                     column]
                 labelElement =
