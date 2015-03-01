@@ -35,6 +35,7 @@ describe "Jumpy", ->
             textEditor = atom.workspace.getActiveTextEditor()
             textEditorElement = atom.views.getView(textEditor)
             jumpyPromise = atom.packages.activatePackage 'jumpy'
+            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
             # TODO: SPLIT PANE (MOVE TO RIGHT)!
 
@@ -43,6 +44,6 @@ describe "Jumpy", ->
 
     # TODO: IMPLEMENT THIS.  Line 192 `pane.activate()` in jumpy-view.coffee
     # should be enough to make this red to green.
-    describe "when jumpy jumps to another pane", ->
+    xdescribe "when jumpy jumps to another pane", ->
         it "focuses the new pane", ->
         it "does not move cursor of original pane", ->

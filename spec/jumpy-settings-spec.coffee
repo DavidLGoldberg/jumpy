@@ -40,6 +40,7 @@ describe "Jumpy with non default settings on", ->
             textEditor = atom.workspace.getActiveTextEditor()
             textEditorElement = atom.views.getView(textEditor)
             jumpyPromise = atom.packages.activatePackage 'jumpy'
+            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
 
         waitsForPromise ->
@@ -56,7 +57,6 @@ describe "Jumpy with non default settings on", ->
     describe "when the jumpy:toggle event is triggered
         and a jump is performed", ->
         xit "contains no beacon", ->
-            textEditor.setCursorBufferPosition [1,1]
             expect(textEditorElement.find('.cursors .cursor')[0].classList
                 .contains 'beacon').toBe false
             atom.commands.dispatch textEditorElement, 'jumpy:a'

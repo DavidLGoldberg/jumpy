@@ -45,6 +45,7 @@ describe "Jumpy", ->
             textEditorElement = atom.views.getView(textEditor)
             jumpyPromise = atom.packages.activatePackage 'jumpy'
             statusBarPromise = atom.packages.activatePackage 'status-bar'
+            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
 
         waitsForPromise ->
@@ -73,27 +74,35 @@ describe "Jumpy", ->
             expect(textEditorElement.classList.contains('jumpy-jump-mode')).toBe false
             expect(textEditorElement.parentElement.querySelectorAll('.jumpy')).toHaveLength 0
 
-    xdescribe "when the jumpy:toggle event is triggered
+    describe "when the jumpy:toggle event is triggered
     and a mousedown event is fired", ->
         it "jumpy is cleared", ->
-            # TODO: Finish test for mousedown
+            textEditorElement.dispatchEvent new Event 'mousedown'
             expect(textEditorElement.classList.contains('jumpy-jump-mode'))
-                .toBe 'false'
+                .toBe false
 
     xdescribe "when the jumpy:toggle event is triggered
     and a scroll event is fired", ->
         it "jumpy is cleared", ->
-            # TODO: Finish test for scroll-to-top
+            # TODO: Finish test for scroll-up
             expect(textEditorElement.classList.contains('jumpy-jump-mode'))
-                .toBe 'false'
-            # TODO: Finish test for scroll-to-left
+                .toBe false
+
+            # TODO: Finish test for scroll-down
             expect(textEditorElement.classList.contains('jumpy-jump-mode'))
-                .toBe 'false'
+                .toBe false
+
+            # TODO: Finish test for scroll-left
+            expect(textEditorElement.classList.contains('jumpy-jump-mode'))
+                .toBe false
+
+            # TODO: Finish test for scroll-right
+            expect(textEditorElement.classList.contains('jumpy-jump-mode'))
+                .toBe false
 
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
         it "jumpy is cleared", ->
-            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
             expect(textEditorElement.classList.contains('jumpy-jump-mode')).toBe false
@@ -102,7 +111,6 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
     and invalid hotkeys are entered", ->
         it "jumpy is cleared", ->
-            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:z'
             atom.commands.dispatch workspaceElement, 'jumpy:z'
             cursorPosition = textEditor.getCursorBufferPosition()
@@ -112,7 +120,6 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
         it "jumps the cursor", ->
-            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
             cursorPosition = textEditor.getCursorBufferPosition()
@@ -127,7 +134,6 @@ describe "Jumpy", ->
             expect(textEditorElement.
                 classList.contains('jumpy-jump-mode')).not.toBeTruthy()
         it "jumps the cursor in folded regions", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:clear'
             textEditor.setCursorBufferPosition [23, 20]
             textEditor.foldCurrentRow()
             atom.commands.dispatch workspaceElement, 'jumpy:toggle'
@@ -146,7 +152,6 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered in succession", ->
         it "jumps the cursor twice", ->
-            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
             atom.commands.dispatch workspaceElement, 'jumpy:toggle'
@@ -255,13 +260,11 @@ describe "Jumpy", ->
                 .querySelector '#status-bar-jumpy .status'
                     .innerHTML == 'a').toBeTruthy()
         it "does not jump", ->
-            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:z'
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
         it "leaves the labels up", ->
-            textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:z'
             relevantLabels = textEditorElement
                 .querySelectorAll('.label:not(.irrelevant)')
@@ -317,8 +320,32 @@ describe "Jumpy", ->
                 expect(labels.length)
                     .toBe (expectedTotalNumberWith2TabsOpenInOnePane)
 
-    describe "when a jump mode is enabled", ->
-        xit "clears when a mini pane is opened", ->
-            atom.commands.dispatch textEditorElement, 'find-and-replace:show'
-            expect(textEditorElement.classList.contains('jumpy-jump-mode')).toBe false
-            expect(textEditorElement.parentElement.querySelectorAll('.jumpy')).toHaveLength 0
+    xdescribe "when a jump mode is enabled", ->
+        it "clears when a find-and-replace mini pane is opened", ->
+            waitsForPromise ->
+                atom.packages.activatePackage 'find-and-replace'
+
+            runs ->
+                atom.commands
+                    .dispatch textEditorElement, 'find-and-replace:show'
+                expect(textEditorElement
+                    .classList.contains('jumpy-jump-mode')).toBe false
+                expect(textEditorElement
+                    .parentElement .querySelectorAll('.jumpy')).toHaveLength 0
+                expect(workspaceElement
+                    .querySelectorAll('.find-and-replace')).toHaveLength 1
+
+    xdescribe "when a jump mode is enabled", ->
+        it "clears when a fuzzy-finder mini pane is opened", ->
+            waitsForPromise ->
+                atom.packages.activatePackage 'fuzzy-finder'
+
+            runs ->
+                atom.commands
+                    .dispatch textEditorElement, 'fuzzy-finder:toggle-file-finder'
+                expect(textEditorElement
+                    .classList.contains('jumpy-jump-mode')).toBe false
+                expect(textEditorElement
+                    .parentElement.querySelectorAll('.jumpy')).toHaveLength 0
+                expect(workspaceElement
+                    .querySelectorAll('.fuzzy-finder')).toHaveLength 1

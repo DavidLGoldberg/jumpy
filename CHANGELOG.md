@@ -1,5 +1,6 @@
 ## 2.0.3
-* Fix deprecated method calls
+* Fix deprecated method calls.
+* Improve tests.
 
 ## 2.0.2
 * Fixed regression: restore consecutive labels across open tabs.
