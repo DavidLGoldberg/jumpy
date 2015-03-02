@@ -59,6 +59,8 @@ class JumpyView extends View
             priority: -1
         @statusBarJumpy = document.getElementById 'status-bar-jumpy'
 
+        @initKeyFilters()
+
     getKey: (character) ->
         @statusBarJumpy?.classList.remove 'no-match'
 
@@ -112,14 +114,24 @@ class JumpyView extends View
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
-    turnOffSlowKeys: ->
-        atom.keymap.keyBindings = atom.keymap.keyBindings.filter (keymap) ->
+    initKeyFilters: ->
+        @filteredJumpyKeys = @getFilteredJumpyKeys()
+        Object.observe atom.keymap.keyBindings, ->
+            @filteredJumpyKeys = @getFilteredJumpyKeys()
+        # Don't think I need a corresponding unobserve
+
+    getFilteredJumpyKeys: ->
+        atom.keymap.keyBindings.filter (keymap) ->
             keymap.command.indexOf('jumpy') > -1
+
+    turnOffSlowKeys: ->
+        atom.keymap.keyBindings = @filteredJumpyKeys
 
     toggle: ->
         @clearJumpMode()
-        wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g' # Can this be singleton'd up!?!? private/static/instance var above?
 
+        # TODO: Can the following few lines be singleton'd up? ie. instance var?
+        wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
         fontSize = atom.config.get 'jumpy.fontSize'
         fontSize = .75 if isNaN(fontSize) or fontSize > 1
         fontSize = (fontSize * 100) + '%'
