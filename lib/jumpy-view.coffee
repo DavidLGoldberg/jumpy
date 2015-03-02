@@ -50,6 +50,7 @@ class JumpyView extends View
         atom.commands.add 'atom-workspace', commands
 
         # TODO: consider moving this into toggle for new bindings.
+        # This might be able to move into the new Object.observe callback
         @backedUpKeyBindings = _.clone atom.keymap.keyBindings
 
         @workspaceElement = atom.views.getView(atom.workspace)
@@ -60,6 +61,31 @@ class JumpyView extends View
         @statusBarJumpy = document.getElementById 'status-bar-jumpy'
 
         @initKeyFilters()
+
+        getWordsPattern = (configValue) ->
+            return new RegExp (configValue), 'g'
+
+        getFontSize = (configValue) ->
+            fontSize = configValue
+            fontSize = .75 if isNaN(fontSize) or fontSize > 1
+            fontSize = (fontSize * 100) + '%'
+            return fontSize
+
+        @wordsPattern = getWordsPattern(atom.config.get 'jumpy.matchPattern')
+        console.log @wordsPattern
+        atom.config.observe 'jumpy.matchPattern', (value) ->
+            console.log 'in observe'
+            @wordsPattern = getWordsPattern(value)
+            console.log @wordsPattern
+            console.log 'after set in observe'
+
+        @fontSize = getFontSize(atom.config.get 'jumpy.fontSize')
+        atom.config.observe 'jumpy.fontSize', (value) ->
+            @fontSize = getFontSize(value)
+
+        @highContrast = atom.config.get 'jumpy.highContrast'
+        atom.config.observe 'jumpy.highContrast', (value) ->
+            @highContrast = value
 
     getKey: (character) ->
         @statusBarJumpy?.classList.remove 'no-match'
@@ -118,7 +144,7 @@ class JumpyView extends View
         @filteredJumpyKeys = @getFilteredJumpyKeys()
         Object.observe atom.keymap.keyBindings, ->
             @filteredJumpyKeys = @getFilteredJumpyKeys()
-        # Don't think I need a corresponding unobserve
+        # Don't think I need a corresponding unobserve because always on!
 
     getFilteredJumpyKeys: ->
         atom.keymap.keyBindings.filter (keymap) ->
@@ -129,13 +155,6 @@ class JumpyView extends View
 
     toggle: ->
         @clearJumpMode()
-
-        # TODO: Can the following few lines be singleton'd up? ie. instance var?
-        wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
-        fontSize = atom.config.get 'jumpy.fontSize'
-        fontSize = .75 if isNaN(fontSize) or fontSize > 1
-        fontSize = (fontSize * 100) + '%'
-        highContrast = atom.config.get 'jumpy.highContrast'
 
         @turnOffSlowKeys()
         @statusBarJumpy?.classList.remove 'no-match'
@@ -175,8 +194,8 @@ class JumpyView extends View
                         .css
                             left: pixelPosition.left
                             top: pixelPosition.top
-                            fontSize: fontSize
-                if highContrast
+                            fontSize: @fontSize
+                if @highContrast
                     labelElement.addClass 'high-contrast'
                 $labelContainer
                     .append labelElement
@@ -187,8 +206,10 @@ class JumpyView extends View
                 if editor.isFoldedAtScreenRow(lineNumber)
                     drawLabels 0, $labelContainer
                 else
-                    while ((word = wordsPattern.exec(lineContents)) != null)
+                    console.time 'toggle'
+                    while ((word = @wordsPattern.exec(lineContents)) != null)
                         drawLabels word.index, $labelContainer
+                    console.timeEnd 'toggle'
 
             $(@workspaceElement).find '*'
                 .on 'mousedown', =>
