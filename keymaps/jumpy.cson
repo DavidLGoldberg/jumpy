@@ -7,10 +7,10 @@
 
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
-'.workspace .editor:not(.mini)':
+'atom-workspace atom-text-editor:not(.mini)':
     'shift-enter': 'jumpy:toggle'
 
-'.workspace .editor.jumpy-jump-mode':
+'atom-workspace atom-text-editor.jumpy-jump-mode':
     'backspace': 'jumpy:reset'
     'enter': 'jumpy:clear'
     'space': 'jumpy:clear'
