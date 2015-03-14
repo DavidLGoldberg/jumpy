@@ -190,14 +190,21 @@ class JumpyView extends View
                     while ((word = wordsPattern.exec(lineContents)) != null)
                         drawLabels word.index, $labelContainer
 
-            $(@workspaceElement).find '*'
-                .on 'mousedown', =>
-                    @clearJumpMode()
+            @initializeClearEvents(editor, editorView)
 
-            @disposables.add editor.onDidChangeScrollTop =>
+    initializeClearEvents: (editor, editorView) ->
+        $(@workspaceElement).find '*'
+            .on 'mousedown', =>
                 @clearJumpMode()
-            @disposables.add editor.onDidChangeScrollLeft =>
-                @clearJumpMode()
+
+        @disposables.add editor.onDidChangeScrollTop =>
+            @clearJumpMode()
+        @disposables.add editor.onDidChangeScrollLeft =>
+            @clearJumpMode()
+
+        editorView.onblur = =>
+            @clearJumpMode()
+
 
     clearJumpMode: ->
         @clearKeys()

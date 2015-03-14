@@ -1,4 +1,6 @@
 ## 2.0.3
+* Fixes #39 - Calls to mini panes (like cmd+f, cmd+p) lock up when in jump mode.
+* Slight performance improvements.
 * Fix deprecated method calls.
 * Improve tests.
 

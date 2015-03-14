@@ -320,14 +320,15 @@ describe "Jumpy", ->
                 expect(labels.length)
                     .toBe (expectedTotalNumberWith2TabsOpenInOnePane)
 
+    # TODO: This one doesn't work for some reason.
     xdescribe "when a jump mode is enabled", ->
         it "clears when a find-and-replace mini pane is opened", ->
             waitsForPromise ->
                 atom.packages.activatePackage 'find-and-replace'
 
             runs ->
-                atom.commands
-                    .dispatch textEditorElement, 'find-and-replace:show'
+                atom.commands.dispatch textEditorElement,
+                    'find-and-replace:show'
                 expect(textEditorElement
                     .classList.contains('jumpy-jump-mode')).toBe false
                 expect(textEditorElement
@@ -335,14 +336,14 @@ describe "Jumpy", ->
                 expect(workspaceElement
                     .querySelectorAll('.find-and-replace')).toHaveLength 1
 
-    xdescribe "when a jump mode is enabled", ->
+    describe "when a jump mode is enabled", ->
         it "clears when a fuzzy-finder mini pane is opened", ->
             waitsForPromise ->
                 atom.packages.activatePackage 'fuzzy-finder'
 
             runs ->
-                atom.commands
-                    .dispatch textEditorElement, 'fuzzy-finder:toggle-file-finder'
+                atom.commands.dispatch textEditorElement,
+                    'fuzzy-finder:toggle-file-finder'
                 expect(textEditorElement
                     .classList.contains('jumpy-jump-mode')).toBe false
                 expect(textEditorElement
