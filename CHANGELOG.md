@@ -1,7 +1,8 @@
 ## 2.0.3
 * Fixes #39 - Calls to mini panes (like cmd+f, cmd+p) lock up when in jump mode.
-* Slight performance improvements.
+* Merge @badem4o's pull request to fix some more deprecations in the shadow dom selectors.
 * Fix deprecated method calls.
+* *Slight* performance improvements.
 * Improve tests.
 
 ## 2.0.2

@@ -4,7 +4,9 @@
 # FIXME: Beacon code (currently broken in shadow).  This will probably return
 # in the form of a decoration with a "flash", not sure yet.
 # TODO: Merge in @willdady's code for better accuracy.
-# TODO: Investigate using markers.
+# TODO: Merge in @badem4o's code for shadow selectors.
+# TODO: Investigate using markers, else my own custom elements.
+# TODO: Remove space-pen? Probably alongside markers todo above.
 
 {CompositeDisposable} = require 'atom'
 {View, $} = require 'space-pen'

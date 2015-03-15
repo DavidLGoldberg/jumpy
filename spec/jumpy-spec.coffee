@@ -320,7 +320,7 @@ describe "Jumpy", ->
                 expect(labels.length)
                     .toBe (expectedTotalNumberWith2TabsOpenInOnePane)
 
-    # TODO: This one doesn't work for some reason.
+    # TODO: find-and-replace test doesn't work for some reason.
     xdescribe "when a jump mode is enabled", ->
         it "clears when a find-and-replace mini pane is opened", ->
             waitsForPromise ->
