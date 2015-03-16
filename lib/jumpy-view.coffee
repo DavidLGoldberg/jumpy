@@ -188,8 +188,16 @@ class JumpyView extends View
                 if editor.isFoldedAtScreenRow(lineNumber)
                     drawLabels 0, $labelContainer
                 else
-                    while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels word.index, $labelContainer
+                    while (word = wordsPattern.exec(lineContents))
+                        if word.length == 1
+                            drawLabels word.index, $labelContainer
+                        else
+                            matchStr = word[0]
+                            for i in [1...word.length]
+                                offset = matchStr.indexOf(word[i])
+                                if offset != -1
+                                    drawLabels(word.index + offset, $labelContainer)
+
 
             @initializeClearEvents(editor, editorView)
 
