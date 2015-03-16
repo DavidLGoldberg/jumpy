@@ -203,7 +203,7 @@ class JumpyView extends View
         @disposables.add editor.onDidChangeScrollLeft =>
             @clearJumpMode()
 
-        editorView.onblur = =>
+        editorView.addEventListener 'blur', =>
             @clearJumpMode()
 
 
