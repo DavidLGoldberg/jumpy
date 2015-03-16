@@ -1,5 +1,5 @@
 path = require 'path'
-{WorkspaceView} = require 'atom'
+{Views} = require 'atom'
 Jumpy = require '../lib/jumpy'
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
@@ -15,11 +15,19 @@ NUM_TOTAL_WORDS =
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
 describe "Jumpy with non default settings on", ->
-    [editorView, editor, jumpyPromise] = []
+    [textEditor, textEditorElement, jumpyPromise] = []
 
     beforeEach ->
-        atom.workspaceView = new WorkspaceView
-        atom.project.setPath(path.join(__dirname, 'fixtures'))
+        atom.project.setPaths([path.join(__dirname, 'fixtures')])
+        # TODO: Abstract the following out, (DRY) --------------
+        workspaceElement = atom.views.getView(atom.workspace)
+        # @leedohm helped me with this idiom of workspace size.
+        # He found it in the wrap-guide.
+        workspaceElement.style.height = "5000px" # big enough
+        workspaceElement.style.width = "5000px"
+        jasmine.attachToDOM(workspaceElement)
+        # TODO: Abstract the following out, (DRY) ---------------
+
         atom.config.set 'jumpy.highContrast', true
         atom.config.set 'jumpy.fontSize', .50
         atom.config.set 'jumpy.useHomingBeaconEffectOnJumps', false
@@ -29,38 +37,36 @@ describe "Jumpy with non default settings on", ->
             atom.workspace.open 'test_text.md'
 
         runs ->
-            atom.workspaceView.attachToDom()
-            editorView = atom.workspaceView.getActiveView()
-            editor = editorView.getEditor()
+            textEditor = atom.workspace.getActiveTextEditor()
+            textEditorElement = atom.views.getView(textEditor)
             jumpyPromise = atom.packages.activatePackage 'jumpy'
-            editorView.trigger 'jumpy:toggle'
+            textEditor.setCursorBufferPosition [1,1]
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
 
         waitsForPromise ->
             jumpyPromise
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws correctly colored labels", ->
-            expect(editorView.find('.jumpy.label')[0].classList
+            expect(textEditorElement.querySelectorAll('.jumpy.label')[0].classList
                 .contains 'high-contrast').toBe true
         it "draws labels of the right font size", ->
-            expect(editorView.find('.jumpy.label')[0]
+            expect(textEditorElement.querySelectorAll('.jumpy.label')[0]
                 .style.fontSize).toBe '50%'
 
     describe "when the jumpy:toggle event is triggered
         and a jump is performed", ->
-        it "contains no beacon", ->
-            editor.setCursorBufferPosition [1,1]
-            expect(editorView.find('.cursors .cursor')[0].classList
+        xit "contains no beacon", ->
+            expect(textEditorElement.find('.cursors .cursor')[0].classList
                 .contains 'beacon').toBe false
-            editorView.trigger 'jumpy:a'
-            editorView.trigger 'jumpy:c'
-            expect(editorView.find('.cursors .cursor')[0].classList
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            atom.commands.dispatch textEditorElement, 'jumpy:c'
+            expect(textEditorElement.querySelectorAll('.cursors .cursor')[0].classList
                 .contains 'beacon').toBe false
 
     describe "when a custom match (jumpy default) is used", ->
         it "draws correct labels", ->
-            expect(editorView.find('.jumpy.labels')).toExist()
-            labels = editorView.find('.jumpy.label')
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS
             expect(labels[0].innerHTML).toBe 'aa'
@@ -70,11 +76,10 @@ describe "Jumpy with non default settings on", ->
 
     describe "when a custom match is used (camel case)", ->
         it "draws correct labels and jumps appropriately", ->
-            editorView.trigger 'jumpy:clear'
+            atom.commands.dispatch textEditorElement, 'jumpy:clear'
             atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
-            editorView.trigger 'jumpy:toggle'
-            expect(editorView.find('.jumpy.labels')).toExist()
-            labels = editorView.find('.jumpy.label')
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
             # BASE CASE WORDS:
@@ -84,16 +89,16 @@ describe "Jumpy with non default settings on", ->
             expect(labels[83].innerHTML).toBe 'df'
 
             #CAMELS:
-            editorView.trigger 'jumpy:e'
-            editorView.trigger 'jumpy:a'
-            cursorPosition = editor.getCursorBufferPosition()
+            atom.commands.dispatch textEditorElement, 'jumpy:e'
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 30
             expect(cursorPosition.column).toBe 4
 
             #UNDERSCORES:
-            editorView.trigger 'jumpy:toggle'
-            editorView.trigger 'jumpy:e'
-            editorView.trigger 'jumpy:l'
-            cursorPosition = editor.getCursorBufferPosition()
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            atom.commands.dispatch textEditorElement, 'jumpy:e'
+            atom.commands.dispatch textEditorElement, 'jumpy:l'
+            cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 32
             expect(cursorPosition.column).toBe 5
