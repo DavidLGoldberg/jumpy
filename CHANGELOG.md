@@ -1,3 +1,6 @@
+## 2.0.4
+* Minor precaution using addEventListener instead of onblur.
+
 ## 2.0.3
 * Fixes #39 - Calls to mini panes (like cmd+f, cmd+p) lock up when in jump mode.
 * Merge @badem4o's pull request to fix some more deprecations in the shadow dom selectors.
