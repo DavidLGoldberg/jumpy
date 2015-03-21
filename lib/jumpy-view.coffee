@@ -38,8 +38,9 @@ class JumpyView extends View
 
     initialize: (serializeState) ->
         @disposables = new CompositeDisposable()
+        @commands = new CompositeDisposable()
 
-        atom.commands.add 'atom-workspace',
+        @commands.add atom.commands.add 'atom-workspace',
             'jumpy:toggle': => @toggle()
             'jumpy:reset': => @reset()
             'jumpy:clear': => @clearJumpMode()
@@ -48,7 +49,7 @@ class JumpyView extends View
         for characterSet in [lowerCharacters, upperCharacters]
             for c in characterSet
                 do (c) => commands['jumpy:' + c] = => @getKey(c)
-        atom.commands.add 'atom-workspace', commands
+        @commands.add atom.commands.add 'atom-workspace', commands
 
         # TODO: consider moving this into toggle for new bindings.
         @backedUpKeyBindings = _.clone atom.keymap.keyBindings
@@ -269,4 +270,5 @@ class JumpyView extends View
     # Tear down any state and detach
     destroy: ->
         console.log 'Jumpy: "destroy" called.'
+        @commands?.dispose()
         @clearJumpMode()
