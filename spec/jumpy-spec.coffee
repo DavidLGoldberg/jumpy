@@ -320,15 +320,18 @@ describe "Jumpy", ->
                 expect(labels.length)
                     .toBe (expectedTotalNumberWith2TabsOpenInOnePane)
 
-    # TODO: find-and-replace test doesn't work for some reason.
-    xdescribe "when a jump mode is enabled", ->
+    describe "when a jump mode is enabled", ->
+        activationPromise = []
+        beforeEach ->
+            activationPromise = atom.packages.activatePackage('find-and-replace')
+
         it "clears when a find-and-replace mini pane is opened", ->
+            atom.commands.dispatch textEditorElement, 'find-and-replace:show'
+
             waitsForPromise ->
-                atom.packages.activatePackage 'find-and-replace'
+                activationPromise
 
             runs ->
-                atom.commands.dispatch textEditorElement,
-                    'find-and-replace:show'
                 expect(textEditorElement
                     .classList.contains('jumpy-jump-mode')).toBe false
                 expect(textEditorElement
@@ -337,9 +340,16 @@ describe "Jumpy", ->
                     .querySelectorAll('.find-and-replace')).toHaveLength 1
 
     describe "when a jump mode is enabled", ->
+        activationPromise = []
+        beforeEach ->
+            activationPromise = atom.packages.activatePackage('fuzzy-finder')
+
         it "clears when a fuzzy-finder mini pane is opened", ->
+            atom.commands.dispatch textEditorElement,
+                'fuzzy-finder:toggle-file-finder'
+
             waitsForPromise ->
-                atom.packages.activatePackage 'fuzzy-finder'
+                activationPromise
 
             runs ->
                 atom.commands.dispatch textEditorElement,
