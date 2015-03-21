@@ -21,6 +21,18 @@ getLabelsArrayFromAllEditors = ->
             currentTextEditorElement.querySelectorAll('.jumpy.label')))
     return labels
 
+# Borrowed from: @lee-dohm
+# Public: Indicates whether an element has a command.
+#
+# * `element` An {HTMLElement} to search.
+# * `name` A {String} containing the command name.
+#
+# Returns a {Boolean} indicating if it has the given command.
+hasCommand = (element, name) ->
+    commands = atom.commands.findCommands(target: element)
+    found = true for command in commands when command.name is name
+
+    found
 
 describe "Jumpy", ->
     [workspaceElement, textEditorElement, textEditor, jumpyPromise,
@@ -52,6 +64,21 @@ describe "Jumpy", ->
             jumpyPromise
         waitsForPromise ->
             statusBarPromise
+
+    describe 'activate', ->
+        it 'creates the commands', ->
+            expect(hasCommand(workspaceElement, 'jumpy:toggle')).toBeTruthy()
+            expect(hasCommand(workspaceElement, 'jumpy:reset')).toBeTruthy()
+            expect(hasCommand(workspaceElement, 'jumpy:clear')).toBeTruthy()
+
+    describe 'deactivate', ->
+        beforeEach ->
+            atom.packages.deactivatePackage('jumpy')
+
+        it 'destroys the commands', ->
+            expect(hasCommand(workspaceElement, 'jumpy:toggle')).toBeFalsy()
+            expect(hasCommand(workspaceElement, 'jumpy:reset')).toBeFalsy()
+            expect(hasCommand(workspaceElement, 'jumpy:clear')).toBeFalsy()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws correct labels", ->
