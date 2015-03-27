@@ -124,7 +124,8 @@ class JumpyView extends View
 
     getFilteredJumpyKeys: ->
         atom.keymap.keyBindings.filter (keymap) ->
-            keymap.command.indexOf('jumpy') > -1
+            keymap.command
+                .indexOf('jumpy') > -1 if typeof keymap.command is 'string'
 
     turnOffSlowKeys: ->
         atom.keymap.keyBindings = @filteredJumpyKeys
