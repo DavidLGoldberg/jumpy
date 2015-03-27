@@ -1,3 +1,11 @@
+## 2.0.5
+* Fixes #54 for performance issue / leak found by @despairblue.
+* Few other minor performance issues.
+* Memory leak prevention of commands.
+* Added descriptions to the config options.
+* Add test for find-and-replace
+* Adds tests for command activation/deactivation.
+
 ## 2.0.4
 * Minor precaution using addEventListener instead of onblur.
 
