@@ -1,5 +1,7 @@
 path = require 'path'
 {Views, Commands} = require 'atom'
+{$} = require 'space-pen'
+
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
 NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
@@ -17,6 +19,8 @@ getLabelsArrayFromAllEditors = ->
     labels = []
     atom.workspace.observeTextEditors (editor) ->
         currentTextEditorElement = atom.views.getView(editor)
+        return if $(currentTextEditorElement).is ':not(:visible)'
+
         labels = labels.concat([].slice.call(
             currentTextEditorElement.querySelectorAll('.jumpy.label')))
     return labels
@@ -102,9 +106,9 @@ describe "Jumpy", ->
             expect(textEditorElement.parentElement.querySelectorAll('.jumpy')).toHaveLength 0
 
     describe "when the jumpy:toggle event is triggered
-    and a mousedown event is fired", ->
+    and a click event is fired", ->
         it "jumpy is cleared", ->
-            textEditorElement.dispatchEvent new Event 'mousedown'
+            textEditorElement.dispatchEvent new Event 'click'
             expect(textEditorElement.classList.contains('jumpy-jump-mode'))
                 .toBe false
 

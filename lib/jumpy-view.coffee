@@ -70,7 +70,7 @@ class JumpyView extends View
             found = false
             @disposables.add atom.workspace.observeTextEditors (editor) ->
                 editorView = atom.views.getView(editor)
-                return if editorView.style.display is 'none'
+                return if $(editorView).is ':not(:visible)'
 
                 $(editorView).find('.label:not(.irrelevant)').each (i, label) ->
                     if label.innerHTML[labelPosition] == character
@@ -91,7 +91,7 @@ class JumpyView extends View
             # TODO: Refactor this so not 2 calls to observeTextEditors
             @disposables.add atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
-                return if editorView.style.display is 'none'
+                return if $(editorView).is ':not(:visible)'
 
                 for label in editorView.querySelectorAll '.jumpy.label'
                     if label.innerHTML.indexOf(@firstChar) != 0
@@ -132,6 +132,9 @@ class JumpyView extends View
     toggle: ->
         @clearJumpMode()
 
+        # Set dirty for @clearJumpMode
+        @cleared = false
+
         # TODO: Can the following few lines be singleton'd up? ie. instance var?
         wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
         fontSize = atom.config.get 'jumpy.fontSize'
@@ -150,7 +153,7 @@ class JumpyView extends View
         nextKeys = _.clone keys
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            return if editorView.style.display is 'none'
+            return if $(editorView).is ':not(:visible)'
 
             $editorView = $(editorView)
             $editorView
@@ -194,27 +197,32 @@ class JumpyView extends View
 
             @initializeClearEvents(editor, editorView)
 
+    clearJumpModeHandler: (e) =>
+        @clearJumpMode()
+
     initializeClearEvents: (editor, editorView) ->
-        $(@workspaceElement).find '*'
-            .on 'mousedown', =>
-                @clearJumpMode()
-
         @disposables.add editor.onDidChangeScrollTop =>
-            @clearJumpMode()
+            @clearJumpModeHandler()
         @disposables.add editor.onDidChangeScrollLeft =>
-            @clearJumpMode()
+            @clearJumpModeHandler()
 
-        editorView.addEventListener 'blur', =>
-            @clearJumpMode()
-
+        for e in ['blur', 'click']
+            editorView.addEventListener e, @clearJumpModeHandler, true
 
     clearJumpMode: ->
+        if @cleared
+            return
+
+        @cleared = true
         @clearKeys()
         @statusBarJumpy?.innerHTML = ''
-        @disposables.add atom.workspace.observeTextEditors (editor) ->
+        @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
+            return if $(editorView).is ':not(:visible)'
             $(editorView).find('.jumpy').remove()
             editorView.classList.remove 'jumpy-jump-mode'
+            for e in ['blur', 'click']
+                editorView.removeEventListener e, @clearJumpModeHandler, true
         atom.keymap.keyBindings = @backedUpKeyBindings
         @disposables?.dispose()
         @detach()
