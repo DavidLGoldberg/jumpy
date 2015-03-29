@@ -1,3 +1,6 @@
+## 2.0.6
+* Fixes #45 Let's a keymap command contain a non string.
+
 ## 2.0.5
 * Fixes #54 for performance issue / leak found by @despairblue.
 * Few other minor performance issues.
