@@ -1,3 +1,9 @@
+## 3.0.0
+* Breaking changes: No longer supporting custom regex.
+* Instead, many more targets.  Now matching at end of line and new
+  lines.
+* Also matching much more intelligently with symbols.
+
 ## 2.0.6
 * Fixes #45 Let's a keymap command contain a non string.
 
