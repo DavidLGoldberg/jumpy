@@ -93,9 +93,39 @@ describe "Jumpy", ->
             expect(labels[1].innerHTML).toBe 'ab'
             expect(labels[82].innerHTML).toBe 'de'
             expect(labels[83].innerHTML).toBe 'df'
+
+        fit "draws correct labels and jumps appropriately", ->
+            atom.commands.dispatch textEditorElement, 'jumpy:clear'
+            atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
+            expect(labels.length)
+                .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
+            # BASE CASE WORDS:
+            expect(labels[0].innerHTML).toBe 'aa'
+            expect(labels[1].innerHTML).toBe 'ab'
+            expect(labels[82].innerHTML).toBe 'de'
+            expect(labels[83].innerHTML).toBe 'df'
+
+            #CAMELS:
+            atom.commands.dispatch textEditorElement, 'jumpy:e'
+            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            cursorPosition = textEditor.getCursorBufferPosition()
+            expect(cursorPosition.row).toBe 30
+            expect(cursorPosition.column).toBe 4
+
+            #UNDERSCORES:
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            atom.commands.dispatch textEditorElement, 'jumpy:e'
+            atom.commands.dispatch textEditorElement, 'jumpy:l'
+            cursorPosition = textEditor.getCursorBufferPosition()
+            expect(cursorPosition.row).toBe 32
+            expect(cursorPosition.column).toBe 5
+
         it "clears beacon effect", ->
             expect(textEditorElement.
                 querySelectorAll('cursors .cursor.beacon')).not.toExist()
+
         it "only uses jumpy keymaps", ->
             expect(atom.keymap.keyBindings.length).toBe (26 * 2) + 5 + 1
 
@@ -209,12 +239,14 @@ describe "Jumpy", ->
                 expect(textEditorElement.querySelectorAll('.beacon'))
                     .not.toExist()
 
+    # TODO Move this up into previous describe.
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
             expect(document.querySelector('#status-bar-jumpy')).toExist()
             expect(document.querySelector('#status-bar-jumpy .status').innerHTML)
                 .toBe 'Jump Mode!'
 
+    # TODO Move this up into previous describe.
     describe "when the jumpy:clear event is triggered", ->
         it "clears the status bar", ->
             atom.commands.dispatch workspaceElement, 'jumpy:clear'
@@ -243,6 +275,7 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 12
 
+    # TODO: Move with above.
     describe "when the jumpy:reset event is triggered", ->
         it "updates the status bar", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'

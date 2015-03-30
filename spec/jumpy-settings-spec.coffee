@@ -31,7 +31,6 @@ describe "Jumpy with non default settings on", ->
         atom.config.set 'jumpy.highContrast', true
         atom.config.set 'jumpy.fontSize', .50
         atom.config.set 'jumpy.useHomingBeaconEffectOnJumps', false
-        atom.config.set 'jumpy.matchPattern', '([\\w]){2,}' # old Jumpy default
 
         waitsForPromise ->
             atom.workspace.open 'test_text.md'
@@ -63,42 +62,3 @@ describe "Jumpy with non default settings on", ->
             atom.commands.dispatch textEditorElement, 'jumpy:c'
             expect(textEditorElement.querySelectorAll('.cursors .cursor')[0].classList
                 .contains 'beacon').toBe false
-
-    describe "when a custom match (jumpy default) is used", ->
-        it "draws correct labels", ->
-            labels = textEditorElement.querySelectorAll('.jumpy.label')
-            expect(labels.length)
-                .toBe NUM_TOTAL_WORDS
-            expect(labels[0].innerHTML).toBe 'aa'
-            expect(labels[1].innerHTML).toBe 'ab'
-            expect(labels[82].innerHTML).toBe 'de'
-            expect(labels[83].innerHTML).toBe 'df'
-
-    describe "when a custom match is used (camel case)", ->
-        it "draws correct labels and jumps appropriately", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:clear'
-            atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
-            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            labels = textEditorElement.querySelectorAll('.jumpy.label')
-            expect(labels.length)
-                .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
-            # BASE CASE WORDS:
-            expect(labels[0].innerHTML).toBe 'aa'
-            expect(labels[1].innerHTML).toBe 'ab'
-            expect(labels[82].innerHTML).toBe 'de'
-            expect(labels[83].innerHTML).toBe 'df'
-
-            #CAMELS:
-            atom.commands.dispatch textEditorElement, 'jumpy:e'
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
-            cursorPosition = textEditor.getCursorBufferPosition()
-            expect(cursorPosition.row).toBe 30
-            expect(cursorPosition.column).toBe 4
-
-            #UNDERSCORES:
-            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            atom.commands.dispatch textEditorElement, 'jumpy:e'
-            atom.commands.dispatch textEditorElement, 'jumpy:l'
-            cursorPosition = textEditor.getCursorBufferPosition()
-            expect(cursorPosition.row).toBe 32
-            expect(cursorPosition.column).toBe 5
