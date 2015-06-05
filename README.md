@@ -1,5 +1,5 @@
 # Jumpy
-An Atom package that creates dynamic hot keys to jump around files and across visible panes.
+An Atom package that creates dynamic hotkeys to jump around files and across visible panes.
 
 ## How to jump
 1. Hit <kbd>shift</kbd> + <kbd>enter</kbd>
@@ -70,7 +70,7 @@ or enter ctrl+alt+cmd+l (lower case L).
 ### 'vim-mode' Users (Strongly Recommended Override)
 Put this override in your **'Atom'** -> **'Open Your Keymap'** settings:
 
-    '.editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode)':
+    'atom-text-editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode)':
         'f': 'jumpy:toggle'
 
 This will **bind 'f' to toggle Jumpy**.
@@ -92,16 +92,3 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 }
 ```
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
-
-## TODO
-* Provide a command to restore previous cursor position after performing a jump.
-
-## Keywords
-(A little SEO juice)
-
-* Shortcuts
-* Navigation
-* Productivity
-* Mouseless
-* Plugin
-* Extension

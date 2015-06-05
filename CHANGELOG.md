@@ -1,3 +1,9 @@
+## 2.0.7
+* Update README.md with fix for 'f' hotkey with new Atom.
+* Fixes #59 & #60. Jumpy broke with Atom 0.206.0, and now works / tested with 0.207.0 (coincidence)
+  * Handles changes to Atom rendering by tiles.
+  * Includes Shadow dom and keymap fixes.
+
 ## 2.0.6
 * Fixes #45 Let's a keymap command contain a non string.
 

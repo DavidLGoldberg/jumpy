@@ -2,11 +2,9 @@
   "name": "jumpy",
   "main": "./lib/jumpy",
   "version": "2.0.6",
-  "description": "An Atom package that creates dynamic hot keys to jump around files across visible panes.",
+  "description": "An Atom package that creates dynamic hotkeys to jump around files across visible panes.",
   "keywords": [
-    "hot key",
     "hotkey",
-    "hot keys",
     "hotkeys",
     "key bindings",
     "cursor",
@@ -15,7 +13,9 @@
     "shortcuts",
     "navigation",
     "productivity",
-    "mouseless"
+    "mouseless",
+    "plugin",
+    "extension"
   ],
   "activationCommands": {
     "atom-text-editor": [

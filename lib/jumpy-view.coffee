@@ -52,7 +52,7 @@ class JumpyView extends View
         @commands.add atom.commands.add 'atom-workspace', commands
 
         # TODO: consider moving this into toggle for new bindings.
-        @backedUpKeyBindings = _.clone atom.keymap.keyBindings
+        @backedUpKeyBindings = _.clone atom.keymaps.keyBindings
 
         @workspaceElement = atom.views.getView(atom.workspace)
         @statusBar = document.querySelector 'status-bar'
@@ -72,7 +72,8 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                $(editorView).find('.label:not(.irrelevant)').each (i, label) ->
+                overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+                $(overlayer).find('.label:not(.irrelevant)').each (i, label) ->
                     if label.innerHTML[labelPosition] == character
                         found = true
                         return false
@@ -93,7 +94,8 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                for label in editorView.querySelectorAll '.jumpy.label'
+                overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+                for label in overlayer.querySelectorAll '.jumpy.label'
                     if label.innerHTML.indexOf(@firstChar) != 0
                         label.classList.add 'irrelevant'
         else if not @secondChar
@@ -111,24 +113,25 @@ class JumpyView extends View
         @clearKeys()
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            $(editorView).find '.irrelevant'
+            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+            $(overlayer).find '.irrelevant'
                 .removeClass 'irrelevant'
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
     initKeyFilters: ->
         @filteredJumpyKeys = @getFilteredJumpyKeys()
-        Object.observe atom.keymap.keyBindings, ->
+        Object.observe atom.keymaps.keyBindings, ->
             @filteredJumpyKeys = @getFilteredJumpyKeys()
         # Don't think I need a corresponding unobserve
 
     getFilteredJumpyKeys: ->
-        atom.keymap.keyBindings.filter (keymap) ->
+        atom.keymaps.keyBindings.filter (keymap) ->
             keymap.command
                 .indexOf('jumpy') > -1 if typeof keymap.command is 'string'
 
     turnOffSlowKeys: ->
-        atom.keymap.keyBindings = @filteredJumpyKeys
+        atom.keymaps.keyBindings = @filteredJumpyKeys
 
     toggle: ->
         @clearJumpMode()
@@ -154,16 +157,15 @@ class JumpyView extends View
         nextKeys = _.clone keys
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            return if $(editorView).is ':not(:visible)'
-
             $editorView = $(editorView)
-            $editorView
-                .addClass 'jumpy-jump-mode'
-                .find '.overlayer'
-                .append '<div class="jumpy jumpy-label-container"></div>'
-            $labelContainer = $editorView.find('.jumpy-label-container')
+            return if $editorView.is ':not(:visible)'
 
-            drawLabels = (column, $labelContainer) =>
+            editorView.classList.add 'jumpy-jump-mode'
+            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+            $(overlayer).append '<div class="jumpy jumpy-label-container"></div>'
+            labelContainer = overlayer.querySelector '.jumpy-label-container'
+
+            drawLabels = (column, labelContainer) =>
                 return unless nextKeys.length
 
                 keyLabel = nextKeys.shift()
@@ -179,22 +181,22 @@ class JumpyView extends View
                 labelElement =
                     $("<div class='jumpy label'>#{keyLabel}</div>")
                         .css
-                            left: pixelPosition.left
-                            top: pixelPosition.top
+                            left: pixelPosition.left - editor.getScrollLeft()
+                            top: pixelPosition.top - editor.getScrollTop()
                             fontSize: fontSize
                 if highContrast
                     labelElement.addClass 'high-contrast'
-                $labelContainer
+                $(labelContainer)
                     .append labelElement
 
             [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
-                    drawLabels 0, $labelContainer
+                    drawLabels 0, labelContainer
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels word.index, $labelContainer
+                        drawLabels word.index, labelContainer
 
             @initializeClearEvents(editor, editorView)
 
@@ -220,11 +222,12 @@ class JumpyView extends View
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
             return if $(editorView).is ':not(:visible)'
-            $(editorView).find('.jumpy').remove()
+            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+            $(overlayer).find('.jumpy').remove()
             editorView.classList.remove 'jumpy-jump-mode'
             for e in ['blur', 'click']
                 editorView.removeEventListener e, @clearJumpModeHandler, true
-        atom.keymap.keyBindings = @backedUpKeyBindings
+        atom.keymaps.keyBindings = @backedUpKeyBindings
         @disposables?.dispose()
         @detach()
 

@@ -22,7 +22,7 @@ getLabelsArrayFromAllEditors = ->
         return if $(currentTextEditorElement).is ':not(:visible)'
 
         labels = labels.concat([].slice.call(
-            currentTextEditorElement.querySelectorAll('.jumpy.label')))
+            currentTextEditorElement.shadowRoot.querySelectorAll('.jumpy.label')))
     return labels
 
 # Borrowed from: @lee-dohm
@@ -86,7 +86,7 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws correct labels", ->
-            labels = textEditorElement.querySelectorAll('.jumpy.label')
+            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
             expect(labels[0].innerHTML).toBe 'aa'
@@ -97,7 +97,7 @@ describe "Jumpy", ->
             expect(textEditorElement.
                 querySelectorAll('cursors .cursor.beacon')).not.toExist()
         it "only uses jumpy keymaps", ->
-            expect(atom.keymap.keyBindings.length).toBe (26 * 2) + 5 + 1
+            expect(atom.keymaps.keyBindings.length).toBe (26 * 2) + 5 + 1
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears labels", ->
@@ -158,8 +158,8 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 6
             expect(textEditor.getSelectedText()).toBe ''
         it "clears jumpy mode", ->
-            expect(textEditorElement.
-                classList.contains('jumpy-jump-mode')).toBeTruthy()
+            expect(textEditorElement
+                .classList.contains('jumpy-jump-mode')).toBeTruthy()
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
             expect(textEditorElement.
@@ -229,7 +229,7 @@ describe "Jumpy", ->
                     .innerHTML).toBe 'a'
         it "removes all labels that don't begin with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
-            expect(textEditorElement
+            expect(textEditorElement.shadowRoot
                 .querySelectorAll('.jumpy.label:not(.irrelevant)').length)
                     .toBe 26
 
@@ -253,7 +253,7 @@ describe "Jumpy", ->
         it "resets all labels even those that don't begin with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
-            expect(textEditorElement
+            expect(textEditorElement.shadowRoot
                 .querySelectorAll('.jumpy.label:not(.irrelevant)')
                     .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
 
@@ -297,7 +297,7 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 1
         it "leaves the labels up", ->
             atom.commands.dispatch textEditorElement, 'jumpy:z'
-            relevantLabels = textEditorElement
+            relevantLabels = textEditorElement.shadowRoot
                 .querySelectorAll('.label:not(.irrelevant)')
             expect(relevantLabels.length > 0).toBeTruthy()
 
