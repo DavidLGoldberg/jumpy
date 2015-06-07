@@ -92,3 +92,13 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 }
 ```
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
+
+## Keywords
+(A little SEO juice)
+
+* Shortcuts
+* Navigation
+* Productivity
+* Mouseless
+* Plugin
+* Extension
