@@ -84,7 +84,7 @@ Please let me know what you think about this binding for Jumpy [here](https://di
 Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 (see examples below)
 ```less
-.jumpy {
+atom-text-editor::shadow .jumpy {
     &.label {
     }
     &.jump {
