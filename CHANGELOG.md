@@ -1,3 +1,6 @@
+## 2.0.8
+* Remove deprecation warning for styles. Fixes (61 & 62).
+
 ## 2.0.7
 * Update README.md with fix for 'f' hotkey with new Atom.
 * Fixes #59 & #60. Jumpy broke with Atom 0.206.0, and now works / tested with 0.207.0 (coincidence)
