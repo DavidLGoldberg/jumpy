@@ -1,3 +1,7 @@
+## 2.0.9
+* Fix broken beacon animation (finally got around to this).
+* Update README.md with new way to style Jumpy labels etc (using shadow dom).
+
 ## 2.0.8
 * Remove deprecation warning for styles. Fixes (61 & 62).
 

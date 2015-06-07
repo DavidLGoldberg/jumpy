@@ -254,18 +254,14 @@ class JumpyView extends View
             else
                 currentEditor.setCursorScreenPosition location.position
 
-            # FIXME: Restore homing beacon code below!
-            # Unfortunately I NEED to release 2.0 without this as shadow-dom
-            # has been enabled by default.
-
-            # useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-            # if useHomingBeacon
-            #     debugger
-            #     cursor = pane.querySelector '.cursors .cursor'
-            #     cursor.classList.add 'beacon'
-            #     setTimeout ->
-            #         cursor.classList.remove 'beacon'
-            #     , 150
+            useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
+            if useHomingBeacon
+                cursor = editorView.shadowRoot.querySelector '.cursors .cursor'
+                if cursor
+                    cursor.classList.add 'beacon'
+                    setTimeout ->
+                        cursor.classList.remove 'beacon'
+                    , 150
             console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
                 "(#{location.position.row},#{location.position.column})"
 

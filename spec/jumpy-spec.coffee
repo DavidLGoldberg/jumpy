@@ -95,7 +95,7 @@ describe "Jumpy", ->
             expect(labels[83].innerHTML).toBe 'df'
         it "clears beacon effect", ->
             expect(textEditorElement.
-                querySelectorAll('cursors .cursor.beacon')).not.toExist()
+                querySelectorAll('cursors .cursor.beacon').length).toBe 0
         it "only uses jumpy keymaps", ->
             expect(atom.keymaps.keyBindings.length).toBe (26 * 2) + 5 + 1
 
@@ -192,13 +192,14 @@ describe "Jumpy", ->
             expect(cursorPosition.row).toBe 6
             expect(cursorPosition.column).toBe 12
 
-    xdescribe "when the jumpy:toggle event is triggered
+    describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
         it "the beacon animation class is added", ->
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
-            expect(textEditorElement.querySelectorAll('.beacon'))
-                .toExist()
+            expect(textEditorElement.shadowRoot
+                .querySelectorAll('.beacon').length)
+                .toBe 1
         it "the beacon animation class is removed", ->
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             waitsFor ->
@@ -206,12 +207,12 @@ describe "Jumpy", ->
                     atom.commands.dispatch workspaceElement, 'jumpy:c'
                 ,100 + 10 # max default I'd probably use + a buffer
             runs ->
-                expect(textEditorElement.querySelectorAll('.beacon'))
-                    .not.toExist()
+                expect(textEditorElement.shadowRoot
+                    .querySelectorAll('.beacon').length)
+                    .toBe 0
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
-            expect(document.querySelector('#status-bar-jumpy')).toExist()
             expect(document.querySelector('#status-bar-jumpy .status').innerHTML)
                 .toBe 'Jump Mode!'
 
