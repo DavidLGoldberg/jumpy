@@ -41,6 +41,7 @@ class JumpyView extends View
 
   initialize: ->
     @charPairs = null
+    @labelElement = null
     @disposables = new CompositeDisposable()
     # TODO: consider moving this into toggle for new bindings.
     @backedUpKeyBindings = atom.keymaps.getKeyBindings()
@@ -88,9 +89,6 @@ class JumpyView extends View
           @jump() # Jump first.  Currently need the placement of the labels.
           @clearJumpMode()
 
-  getChars: ->
-    @firstChar + @secondChar
-
   clearChars: ->
     @firstChar = null
     @secondChar = null
@@ -130,25 +128,6 @@ class JumpyView extends View
 
     @jumpyKeymaps
 
-  drawLabels: (editor, position, labelContainer, labels) ->
-    return unless labels.length
-
-    label = labels.shift()
-    @allPositions[label] = {editor: editor.id, position}
-    editorView = atom.views.getView(editor)
-    pixelPosition = editorView.pixelPositionForScreenPosition position
-
-    {fontSize, highContrast} = @getLabelPreference()
-    labelElement =
-      $("<div class='jumpy label'>#{label}</div>")
-        .css
-          left: pixelPosition.left - editor.getScrollLeft()
-          top: pixelPosition.top - editor.getScrollTop()
-          fontSize: fontSize
-
-    labelElement.addClass 'high-contrast' if highContrast
-    $(labelContainer).append labelElement
-
   getLabelPreference: ->
     fontSize = atom.config.get 'jumpy.fontSize'
     fontSize = .75 if isNaN(fontSize) or fontSize > 1
@@ -156,93 +135,129 @@ class JumpyView extends View
     highContrast = atom.config.get 'jumpy.highContrast'
     {fontSize, highContrast}
 
+  addLabelContainer: (editorView) ->
+    editorView.classList.add 'jumpy-jump-mode'
+    div = document.createElement("div")
+    div.classList.add "jumpy", "jumpy-label-container"
+    overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+    overlayer.appendChild div
+    div
+
+  removeLabelContainer: (editorView) ->
+    overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+    $(overlayer).find('.jumpy').remove()
+    editorView.classList.remove 'jumpy-jump-mode'
+
   toggle: ->
-      @clearJumpMode()
-      @cleared = false # Set dirty for @clearJumpMode
+    @clearJumpMode()
+    @cleared = false # Set dirty for @clearJumpMode
 
-      # TODO: Can the following few lines be singleton'd up? ie. instance var?
-      wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
-      @replaceKeymaps @getJumpyKeyMaps()
-      @statusBarManager.update 'Jump Mode!'
-      @statusBarManager.show()
-      @allPositions = {}
-      labels = @getCharPairs()
+    # TODO: Can the following few lines be singleton'd up? ie. instance var?
+    wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
+    @replaceKeymaps @getJumpyKeyMaps()
 
-      # @disposables.add atom.workspace.observeTextEditors (editor) =>
-      for editor in @getVisibleEditor()
-          editorView = atom.views.getView(editor)
-          $editorView = $(editorView)
-          return if $editorView.is ':not(:visible)'
+    @statusBarManager.update 'Jump Mode!'
+    @statusBarManager.show()
+    @jumpTarget = {}
 
-          editorView.classList.add 'jumpy-jump-mode'
-          overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-          $(overlayer).append '<div class="jumpy jumpy-label-container"></div>'
-          labelContainer = overlayer.querySelector '.jumpy-label-container'
+    labels = @getCharPairs()
 
-          [startRow, endRow] = editor.getVisibleRowRange()
-          for row in [startRow..endRow]
-              if editor.isFoldedAtScreenRow row
-                  point = new Point(row, 0)
-                  @drawLabels editor, point, labelContainer, labels
-              else
-                  lineContents = editor.lineTextForScreenRow row
-                  while ((word = wordsPattern.exec(lineContents)) != null)
-                      point = new Point(row, word.index)
-                      @drawLabels editor, point, labelContainer, labels
+    for editor in @getVisibleEditor()
+      # wordRegExp = editor.getLastCursor().wordRegExp()
+      editorView = atom.views.getView(editor)
+      label2point = {}
 
-          @initializeClearEvents(editor, editorView)
+      [startRow, endRow] = editor.getVisibleRowRange()
+      for row in [startRow..endRow]
+        if editor.isFoldedAtScreenRow row
+          label2point[labels.shift()] = new Point(row, 0)
+        else
+          lineContents = editor.lineTextForScreenRow row
+          while match = wordsPattern.exec(lineContents)
+            label2point[labels.shift()] = new Point(row, match.index)
 
-  initializeClearEvents: (editor, editorView) ->
-    @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
-    @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
+      @jumpTarget[editor.id] = label2point
+      @renderLabels editor, label2point
+      # @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
+      # @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
 
-    for e in ['blur', 'click']
-      editorView.addEventListener e, @clearJumpMode.bind(@), true
+      for e in ['blur', 'click']
+        editorView.addEventListener e, @clearJumpMode.bind(@), true
+
+  # Return base element for labelElement
+  getLabelElement: ->
+    return @labelElement.cloneNode() if @labelElement?
+
+    {fontSize, highContrast} = @getLabelPreference()
+    elem = document.createElement "div"
+    elem.classList.add "jumpy", "label"
+    elem.classList.add "high-contrast" if highContrast
+    elem.style.fontSize = fontSize
+    @labelElement = elem
+
+    @labelElement.cloneNode()
+
+  # Return intividual labelElement
+  createLabelElement: (label, px, scrollLeft, scrollTop) ->
+    elem             = @getLabelElement()
+    elem.textContent = label
+    elem.style.left  = "#{px.left - scrollLeft}px"
+    elem.style.top   = "#{px.top - scrollTop}px"
+    elem
+
+  renderLabels: (editor, label2point, preference) ->
+    editorView = atom.views.getView(editor)
+    scrollLeft = editor.getScrollLeft()
+    scrollTop  = editor.getScrollTop()
+    container = @addLabelContainer editorView
+
+    for label, position of label2point
+      px = editorView.pixelPositionForScreenPosition position
+      container.appendChild(@createLabelElement label, px, scrollLeft, scrollTop)
+
+  getTarget: (label) ->
+    for editorID, label2point of @jumpTarget
+      if position = label2point[label]
+        console.log "found"
+        return {editor: editorID, position}
+
+  getLabel: ->
+    @firstChar + @secondChar
 
   jump: ->
-    inputs = @getChars()
-    unless location = @allPositions[inputs]
-      console.log "Jumpy canceled jump.  No location found."
+    label = @getLabel()
+    unless target = @getTarget(label)
+      console.log "Jumpy canceled jump.  No target found."
       return
 
     return unless editor = _.detect @getVisibleEditor(), (_editor) ->
-      _editor.id is location.editor
+      _editor.id is Number(target.editor)
 
     editorView = atom.views.getView editor
     atom.workspace.paneForItem(editor).activate()
 
-    {position} = location
+    {position} = target
     if (editor.getSelections().length is 1) and (not editor.getLastSelection().isEmpty())
       editor.selectToScreenPosition position
     else
       editor.setCursorScreenPosition position
 
     {row, column} = position
-    console.log "Jumpy jumped to: '#{inputs} at #{row}:#{column}"
+    console.log "Jumpy jumped to: '#{label} at #{row}:#{column}"
 
-    # if atom.config.get('jumpy.useHomingBeaconEffectOnJumps')
-    #   cursor = editorView.shadowRoot.querySelector '.cursors .cursor'
-    #   if cursor
-    #     cursor.classList.add 'beacon'
-    #     setTimeout ->
-    #       cursor.classList.remove 'beacon'
-    #     , 150
   clearJumpMode: ->
-    if @cleared
-      return
-
+    return if @cleared
     @cleared = true
+
     @clearChars()
     @statusBarManager.hide()
     for editor in @getVisibleEditor()
       editorView = atom.views.getView(editor)
-      return if $(editorView).is ':not(:visible)'
-      overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-      $(overlayer).find('.jumpy').remove()
-      editorView.classList.remove 'jumpy-jump-mode'
+      @removeLabelContainer editorView
       for e in ['blur', 'click']
         editorView.removeEventListener e, @clearJumpMode.bind(@), true
 
+    # Restore keymaps
     @replaceKeymaps @backedUpKeyBindings
     @disposables?.dispose()
     @detach()
