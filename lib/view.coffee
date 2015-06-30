@@ -1,15 +1,12 @@
-{CompositeDisposable, Point} = require 'atom'
-{View, $} = require 'space-pen'
+{Point} = require 'atom'
 _ = require 'underscore-plus'
 
 lowerCharacters = "abcdefghijklmnopqrstuvwxyz".split('')
 upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
 
+# [FIXME] This class is not simple View, its essencially controller.
 module.exports =
-class JumpyView extends View
-  @content: ->
-    @div ''
-
+class JumpyView
   getLabels: ->
     return @labels.slice() if @labels?
     @labels = []
@@ -27,10 +24,9 @@ class JumpyView extends View
 
     @labels
 
-  initialize: (@statusBarManager) ->
+  constructor: (@statusBarManager) ->
     @labels = null
-    @labelElement = null
-    @disposables = new CompositeDisposable()
+    @baseElement = null
     # TODO: consider moving this into toggle for new bindings.
     @backedUpKeyBindings = atom.keymaps.getKeyBindings()
 
@@ -50,14 +46,14 @@ class JumpyView extends View
       when 0
         status = 'No match!'
       when 1
-        status = ''
         @jump @candidates.shift()
         @clearJumpMode()
       else
         @firstChar = char
         status = @firstChar
-        _.each @irrelevants, ({element}) ->
+        for {element} in @irrelevants
           element.classList.add 'irrelevant'
+
     @statusBarManager.update status
 
   reset: ->
@@ -78,7 +74,6 @@ class JumpyView extends View
     getFilteredJumpyKeys = ->
       atom.keymaps.keyBindings.filter (keymap) ->
         keymap.command.indexOf('jumpy') > -1
-        #   .indexOf('jumpy') > -1 if typeof keymap.command is 'string'
 
     @jumpyKeymaps = getFilteredJumpyKeys()
     # Don't think I need a corresponding unobserve
@@ -95,11 +90,11 @@ class JumpyView extends View
     {fontSize, highContrast}
 
   addLabelContainer: (editorView) ->
-    div = document.createElement("div")
-    div.classList.add "jumpy", "jumpy-label-container"
+    container = document.createElement("div")
+    container.classList.add "jumpy", "jumpy-label-container"
     overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-    overlayer.appendChild div
-    div
+    overlayer.appendChild container
+    container
 
   newTarget: (editorView, label, row, column) ->
     position = new Point(row, column)
@@ -124,8 +119,6 @@ class JumpyView extends View
       @labelContainers[editor.id] = labelContainer
       _.extend(@label2target, label2target)
 
-      # @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
-      # @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
       for event in ['blur', 'click']
         editorView.addEventListener event, @clearJumpMode.bind(@), true
 
@@ -157,22 +150,22 @@ class JumpyView extends View
 
   # Return intividual labelElement
   createLabelElement: (label, px, scrollLeft, scrollTop) ->
-    elem             = @getBaseLabelElement()
+    elem             = @getBaseElement()
     elem.textContent = label
     elem.style.left  = "#{px.left - scrollLeft}px"
     elem.style.top   = "#{px.top - scrollTop}px"
     elem
 
   # Return base element for labelElement
-  getBaseLabelElement: ->
-    return @labelElement.cloneNode() if @labelElement?
+  getBaseElement: ->
+    return @baseElement.cloneNode() if @baseElement?
     {fontSize, highContrast} = @getLabelPreference()
     klasses = ['jumpy', 'label']
     klasses.push 'high-contrast' if highContrast
-    @labelElement = document.createElement "div"
-    @labelElement.classList.add klasses...
-    @labelElement.style.fontSize = fontSize
-    @labelElement.cloneNode()
+    @baseElement = document.createElement "div"
+    @baseElement.classList.add klasses...
+    @baseElement.style.fontSize = fontSize
+    @baseElement.cloneNode()
 
   jump: ({label, editorView, position}) ->
     editor = editorView.getModel()
@@ -184,7 +177,7 @@ class JumpyView extends View
       editor.setCursorScreenPosition position
 
     {row, column} = position
-    console.log "Jumpy jumped to: '#{label} at #{row}:#{column}"
+    # console.log "Jumpy jumped to: '#{label} at #{row}:#{column}"
 
   clearJumpMode: ->
     @firstChar = null
@@ -199,11 +192,10 @@ class JumpyView extends View
 
     # Restore keymaps
     @replaceKeymaps @backedUpKeyBindings
-    @disposables?.dispose()
-    @detach()
+    # @detach()
 
   destroy: ->
-    console.log 'Jumpy: "destroy" called.'
+    # console.log 'Jumpy: "destroy" called.'
     @clearJumpMode()
 
   getVisibleEditor: ->
