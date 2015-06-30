@@ -3,10 +3,10 @@
 This is fork of [DavidLGoldberg/jumpy](https://github.com/DavidLGoldberg/jumpy).
 Purpose of this fork is...
 
-* Refactoring
+* Refactoring. renaming, separate file etc.
 * Performance Improvement(Eliminate lot of unnecessary observation etc.).
 * Understand how it works by re-writing, refactoring.
-* Understand how it work to create cursor jumping package by myself.
+* Understand how it work to create cursor jumping package by myself(main purpose).
 
 END of note by t9md
 
