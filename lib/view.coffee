@@ -7,7 +7,7 @@
 # TODO: Investigate using markers, else my own custom elements.
 # TODO: Remove space-pen? Probably alongside markers todo above.
 
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, Point} = require 'atom'
 {View, $} = require 'space-pen'
 _ = require 'lodash'
 
@@ -88,18 +88,17 @@ class JumpyView extends View
           @jump() # Jump first.  Currently need the placement of the labels.
           @clearJumpMode()
 
+  getChars: ->
+    @firstChar + @secondChar
+
   clearChars: ->
     @firstChar = null
     @secondChar = null
 
-  getVisibleEditor: (URI) ->
+  getVisibleEditor: ->
     editors = atom.workspace.getPanes()
       .map    (pane)   -> pane.getActiveEditor()
       .filter (editor) -> editor?
-
-    if URI
-      editors = editors.filter (editor) ->
-        editor.getURI() is URI
     editors
 
   reset: ->
@@ -112,44 +111,62 @@ class JumpyView extends View
 
     @statusBarManager.update 'Jump Mode!'
 
+  # Disable partial match timeout temporarily is more lighter approarch?
   replaceKeymaps: (keyBindings) ->
     atom.keymaps.keyBindings = keyBindings
-
-  getFilteredJumpyKeys: ->
-    atom.keymaps.keyBindings.filter (keymap) ->
-      keymap.command.indexOf('jumpy') > -1
-      #   .indexOf('jumpy') > -1 if typeof keymap.command is 'string'
 
   getJumpyKeyMaps: ->
     return @jumpyKeymaps if @jumpyKeymaps
 
-    @jumpyKeymaps = @getFilteredJumpyKeys()
+    getFilteredJumpyKeys = ->
+      atom.keymaps.keyBindings.filter (keymap) ->
+        keymap.command.indexOf('jumpy') > -1
+        #   .indexOf('jumpy') > -1 if typeof keymap.command is 'string'
+
+    @jumpyKeymaps = getFilteredJumpyKeys()
     # Don't think I need a corresponding unobserve
     Object.observe atom.keymaps.keyBindings, =>
-      @jumpyKeymaps = @getFilteredJumpyKeys()
+      @jumpyKeymaps = getFilteredJumpyKeys()
 
     @jumpyKeymaps
 
-  # Disable partial match timeout temporarily is more lighter approarch?
+  drawLabels: (editor, position, labelContainer, labels) ->
+    return unless labels.length
+
+    label = labels.shift()
+    @allPositions[label] = {editor: editor.id, position}
+    editorView = atom.views.getView(editor)
+    pixelPosition = editorView.pixelPositionForScreenPosition position
+
+    {fontSize, highContrast} = @getLabelPreference()
+    labelElement =
+      $("<div class='jumpy label'>#{label}</div>")
+        .css
+          left: pixelPosition.left - editor.getScrollLeft()
+          top: pixelPosition.top - editor.getScrollTop()
+          fontSize: fontSize
+
+    labelElement.addClass 'high-contrast' if highContrast
+    $(labelContainer).append labelElement
+
+  getLabelPreference: ->
+    fontSize = atom.config.get 'jumpy.fontSize'
+    fontSize = .75 if isNaN(fontSize) or fontSize > 1
+    fontSize = (fontSize * 100) + '%'
+    highContrast = atom.config.get 'jumpy.highContrast'
+    {fontSize, highContrast}
 
   toggle: ->
       @clearJumpMode()
-      # Set dirty for @clearJumpMode
-      @cleared = false
+      @cleared = false # Set dirty for @clearJumpMode
 
       # TODO: Can the following few lines be singleton'd up? ie. instance var?
       wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
-      fontSize = atom.config.get 'jumpy.fontSize'
-      fontSize = .75 if isNaN(fontSize) or fontSize > 1
-      fontSize = (fontSize * 100) + '%'
-      highContrast = atom.config.get 'jumpy.highContrast'
-
       @replaceKeymaps @getJumpyKeyMaps()
       @statusBarManager.update 'Jump Mode!'
       @statusBarManager.show()
-
       @allPositions = {}
-      nextKeys = @getCharPairs()
+      labels = @getCharPairs()
 
       # @disposables.add atom.workspace.observeTextEditors (editor) =>
       for editor in @getVisibleEditor()
@@ -162,76 +179,25 @@ class JumpyView extends View
           $(overlayer).append '<div class="jumpy jumpy-label-container"></div>'
           labelContainer = overlayer.querySelector '.jumpy-label-container'
 
-          drawLabels = (column, labelContainer) =>
-              return unless nextKeys.length
-
-              keyLabel = nextKeys.shift()
-              position = {row: lineNumber, column: column}
-              # creates a reference:
-              @allPositions[keyLabel] = {
-                  editor: editor.id
-                  position: position
-              }
-              pixelPosition = editorView
-                  .pixelPositionForScreenPosition [lineNumber,
-                  column]
-              labelElement =
-                  $("<div class='jumpy label'>#{keyLabel}</div>")
-                      .css
-                          left: pixelPosition.left - editor.getScrollLeft()
-                          top: pixelPosition.top - editor.getScrollTop()
-                          fontSize: fontSize
-              if highContrast
-                  labelElement.addClass 'high-contrast'
-              $(labelContainer)
-                  .append labelElement
-
-          [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
-          for lineNumber in [firstVisibleRow...lastVisibleRow]
-              lineContents = editor.lineTextForScreenRow(lineNumber)
-              if editor.isFoldedAtScreenRow(lineNumber)
-                  drawLabels 0, labelContainer
+          [startRow, endRow] = editor.getVisibleRowRange()
+          for row in [startRow..endRow]
+              if editor.isFoldedAtScreenRow row
+                  point = new Point(row, 0)
+                  @drawLabels editor, point, labelContainer, labels
               else
+                  lineContents = editor.lineTextForScreenRow row
                   while ((word = wordsPattern.exec(lineContents)) != null)
-                      drawLabels word.index, labelContainer
+                      point = new Point(row, word.index)
+                      @drawLabels editor, point, labelContainer, labels
 
           @initializeClearEvents(editor, editorView)
 
-  clearJumpModeHandler: (e) =>
-      @clearJumpMode()
-
   initializeClearEvents: (editor, editorView) ->
-      @disposables.add editor.onDidChangeScrollTop =>
-          @clearJumpModeHandler()
-      @disposables.add editor.onDidChangeScrollLeft =>
-          @clearJumpModeHandler()
+    @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
+    @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
 
-      for e in ['blur', 'click']
-          editorView.addEventListener e, @clearJumpModeHandler, true
-
-  clearJumpMode: ->
-    if @cleared
-      return
-
-    @cleared = true
-    @clearChars()
-    @statusBarManager.hide()
-    for editor in @getVisibleEditor()
-      editorView = atom.views.getView(editor)
-      return if $(editorView).is ':not(:visible)'
-      overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-      $(overlayer).find('.jumpy').remove()
-      editorView.classList.remove 'jumpy-jump-mode'
-      for e in ['blur', 'click']
-        editorView.removeEventListener e, @clearJumpModeHandler, true
-
-    @replaceKeymaps @backedUpKeyBindings
-    # atom.keymaps.keyBindings = @backedUpKeyBindings
-    @disposables?.dispose()
-    @detach()
-
-  getChars: ->
-    @firstChar + @secondChar
+    for e in ['blur', 'click']
+      editorView.addEventListener e, @clearJumpMode.bind(@), true
 
   jump: ->
     inputs = @getChars()
@@ -261,8 +227,26 @@ class JumpyView extends View
     #     setTimeout ->
     #       cursor.classList.remove 'beacon'
     #     , 150
+  clearJumpMode: ->
+    if @cleared
+      return
 
-  # Tear down any state and detach
+    @cleared = true
+    @clearChars()
+    @statusBarManager.hide()
+    for editor in @getVisibleEditor()
+      editorView = atom.views.getView(editor)
+      return if $(editorView).is ':not(:visible)'
+      overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+      $(overlayer).find('.jumpy').remove()
+      editorView.classList.remove 'jumpy-jump-mode'
+      for e in ['blur', 'click']
+        editorView.removeEventListener e, @clearJumpMode.bind(@), true
+
+    @replaceKeymaps @backedUpKeyBindings
+    @disposables?.dispose()
+    @detach()
+
   destroy: ->
     console.log 'Jumpy: "destroy" called.'
     @clearJumpMode()
