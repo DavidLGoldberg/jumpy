@@ -29,48 +29,44 @@ class JumpyView extends View
 
   initialize: (@statusBarManager) ->
     @labels = null
-    @jumpTarget = new Map()
     @labelElement = null
     @disposables = new CompositeDisposable()
     # TODO: consider moving this into toggle for new bindings.
     @backedUpKeyBindings = atom.keymaps.getKeyBindings()
-    @workspaceElement = atom.views.getView(atom.workspace)
 
   getKey: (char) ->
     chars = if @firstChar then @firstChar + char else char
-    labels = _.keys @label2Element
-    [candidates, irrelevants] = _.partition labels, (label) ->
-      ///^#{chars}///.test label
 
-    if candidates.length is 0
-      @statusBarManager.noMatch()
-    else if candidates.length is 1
-      @jump chars
-      @clearJumpMode()
-    else
-      for irrelevant in irrelevants
-        elem = @label2Element[irrelevant]
-        elem.classList.add 'irrelevant'
-        @irrelevants.push elem
-        # @label2Element[irrelevant].classList.add 'irrelevant'
-      @statusBarManager.update @firstChar
-      @firstChar = char
+    status = ''
+    @candidates = []
+    @irrelevants = []
+    for label, target of @label2target
+      if ///^#{chars}///.test label
+        @candidates.push target
+      else
+        @irrelevants.push target
 
-  clearChars: ->
-    @firstChar = null
-
-  getVisibleEditor: ->
-    editors = atom.workspace.getPanes()
-      .map    (pane)   -> pane.getActiveEditor()
-      .filter (editor) -> editor?
-    editors
+    switch @candidates.length
+      when 0
+        status = 'No match!'
+      when 1
+        status = ''
+        @jump @candidates.shift()
+        @clearJumpMode()
+      else
+        @firstChar = char
+        status = @firstChar
+        _.each @irrelevants, ({element}) ->
+          element.classList.add 'irrelevant'
+    @statusBarManager.update status
 
   reset: ->
-    @clearChars()
-    @irrelevants.forEach (elem) ->
-      elem.classList.remove 'irrelevant'
-    @statusBarManager.update 'Jump Mode!'
+    @firstChar = null
+    for {element} in @irrelevants
+      element.classList.remove 'irrelevant'
+    @statusBarManager.init()
     @irrelevants = []
+    @candidates = []
 
   # Disable partial match timeout temporarily is more lighter approarch?
   replaceKeymaps: (keyBindings) ->
@@ -99,100 +95,87 @@ class JumpyView extends View
     {fontSize, highContrast}
 
   addLabelContainer: (editorView) ->
-    editorView.classList.add 'jumpy-jump-mode'
     div = document.createElement("div")
     div.classList.add "jumpy", "jumpy-label-container"
     overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
     overlayer.appendChild div
     div
 
-  removeLabelContainer: (editorView) ->
-    overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-    $(overlayer).find('.jumpy').remove()
-    editorView.classList.remove 'jumpy-jump-mode'
+  newTarget: (editorView, label, row, column) ->
+    position = new Point(row, column)
+    px = editorView.pixelPositionForScreenPosition position
+    editor = editorView.getModel()
+    scrollLeft = editor.getScrollLeft()
+    scrollTop  = editor.getScrollTop()
+    element    = @createLabelElement label, px, scrollLeft, scrollTop
+    {label, editorView, position, px, element}
 
-  toggle: ->
-    @clearJumpMode()
-    @cleared = false # Set dirty for @clearJumpMode
-    @irrelevants = []
-
-    # TODO: Can the following few lines be singleton'd up? ie. instance var?
-    wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
-    @replaceKeymaps @getJumpyKeyMaps()
-
-    @statusBarManager.update 'Jump Mode!'
-    @statusBarManager.show()
-    @jumpTarget.clear()
-    @label2Element = {}
-
+  eachVisibleEditor: (callback) ->
     labels = @getLabels()
     for editor in @getVisibleEditor()
-      label2point = {}
+      editorView = atom.views.getView(editor)
+      editorView.classList.add 'jumpy-jump-mode'
+
+      label2target = callback(labels, editor, editorView)
+
+      labelContainer = @addLabelContainer editorView
+      for label, {element} of label2target
+        labelContainer.appendChild(element)
+      @labelContainers[editor.id] = labelContainer
+      _.extend(@label2target, label2target)
+
+      # @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
+      # @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
+      for event in ['blur', 'click']
+        editorView.addEventListener event, @clearJumpMode.bind(@), true
+
+  toggle: ->
+    @labelContainers = {}
+    @irrelevants     = []
+    @candidates      = []
+    @label2target    = {}
+    @replaceKeymaps @getJumpyKeyMaps()
+    @statusBarManager.init()
+
+    # TODO: Can the following few lines be singleton'd up? ie. instance var?
+    wordsPattern = new RegExp(atom.config.get('jumpy.matchPattern'), 'g')
+
+    @eachVisibleEditor (labels, editor, editorView) =>
+      label2target = {}
       [startRow, endRow] = editor.getVisibleRowRange()
       for row in [startRow..endRow]
         if editor.isFoldedAtScreenRow row
-          label2point[labels.shift()] = new Point(row, 0)
+          label = labels.shift()
+          label2target[label] = @newTarget(editorView, label, row, 0)
         else
           lineContents = editor.lineTextForScreenRow row
           while match = wordsPattern.exec(lineContents)
-            label2point[labels.shift()] = new Point(row, match.index)
+            label = labels.shift()
+            label2target[label] = @newTarget(editorView, label, row, match.index)
 
-      @jumpTarget.set editor, label2point
-      @renderLabels editor, label2point
-      # @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
-      # @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
-
-      editorView = atom.views.getView(editor)
-      for e in ['blur', 'click']
-        editorView.addEventListener e, @clearJumpMode.bind(@), true
-
-  # Return base element for labelElement
-  getLabelElement: ->
-    return @labelElement.cloneNode() if @labelElement?
-    {fontSize, highContrast} = @getLabelPreference()
-    elem = document.createElement "div"
-    elem.classList.add "jumpy", "label"
-    elem.classList.add "high-contrast" if highContrast
-    elem.style.fontSize = fontSize
-    @labelElement = elem
-
-    @labelElement.cloneNode()
+      label2target
 
   # Return intividual labelElement
   createLabelElement: (label, px, scrollLeft, scrollTop) ->
-    elem             = @getLabelElement()
+    elem             = @getBaseLabelElement()
     elem.textContent = label
     elem.style.left  = "#{px.left - scrollLeft}px"
     elem.style.top   = "#{px.top - scrollTop}px"
     elem
 
-  renderLabels: (editor, label2point, preference) ->
-    editorView = atom.views.getView(editor)
-    scrollLeft = editor.getScrollLeft()
-    scrollTop  = editor.getScrollTop()
-    container = @addLabelContainer editorView
+  # Return base element for labelElement
+  getBaseLabelElement: ->
+    return @labelElement.cloneNode() if @labelElement?
+    {fontSize, highContrast} = @getLabelPreference()
+    klasses = ['jumpy', 'label']
+    klasses.push 'high-contrast' if highContrast
+    @labelElement = document.createElement "div"
+    @labelElement.classList.add klasses...
+    @labelElement.style.fontSize = fontSize
+    @labelElement.cloneNode()
 
-    for label, position of label2point
-      px = editorView.pixelPositionForScreenPosition position
-      elem = @createLabelElement label, px, scrollLeft, scrollTop
-      @label2Element[label] = elem
-      container.appendChild(elem)
-
-  getTarget: (label) ->
-    iterator = @jumpTarget.entries()
-    while value = iterator.next().value
-      [editor, label2point] = value
-      if position = label2point[label]
-        return {editor, position}
-    return null
-
-  jump: (label) ->
-    unless target = @getTarget label
-      console.log "Jumpy canceled jump.  No target found."
-      return
-
-    {editor, position} = target
-    editorView = atom.views.getView editor
+  jump: ({label, editorView, position}) ->
+    editor = editorView.getModel()
     atom.workspace.paneForItem(editor).activate()
 
     if (editor.getSelections().length is 1) and (not editor.getLastSelection().isEmpty())
@@ -204,15 +187,15 @@ class JumpyView extends View
     console.log "Jumpy jumped to: '#{label} at #{row}:#{column}"
 
   clearJumpMode: ->
-    return if @cleared
-    @cleared = true
-    @clearChars()
+    @firstChar = null
     @statusBarManager.hide()
     for editor in @getVisibleEditor()
       editorView = atom.views.getView(editor)
-      @removeLabelContainer editorView
-      for e in ['blur', 'click']
-        editorView.removeEventListener e, @clearJumpMode.bind(@), true
+      @labelContainers[editor.id]?.remove()
+      editorView.classList.remove 'jumpy-jump-mode'
+
+      for event in ['blur', 'click']
+        editorView.removeEventListener event, @clearJumpMode.bind(@), true
 
     # Restore keymaps
     @replaceKeymaps @backedUpKeyBindings
@@ -222,3 +205,9 @@ class JumpyView extends View
   destroy: ->
     console.log 'Jumpy: "destroy" called.'
     @clearJumpMode()
+
+  getVisibleEditor: ->
+    editors = atom.workspace.getPanes()
+      .map    (pane)   -> pane.getActiveEditor()
+      .filter (editor) -> editor?
+    editors

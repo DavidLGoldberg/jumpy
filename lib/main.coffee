@@ -27,7 +27,7 @@ module.exports =
   config: Config
 
   activate: ->
-    @subscriptions = new CompositeDisposable
+    @subscriptions    = new CompositeDisposable
     @statusBarManager = new StatusBarManager
 
     lowerCharacters = "abcdefghijklmnopqrstuvwxyz"
@@ -55,5 +55,4 @@ module.exports =
 
   deactivate: ->
     @view?.destroy()
-    @commands?.dispose()
     @subscriptions.dispose()

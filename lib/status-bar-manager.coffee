@@ -17,16 +17,22 @@ class StatusBarManager
 
   hide: ->
     @element.style.display = 'none'
+    @update ''
 
   show: ->
     @element.style.display = 'inline-block'
 
-  noMatch: ->
-    @update 'No match!'
-    @element.classList.add 'no-match'
+  init: ->
+    @show()
+    @update 'Jump Mode!'
+
 
   update: (text) ->
-    @element.classList.remove 'no-match'
+    if text is 'No match!'
+      @element.classList.add 'no-match'
+    else
+      @element.classList.remove 'no-match'
+
     @span.textContent = text
 
   attach: ->
