@@ -1,3 +1,4 @@
+"use 6to5"
 # Shortly after 2.0 release action items:
 # (need to rush release a little bit because
 # the default shadow dom option has been enabled by atom!)
@@ -41,6 +42,7 @@ class JumpyView extends View
 
   initialize: ->
     @charPairs = null
+    @jumpTarget = new Map()
     @labelElement = null
     @disposables = new CompositeDisposable()
     # TODO: consider moving this into toggle for new bindings.
@@ -158,10 +160,9 @@ class JumpyView extends View
 
     @statusBarManager.update 'Jump Mode!'
     @statusBarManager.show()
-    @jumpTarget = {}
+    @jumpTarget.clear()
 
     labels = @getCharPairs()
-
     for editor in @getVisibleEditor()
       # wordRegExp = editor.getLastCursor().wordRegExp()
       editorView = atom.views.getView(editor)
@@ -176,7 +177,7 @@ class JumpyView extends View
           while match = wordsPattern.exec(lineContents)
             label2point[labels.shift()] = new Point(row, match.index)
 
-      @jumpTarget[editor.id] = label2point
+      @jumpTarget.set editor, label2point
       @renderLabels editor, label2point
       # @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
       # @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
@@ -216,27 +217,23 @@ class JumpyView extends View
       container.appendChild(@createLabelElement label, px, scrollLeft, scrollTop)
 
   getTarget: (label) ->
-    for editorID, label2point of @jumpTarget
+    iterator = @jumpTarget.entries()
+    while value = iterator.next().value
+      [editor, label2point] = value
       if position = label2point[label]
-        console.log "found"
-        return {editor: editorID, position}
-
-  getLabel: ->
-    @firstChar + @secondChar
+        return {editor, position}
+    return null
 
   jump: ->
-    label = @getLabel()
-    unless target = @getTarget(label)
+    label = @firstChar + @secondChar
+    unless target = @getTarget label
       console.log "Jumpy canceled jump.  No target found."
       return
 
-    return unless editor = _.detect @getVisibleEditor(), (_editor) ->
-      _editor.id is Number(target.editor)
-
+    {editor, position} = target
     editorView = atom.views.getView editor
     atom.workspace.paneForItem(editor).activate()
 
-    {position} = target
     if (editor.getSelections().length is 1) and (not editor.getLastSelection().isEmpty())
       editor.selectToScreenPosition position
     else
