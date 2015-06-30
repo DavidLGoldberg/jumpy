@@ -78,7 +78,7 @@ class JumpyView
 
     getFilteredJumpyKeys = ->
       atom.keymaps.keyBindings.filter (keymap) ->
-        keymap.command.indexOf('jumpy') > -1
+        keymap.command.indexOf('jumpy') > -1 if typeof keymap.command is 'string'
 
     @jumpyKeymaps = getFilteredJumpyKeys()
     # Don't think I need a corresponding unobserve
