@@ -22,7 +22,7 @@ class JumpyView
       for c2 in upperCharacters
         @labels.push c1 + c2
 
-    @labels
+    @labels.slice()
 
   constructor: (@statusBarManager) ->
     @labels = null
@@ -30,17 +30,22 @@ class JumpyView
     # TODO: consider moving this into toggle for new bindings.
     @backedUpKeyBindings = atom.keymaps.getKeyBindings()
 
+  classifyTarget: (label2target, callback) ->
+    candidates = []
+    irrelevants = []
+    for label, target of label2target
+      if callback(label)
+        candidates.push target
+      else
+        irrelevants.push target
+    [candidates, irrelevants]
+
   getKey: (char) ->
     chars = if @firstChar then @firstChar + char else char
-
     status = ''
-    @candidates = []
-    @irrelevants = []
-    for label, target of @label2target
-      if ///^#{chars}///.test label
-        @candidates.push target
-      else
-        @irrelevants.push target
+    labelPattern = ///^#{chars}///
+    [@candidates, @irrelevants] = @classifyTarget @label2target, (label) ->
+      labelPattern.test label
 
     switch @candidates.length
       when 0
@@ -105,7 +110,7 @@ class JumpyView
     element    = @createLabelElement label, px, scrollLeft, scrollTop
     {label, editorView, position, px, element}
 
-  eachVisibleEditor: (callback) ->
+  prepareTarget: (callback) ->
     labels = @getLabels()
     for editor in @getVisibleEditor()
       editorView = atom.views.getView(editor)
@@ -133,7 +138,7 @@ class JumpyView
     # TODO: Can the following few lines be singleton'd up? ie. instance var?
     wordsPattern = new RegExp(atom.config.get('jumpy.matchPattern'), 'g')
 
-    @eachVisibleEditor (labels, editor, editorView) =>
+    @prepareTarget (labels, editor, editorView) =>
       label2target = {}
       [startRow, endRow] = editor.getVisibleRowRange()
       for row in [startRow..endRow]
