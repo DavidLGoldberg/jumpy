@@ -1,6 +1,6 @@
 {
   "name": "jumpy",
-  "main": "./lib/jumpy",
+  "main": "./lib/main",
   "version": "2.0.9",
   "description": "An Atom package that creates dynamic hotkeys to jump around files across visible panes.",
   "keywords": [
@@ -22,13 +22,20 @@
       "jumpy:toggle"
     ]
   },
+  "consumedServices": {
+    "status-bar": {
+      "versions": {
+        "^1.0.0": "consumeStatusBar"
+      }
+    }
+  },
   "repository": "https://github.com/DavidLGoldberg/jumpy",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "lodash": "^2.4.1",
+    "lodash": "^2.4.2",
     "space-pen": "^4.2.2"
   }
 }
