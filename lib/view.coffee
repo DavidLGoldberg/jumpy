@@ -1,13 +1,3 @@
-"use 6to5"
-# Shortly after 2.0 release action items:
-# (need to rush release a little bit because
-# the default shadow dom option has been enabled by atom!)
-# FIXME: Beacon code (currently broken in shadow).  This will probably return
-# in the form of a decoration with a "flash", not sure yet.
-# TODO: Merge in @willdady's code for better accuracy.
-# TODO: Investigate using markers, else my own custom elements.
-# TODO: Remove space-pen? Probably alongside markers todo above.
-
 {CompositeDisposable, Point} = require 'atom'
 {View, $} = require 'space-pen'
 _ = require 'underscore-plus'
@@ -54,26 +44,15 @@ class JumpyView extends View
 
     if candidates.length is 0
       @statusBarManager.noMatch()
-      return
-    if candidates.length is 1
-
-      # To get screenPositionForPixelPosition to work.
-      # Maybe need to use CustomElement like JumpyLabel and
-      #  let it have properties like `editor`, `jump` etc...
-
-      # elem = @label2Element[chars]
-      # left = Number(elem.style.left.slice(0, -2)) # remove `px` string
-      # top = Number(elem.style.top.slice(0, -2))
-      # console.log [top, left]
-      # for editor in @getVisibleEditor()
-      #   position = editor.screenPositionForPixelPosition {top, left}
-      #   console.log position
-
+    else if candidates.length is 1
       @jump chars
       @clearJumpMode()
     else
       for irrelevant in irrelevants
-        @label2Element[irrelevant].classList.add 'irrelevant'
+        elem = @label2Element[irrelevant]
+        elem.classList.add 'irrelevant'
+        @irrelevants.push elem
+        # @label2Element[irrelevant].classList.add 'irrelevant'
       @statusBarManager.update @firstChar
       @firstChar = char
 
@@ -88,13 +67,10 @@ class JumpyView extends View
 
   reset: ->
     @clearChars()
-    for editor in @getVisibleEditor()
-      editorView = atom.views.getView(editor)
-      overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-      $(overlayer).find '.irrelevant'
-        .removeClass 'irrelevant'
-
+    @irrelevants.forEach (elem) ->
+      elem.classList.remove 'irrelevant'
     @statusBarManager.update 'Jump Mode!'
+    @irrelevants = []
 
   # Disable partial match timeout temporarily is more lighter approarch?
   replaceKeymaps: (keyBindings) ->
@@ -138,6 +114,7 @@ class JumpyView extends View
   toggle: ->
     @clearJumpMode()
     @cleared = false # Set dirty for @clearJumpMode
+    @irrelevants = []
 
     # TODO: Can the following few lines be singleton'd up? ie. instance var?
     wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
