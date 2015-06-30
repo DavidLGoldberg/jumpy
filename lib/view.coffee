@@ -10,7 +10,7 @@
 
 {CompositeDisposable, Point} = require 'atom'
 {View, $} = require 'space-pen'
-_ = require 'lodash'
+_ = require 'underscore-plus'
 
 lowerCharacters = "abcdefghijklmnopqrstuvwxyz".split('')
 upperCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
@@ -20,80 +20,65 @@ class JumpyView extends View
   @content: ->
     @div ''
 
-  constructor: (@statusBarManager) ->
-    super()
-
-  getCharPairs: ->
-    return @charPairs.slice() if @charPairs?
-    @charPairs = []
+  getLabels: ->
+    return @labels.slice() if @labels?
+    @labels = []
     for c1 in lowerCharacters
       for c2 in lowerCharacters
-        @charPairs.push c1 + c2
+        @labels.push c1 + c2
 
     for c1 in upperCharacters
       for c2 in lowerCharacters
-        @charPairs.push c1 + c2
+        @labels.push c1 + c2
 
     for c1 in lowerCharacters
       for c2 in upperCharacters
-        @charPairs.push c1 + c2
+        @labels.push c1 + c2
 
-    @charPairs
+    @labels
 
-  initialize: ->
-    @charPairs = null
+  initialize: (@statusBarManager) ->
+    @labels = null
     @jumpTarget = new Map()
     @labelElement = null
     @disposables = new CompositeDisposable()
     # TODO: consider moving this into toggle for new bindings.
     @backedUpKeyBindings = atom.keymaps.getKeyBindings()
     @workspaceElement = atom.views.getView(atom.workspace)
-    # @initKeyFilters()
 
-  getKey: (character) ->
-      @statusBarManager.update()
+  getKey: (char) ->
+    chars = if @firstChar then @firstChar + char else char
+    labels = _.keys @label2Element
+    [candidates, irrelevants] = _.partition labels, (label) ->
+      ///^#{chars}///.test label
 
-      isMatchOfCurrentLabels = (character, labelPosition) =>
-          found = false
-          @disposables.add atom.workspace.observeTextEditors (editor) ->
-              editorView = atom.views.getView(editor)
-              return if $(editorView).is ':not(:visible)'
+    if candidates.length is 0
+      @statusBarManager.noMatch()
+      return
+    if candidates.length is 1
 
-              overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-              $(overlayer).find('.label:not(.irrelevant)').each (i, label) ->
-                  if label.innerHTML[labelPosition] == character
-                      found = true
-                      return false
-          return found
+      # To get screenPositionForPixelPosition to work.
+      # Maybe need to use CustomElement like JumpyLabel and
+      #  let it have properties like `editor`, `jump` etc...
 
-      # Assert: labelPosition will start at 0!
-      labelPosition = (if not @firstChar then 0 else 1)
-      if !isMatchOfCurrentLabels character, labelPosition
-          @statusBarManager.noMatch()
-          return
+      # elem = @label2Element[chars]
+      # left = Number(elem.style.left.slice(0, -2)) # remove `px` string
+      # top = Number(elem.style.top.slice(0, -2))
+      # console.log [top, left]
+      # for editor in @getVisibleEditor()
+      #   position = editor.screenPositionForPixelPosition {top, left}
+      #   console.log position
 
-      if not @firstChar
-          @firstChar = character
-          @statusBarManager.update @firstChar
-          # TODO: Refactor this so not 2 calls to observeTextEditors
-          @disposables.add atom.workspace.observeTextEditors (editor) =>
-              editorView = atom.views.getView(editor)
-              return if $(editorView).is ':not(:visible)'
-
-              overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-              for label in overlayer.querySelectorAll '.jumpy.label'
-                  if label.innerHTML.indexOf(@firstChar) != 0
-                      label.classList.add 'irrelevant'
-      else if not @secondChar
-          @secondChar = character
-
-      if @secondChar
-          @jump() # Jump first.  Currently need the placement of the labels.
-          @clearJumpMode()
+      @jump chars
+      @clearJumpMode()
+    else
+      for irrelevant in irrelevants
+        @label2Element[irrelevant].classList.add 'irrelevant'
+      @statusBarManager.update @firstChar
+      @firstChar = char
 
   clearChars: ->
     @firstChar = null
-    @secondChar = null
 
   getVisibleEditor: ->
     editors = atom.workspace.getPanes()
@@ -161,13 +146,11 @@ class JumpyView extends View
     @statusBarManager.update 'Jump Mode!'
     @statusBarManager.show()
     @jumpTarget.clear()
+    @label2Element = {}
 
-    labels = @getCharPairs()
+    labels = @getLabels()
     for editor in @getVisibleEditor()
-      # wordRegExp = editor.getLastCursor().wordRegExp()
-      editorView = atom.views.getView(editor)
       label2point = {}
-
       [startRow, endRow] = editor.getVisibleRowRange()
       for row in [startRow..endRow]
         if editor.isFoldedAtScreenRow row
@@ -182,13 +165,13 @@ class JumpyView extends View
       # @disposables.add editor.onDidChangeScrollTop => @clearJumpMode()
       # @disposables.add editor.onDidChangeScrollLeft => @clearJumpMode()
 
+      editorView = atom.views.getView(editor)
       for e in ['blur', 'click']
         editorView.addEventListener e, @clearJumpMode.bind(@), true
 
   # Return base element for labelElement
   getLabelElement: ->
     return @labelElement.cloneNode() if @labelElement?
-
     {fontSize, highContrast} = @getLabelPreference()
     elem = document.createElement "div"
     elem.classList.add "jumpy", "label"
@@ -214,7 +197,9 @@ class JumpyView extends View
 
     for label, position of label2point
       px = editorView.pixelPositionForScreenPosition position
-      container.appendChild(@createLabelElement label, px, scrollLeft, scrollTop)
+      elem = @createLabelElement label, px, scrollLeft, scrollTop
+      @label2Element[label] = elem
+      container.appendChild(elem)
 
   getTarget: (label) ->
     iterator = @jumpTarget.entries()
@@ -224,8 +209,7 @@ class JumpyView extends View
         return {editor, position}
     return null
 
-  jump: ->
-    label = @firstChar + @secondChar
+  jump: (label) ->
     unless target = @getTarget label
       console.log "Jumpy canceled jump.  No target found."
       return
@@ -245,7 +229,6 @@ class JumpyView extends View
   clearJumpMode: ->
     return if @cleared
     @cleared = true
-
     @clearChars()
     @statusBarManager.hide()
     for editor in @getVisibleEditor()
