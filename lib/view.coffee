@@ -21,8 +21,8 @@ class JumpyView
   # -------------------------
   toggle: ->
     @labelContainers = {}
-    @irrelevants     = []
-    @candidates      = []
+    @unMatched     = []
+    @matched      = []
     @label2target    = {}
     @replaceKeymaps @getJumpyKeyMaps()
     @statusBarManager.init()
@@ -31,19 +31,21 @@ class JumpyView
     wordsPattern = new RegExp(atom.config.get('jumpy.matchPattern'), 'g')
 
     @prepareTarget (labels, editor, editorView) =>
-      label2target = {}
       [startRow, endRow] = editor.getVisibleRowRange()
-      for row in [startRow..endRow]
-        if editor.isFoldedAtScreenRow row
-          label = labels.shift()
-          label2target[label] = @newTarget(editorView, label, row, 0)
-        else
-          lineContents = editor.lineTextForScreenRow row
-          while match = wordsPattern.exec(lineContents)
-            label = labels.shift()
-            label2target[label] = @newTarget(editorView, label, row, match.index)
+      @generateTargets editor, editorView, labels, wordsPattern, startRow, endRow
 
-      label2target
+  generateTargets: (editor, editorView, labels, wordsPattern, startRow, endRow) ->
+    label2target = {}
+    for row in [startRow..endRow]
+      if editor.isFoldedAtScreenRow row
+        label = labels.shift()
+        label2target[label] = @newTarget(editorView, label, row, 0)
+      else
+        lineContents = editor.lineTextForScreenRow row
+        while match = wordsPattern.exec(lineContents)
+          label = labels.shift()
+          label2target[label] = @newTarget(editorView, label, row, match.index)
+    label2target
 
   prepareTarget: (callback) ->
     labels = @getLabels()
@@ -67,42 +69,39 @@ class JumpyView
   # -------------------------
   getKey: (char) ->
     chars = if @firstChar then @firstChar + char else char
-    status = ''
     labelPattern = ///^#{chars}///
-    [@candidates, @irrelevants] = @classifyTarget @label2target, (label) ->
+    [@matched, @unMatched] = @partitionTarget @label2target, (label) ->
       labelPattern.test label
 
-    switch @candidates.length
-      when 0
-        status = 'No match!'
-      when 1
-        @jump @candidates.shift()
-        @clearJumpMode()
+    status = ''
+    switch @matched.length
+      when 0 then status = 'No match!'
+      when 1 then @jump @matched.shift()
       else
         @firstChar = char
         status = @firstChar
-        for {element} in @irrelevants
+        for {element} in @unMatched
           element.classList.add 'irrelevant'
 
     @statusBarManager.update status
 
-  classifyTarget: (label2target, callback) ->
-    candidates = []
-    irrelevants = []
+  partitionTarget: (label2target, callback) ->
+    matched = []
+    unMatched = []
     for label, target of label2target
       if callback(label)
-        candidates.push target
+        matched.push target
       else
-        irrelevants.push target
-    [candidates, irrelevants]
+        unMatched.push target
+    [matched, unMatched]
 
   reset: ->
     @firstChar = null
-    for {element} in @irrelevants
+    for {element} in @unMatched
       element.classList.remove 'irrelevant'
     @statusBarManager.init()
-    @irrelevants = []
-    @candidates = []
+    @matched = []
+    @unMatched = []
 
   # Jump
   # -------------------------
@@ -117,6 +116,7 @@ class JumpyView
 
     {row, column} = position
     # console.log "Jumpy jumped to: '#{label} at #{row}:#{column}"
+    @clearJumpMode()
 
   clearJumpMode: ->
     @firstChar = null
