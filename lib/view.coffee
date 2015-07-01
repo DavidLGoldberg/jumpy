@@ -122,10 +122,12 @@ class JumpyView
     @firstChar = null
     @statusBarManager.hide()
     for editor in @getVisibleEditor()
-      editorView = atom.views.getView(editor)
-      @labelContainers[editor.id]?.remove()
-      editorView.classList.remove 'jumpy-jump-mode'
+      if @labelContainers[editor.id]?
+        @labelContainers[editor.id].remove()
+        delete @labelContainers[editor.id]
 
+      editorView = atom.views.getView editor
+      editorView.classList.remove 'jumpy-jump-mode'
       for event in ['blur', 'click']
         editorView.removeEventListener event, @clearJumpMode.bind(@), true
 
