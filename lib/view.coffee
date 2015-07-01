@@ -18,12 +18,14 @@ class JumpyView
   # Toggle
   # -------------------------
   toggle: ->
+    LabelView ?= require './label-view'
+    LabelContainerView ?= require './label-container-view'
+
     @labelContainers = []
     @unMatched       = []
     @matched         = []
     @label2target    = {}
     @statusBarManager.init()
-    LabelContainerView ?= require './label-container-view'
 
     @replaceKeymaps @getJumpyKeyMaps()
 
@@ -63,7 +65,6 @@ class JumpyView
   getLabel2Target: (label2point, options) ->
     _.mapObject label2point, (label, position) ->
       _.extend options, {label, position}
-      LabelView ?= require './label-view'
       element = new LabelView()
       element.initialize options
       [label, element]
