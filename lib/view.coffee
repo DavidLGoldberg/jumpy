@@ -28,32 +28,32 @@ class JumpyView
     @statusBarManager.init()
 
     # TODO: Can the following few lines be singleton'd up? ie. instance var?
-    wordsPattern = new RegExp(atom.config.get('jumpy.matchPattern'), 'g')
+    pattern = new RegExp(atom.config.get('jumpy.matchPattern'), 'g')
 
-    @prepareTarget (labels, editor, editorView) =>
+    labels = @getLabels()
+    @prepareTarget (editor, editorView) =>
       [startRow, endRow] = editor.getVisibleRowRange()
-      @generateTargets editor, editorView, labels, wordsPattern, startRow, endRow
+      @generateTargets editor, editorView, labels, pattern, startRow, endRow
 
   generateTargets: (editor, editorView, labels, wordsPattern, startRow, endRow) ->
     label2target = {}
     for row in [startRow..endRow]
       if editor.isFoldedAtScreenRow row
-        label = labels.shift()
+        break unless label = labels.shift()
         label2target[label] = @newTarget(editorView, label, row, 0)
       else
         lineContents = editor.lineTextForScreenRow row
         while match = wordsPattern.exec(lineContents)
-          label = labels.shift()
+          break unless label = labels.shift()
           label2target[label] = @newTarget(editorView, label, row, match.index)
     label2target
 
   prepareTarget: (callback) ->
-    labels = @getLabels()
     for editor in @getVisibleEditor()
       editorView = atom.views.getView(editor)
       editorView.classList.add 'jumpy-jump-mode'
 
-      label2target = callback(labels, editor, editorView)
+      label2target = callback(editor, editorView)
       # console.log label2target
 
       labelContainer = @addLabelContainer editorView
