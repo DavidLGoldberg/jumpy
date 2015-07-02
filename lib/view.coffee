@@ -4,6 +4,7 @@ LabelView = null
 LabelContainerView = null
 
 # [FIXME] This class is not simple View, its essencially controller.
+# Maybe all code should be moved to main.coffee?
 module.exports =
 class JumpyView
   constructor: (@statusBarManager) ->
