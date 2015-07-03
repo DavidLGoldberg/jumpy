@@ -98,7 +98,7 @@ module.exports =
 
   collectPoints: (editor, pattern) ->
     [startRow, endRow] = editor.getVisibleRowRange()
-    scanStart = [startRow, Infinity]
+    scanStart = [startRow, 0]
     scanEnd   = [endRow, Infinity]
     scanRange = [scanStart, scanEnd]
     points = []
