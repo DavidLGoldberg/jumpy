@@ -50,4 +50,6 @@ class LabelView extends HTMLElement
   destroy: ->
     @remove()
 
-module.exports = document.registerElement('jumpy-label', prototype: LabelView.prototype, extends: 'div')
+module.exports = document.registerElement 'jumpy-label',
+  prototype: LabelView.prototype
+  extends:   'div'

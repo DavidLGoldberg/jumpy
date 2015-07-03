@@ -16,4 +16,6 @@ class LabelContainerView extends HTMLElement
   destroy: ->
     @remove()
 
-module.exports = document.registerElement('jumpy-label-container', prototype: LabelContainerView.prototype, extends: 'div')
+module.exports = document.registerElement 'jumpy-label-container',
+  prototype: LabelContainerView.prototype
+  extends:   'div'
