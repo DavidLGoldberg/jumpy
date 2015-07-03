@@ -1,5 +1,6 @@
 {Point} = require 'atom'
 _ = require 'underscore-plus'
+
 LabelView = null
 LabelContainerView = null
 
@@ -84,6 +85,7 @@ class JumpyView
         status = 'No match!'
       when 1
         @matched.shift().jump()
+        @clearJumpMode()
       else
         @firstChar = char
         status = @firstChar
@@ -110,13 +112,16 @@ class JumpyView
     editorView = atom.views.getView(editor)
     editorView.classList.add 'jumpy-jump-mode'
     for event in ['blur', 'click']
-      editorView.addEventListener event, @clearJumpMode.bind(@), true
+      editorView.addEventListener event, @clearJumpModeCallback(), true
 
   unSetJumpMode: (editor) ->
     editorView = atom.views.getView editor
     editorView.classList.remove 'jumpy-jump-mode'
     for event in ['blur', 'click']
-      editorView.removeEventListener event, @clearJumpMode.bind(@), true
+      editorView.removeEventListener event, @clearJumpModeCallback(), true
+
+  clearJumpModeCallback: ->
+    @_clearJumpModeCallback ?= @clearJumpMode.bind(this)
 
   clearJumpMode: ->
     @firstChar = null
@@ -124,8 +129,9 @@ class JumpyView
     element.remove() for label, element of @label2target
     @label2target = null
 
-    @labelContainer?.destroy()
-    @labelContainers = null
+    for container in @labelContainers
+      container.destroy()
+    @labelContainers = []
     for editor in @getVisibleEditor()
       @unSetJumpMode(editor)
 
