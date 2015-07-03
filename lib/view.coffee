@@ -37,28 +37,35 @@ class JumpyView
     labelPreference = @getLabelPreference()
     labels =  @getLabels()
     for editor in @getVisibleEditor()
+      # pattern = editor.getLastCursor().wordRegExp()
+
       editorView = atom.views.getView(editor)
       @setJumpMode(editor)
-      label2point  = @getLabel2Point labels, editor, pattern
-      label2target = @getLabel2Target label2point, {labelPreference, editorView}
+
+      points         = @collectPoints(editor, pattern)
+      label2point    = @getLabel2Point labels, points
+      label2target   = @getLabel2Target label2point, {labelPreference, editorView}
       labelContainer = new LabelContainerView()
       labelContainer.initialize(editor)
       labelContainer.appendChildren _.values(label2target)
       @labelContainers.push labelContainer
       _.extend(@label2target, label2target)
 
-  getLabel2Point: (labels, editor, pattern) ->
-    label2point = {}
+  collectPoints: (editor, pattern) ->
     [startRow, endRow] = editor.getVisibleRowRange()
-    for row in [startRow..endRow]
+    scanStart = [startRow, Infinity]
+    scanEnd   = [endRow, Infinity]
+    scanRange = [scanStart, scanEnd]
+    points = []
+    editor.scanInBufferRange pattern, scanRange, ({range, stop}) =>
+      points.push range.start
+    points
+
+  getLabel2Point: (labels, points) ->
+    label2point = {}
+    for point in points
       break unless labels.length
-      if editor.isFoldedAtScreenRow row
-        label2point[labels.shift()] = new Point(row, 0)
-      else
-        lineText = editor.lineTextForScreenRow row
-        while match = pattern.exec lineText
-          label2point[labels.shift()] = new Point(row, match.index)
-          break unless labels.length
+      label2point[labels.shift()] = point
     label2point
 
   # [NOTE]
@@ -170,6 +177,9 @@ class JumpyView
       .map    (pane)   -> pane.getActiveEditor()
       .filter (editor) -> editor?
     editors
+
+  getEditor: ->
+    atom.workspace.getActiveTextEditor()
 
   getLabels: ->
     return @labels.slice() if @labels?
