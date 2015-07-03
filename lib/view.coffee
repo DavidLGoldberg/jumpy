@@ -1,4 +1,3 @@
-{Point} = require 'atom'
 _ = require 'underscore-plus'
 
 LabelView = null
@@ -23,33 +22,31 @@ class JumpyView
     LabelView ?= require './label-view'
     LabelContainerView ?= require './label-container-view'
 
-    @labelContainers = []
+    @containers = []
     @unMatched       = []
     @matched         = []
     @label2target    = {}
     @statusBarManager.init()
 
     @replaceKeymaps @getJumpyKeyMaps()
-
     # TODO: Can the following few lines be singleton'd up? ie. instance var?
     pattern = new RegExp(atom.config.get('jumpy.matchPattern'), 'g')
 
-    labelPreference = @getLabelPreference()
-    labels =  @getLabels()
+    @displayLabel pattern, @getLabels(), @getLabelPreference()
+
+  displayLabel: (pattern, labels, labelPreference) ->
     for editor in @getVisibleEditor()
       # pattern = editor.getLastCursor().wordRegExp()
+      @setJumpMode editor
+      container = new LabelContainerView()
+      container.initialize(editor)
 
-      editorView = atom.views.getView(editor)
-      @setJumpMode(editor)
-
-      points         = @collectPoints(editor, pattern)
-      label2point    = @getLabel2Point labels, points
+      editorView     = atom.views.getView(editor)
+      label2point    = @getLabel2Point labels, @collectPoints(editor, pattern)
       label2target   = @getLabel2Target label2point, {labelPreference, editorView}
-      labelContainer = new LabelContainerView()
-      labelContainer.initialize(editor)
-      labelContainer.appendChildren _.values(label2target)
-      @labelContainers.push labelContainer
-      _.extend(@label2target, label2target)
+      container.appendChildren _.values(label2target)
+      @containers.push container
+      _.extend @label2target, label2target
 
   collectPoints: (editor, pattern) ->
     [startRow, endRow] = editor.getVisibleRowRange()
@@ -85,7 +82,6 @@ class JumpyView
     labelPattern = ///^#{chars}///
     [@matched, @unMatched] = @partitionTarget @label2target, (label) ->
       labelPattern.test label
-
     status = ''
     switch @matched.length
       when 0
@@ -112,7 +108,7 @@ class JumpyView
 
   reset: ->
     @firstChar = null
-    for container in @labelContainers
+    for container in @containers
       container.reset()
 
   setJumpMode: (editor) ->
@@ -136,9 +132,9 @@ class JumpyView
     element.remove() for label, element of @label2target
     @label2target = null
 
-    for container in @labelContainers
+    for container in @containers
       container.destroy()
-    @labelContainers = []
+    @containers = []
     for editor in @getVisibleEditor()
       @unSetJumpMode(editor)
 
@@ -177,9 +173,6 @@ class JumpyView
       .map    (pane)   -> pane.getActiveEditor()
       .filter (editor) -> editor?
     editors
-
-  getEditor: ->
-    atom.workspace.getActiveTextEditor()
 
   getLabels: ->
     return @labels.slice() if @labels?
