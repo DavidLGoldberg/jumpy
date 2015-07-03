@@ -1,5 +1,4 @@
 @import "ui-variables";
-
 #status-bar-jumpy {
   color: @text-color-info;
   &.no-match,
@@ -32,5 +31,12 @@
     background-color: @background-color-success;
   }
 }
+
+atom-text-editor::shadow {
+  .jumpy-beacon .region {
+    background-color: @background-color-info;
+  }
+}
+
 
 @import "beacon.less";

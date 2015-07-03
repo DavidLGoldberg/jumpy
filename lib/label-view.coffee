@@ -9,12 +9,29 @@ class LabelView extends HTMLElement
     @editor = @editorView.getModel()
     this
 
+  flash: ->
+    range = @editor.getLastCursor().getCurrentWordBufferRange()
+    marker = @editor.markBufferRange range,
+      invalidate: 'never'
+      persistent: false
+
+    decoration = @editor.decorateMarker marker,
+      type: 'highlight'
+      class: "jumpy-beacon"
+
+    timeoutID = setTimeout  =>
+      decoration.getMarker().destroy()
+    , 150
+
   jump: ->
     atom.workspace.paneForItem(@editor).activate()
     if (@editor.getSelections().length is 1) and (not @editor.getLastSelection().isEmpty())
       @editor.selectToScreenPosition @position
     else
       @editor.setCursorScreenPosition @position
+
+    if atom.config.get('jumpy.useHomingBeaconEffectOnJumps')
+      @flash()
     # console.log "Jumpy jumped to: '#{@textContent}' at #{@position.toString()}"
 
   attachedCallback: ->
