@@ -70,10 +70,10 @@ module.exports =
     LabelView ?= require './label-view'
     LabelContainerView ?= require './label-container-view'
 
-    @containers = []
-    @unMatched       = []
-    @matched         = []
-    @label2target    = {}
+    @containers   = []
+    @unMatched    = []
+    @matched      = []
+    @label2target = {}
     @statusBarManager.init()
 
     @replaceKeymaps @getJumpyKeyMaps()
