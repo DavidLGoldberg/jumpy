@@ -1,7 +1,7 @@
 _ = require 'underscore-plus'
 
 StatusBarManager = require './status-bar-manager'
-{CompositeDisposable, Disposable} = require 'atom'
+{CompositeDisposable, Disposable, Point} = require 'atom'
 
 LabelView = null
 LabelContainerView = null
@@ -97,13 +97,15 @@ module.exports =
       _.extend @label2target, label2target
 
   collectPoints: (editor, pattern) ->
-    [startRow, endRow] = editor.getVisibleRowRange()
-    scanStart = [startRow, 0]
-    scanEnd   = [endRow, Infinity]
-    scanRange = [scanStart, scanEnd]
     points = []
-    editor.scanInBufferRange pattern, scanRange, ({range, stop}) =>
-      points.push range.start
+    [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
+    for row in [firstVisibleRow...lastVisibleRow]
+      if editor.isFoldedAtScreenRow(row)
+        points.push new Point(row, 0)
+      else
+        lineContents = editor.lineTextForScreenRow row
+        while match = pattern.exec(lineContents)
+          points.push new Point(row, match.index)
     points
 
   getLabel2Point: (labels, points) ->
