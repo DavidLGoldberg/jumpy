@@ -11,10 +11,10 @@
     'shift-enter': 'jumpy:toggle'
 
 'atom-workspace atom-text-editor.jumpy-jump-mode':
-    'backspace': 'jumpy:reset'
-    'enter': 'jumpy:clear'
-    'space': 'jumpy:clear'
-    'escape': 'jumpy:clear'
+    'backspace':   'jumpy:reset'
+    'enter':       'jumpy:clear'
+    'space':       'jumpy:clear'
+    'escape':      'jumpy:clear'
     'shift-enter': 'jumpy:clear'
     'a': 'jumpy:a'
     'b': 'jumpy:b'
