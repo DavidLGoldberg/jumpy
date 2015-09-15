@@ -1,3 +1,6 @@
+## 2.0.10
+* Fix broken labels with atom-material-ui theme.  Thanks to @livelazily for some help with this!
+
 ## 2.0.9
 * Fix broken beacon animation (finally got around to this).
 * Update README.md with new way to style Jumpy labels etc (using shadow dom).
