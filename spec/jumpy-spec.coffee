@@ -210,9 +210,8 @@ describe "Jumpy", ->
         it "the beacon animation class is removed", ->
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             waitsFor ->
-                setTimeout ->
+                ->
                     atom.commands.dispatch workspaceElement, 'jumpy:c'
-                ,100 + 10 # max default I'd probably use + a buffer
             runs ->
                 expect(textEditorElement.shadowRoot
                     .querySelectorAll('.beacon').length)
