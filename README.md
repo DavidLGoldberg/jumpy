@@ -1,11 +1,13 @@
 # Jumpy
+
 An Atom package that creates dynamic hotkeys to jump around files and across visible panes.
 
 ## How to jump
-1. Hit <kbd>shift</kbd> + <kbd>enter</kbd>
-2. Choose from your presented labels:
-3. Enter two characters.
-4. Keep coding!
+
+1.  Hit <kbd>shift</kbd> + <kbd>enter</kbd>
+2.  Choose from your presented labels:
+3.  Enter two characters.
+4.  Keep coding!
 
 [ ![Jumpy in Action! - (gif made with recordit.co)][1]](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy.gif)
 
@@ -29,35 +31,33 @@ apm install jumpy
     * [neon-cursor](https://atom.io/packages/neon-cursor) (This conflicts with the Jumpy homing beacon effect, but you *probably* won't need the beacon anymore!)
 
 ## Key Bindings
+
 ### Defaults
-* Enter jump mode
-    * <kbd>shift</kbd> + <kbd>enter</kbd>
-* Reset first character entered
-    * <kbd>backspace</kbd>
-* Cancel/exit jump mode (any)
-    * <kbd>shift</kbd> + <kbd>enter</kbd>
-    * <kbd>enter</kbd>
-    * <kbd>esc</kbd>
-    * <kbd>space</kbd>
+
+*   Enter jump mode
+    *   <kbd>shift</kbd> + <kbd>enter</kbd>
+*   Reset first character entered
+    *   <kbd>backspace</kbd>
+*   Cancel/exit jump mode (any)
+    *   <kbd>shift</kbd> + <kbd>enter</kbd>
+    *   <kbd>enter</kbd>
+    *   <kbd>esc</kbd>
+    *   <kbd>space</kbd>
 
 ## Settings
 
 ### Jumpy preferences
+
 ( Preferences <kbd>cmd</kbd>+<kbd>,</kbd> ) -> search for 'jumpy'
 
-* <b>Font Size</b>:
+*   **Font Size**:
 If set, must be a decimal value less than 1.
-* <b>High Contrast</b>:
+*   **High Contrast**:
 If checked, uses a more colorful and fun (usually green) label.
-* <b>Match Pattern</b>:
+*   **Match Pattern**:
 Provide a custom regex to match labels with.
-* <b>Use Homing Beacon Effect On Jumps</b>
-*(needs React Editor enabled, see below)*:
+*   **Use Homing Beacon Effect On Jumps**:
 If left on, will display a homing beacon (usually red) after all jumps.
-
-*Note*: After selecting <b>'Use React Editor'</b> in Preferences -> Settings you will have to either restart Atom
-or enter ctrl+alt+cmd+l (lower case L).
-
 
 ![Jumpy settings](https://raw.githubusercontent.com/DavidLGoldberg/jumpy/master/_images/jumpy-settings.png)
 
@@ -68,6 +68,7 @@ or enter ctrl+alt+cmd+l (lower case L).
 (image after settings set to .85 font size, high contrast, and default camel case matching pattern)
 
 ### 'vim-mode' Users (Strongly Recommended Override)
+
 Put this override in your **'Atom'** -> **'Open Your Keymap'** settings:
 
     'atom-text-editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode)':
@@ -81,8 +82,10 @@ The [Vimium chrome extension](https://chrome.google.com/webstore/detail/vimium/d
 Please let me know what you think about this binding for Jumpy [here](https://discuss.atom.io/t/introducing-jumpy-new-package/10980/28)!
 
 ### Jumpy Styles
+
 Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 (see examples below)
+
 ```less
 atom-text-editor::shadow .jumpy {
     &.label {
@@ -91,14 +94,16 @@ atom-text-editor::shadow .jumpy {
     }
 }
 ```
+
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## Keywords
+
 (A little SEO juice)
 
-* Shortcuts
-* Navigation
-* Productivity
-* Mouseless
-* Plugin
-* Extension
+*   Shortcuts
+*   Navigation
+*   Productivity
+*   Mouseless
+*   Plugin
+*   Extension
