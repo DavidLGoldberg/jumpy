@@ -36,6 +36,9 @@ class JumpyView extends View
     @content: ->
         @div ''
 
+    getOverlayer: (editorView) ->
+        editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+
     initialize: (serializeState) ->
         @disposables = new CompositeDisposable()
         @commands = new CompositeDisposable()
@@ -72,7 +75,7 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+                overlayer = @getOverlayer editorView
                 $(overlayer).find('.label:not(.irrelevant)').each (i, label) ->
                     if label.innerHTML[labelPosition] == character
                         found = true
@@ -94,7 +97,7 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+                overlayer = @getOverlayer editorView
                 for label in overlayer.querySelectorAll '.jumpy.label'
                     if label.innerHTML.indexOf(@firstChar) != 0
                         label.classList.add 'irrelevant'
@@ -111,9 +114,9 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        @disposables.add atom.workspace.observeTextEditors (editor) =>
+        @disposables.add atom.workspace.observeTextEditors (editor) ->
             editorView = atom.views.getView(editor)
-            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+            overlayer = @getOverlayer editorView
             $(overlayer).find '.irrelevant'
                 .removeClass 'irrelevant'
         @statusBarJumpy?.classList.remove 'no-match'
@@ -161,8 +164,9 @@ class JumpyView extends View
             return if $editorView.is ':not(:visible)'
 
             editorView.classList.add 'jumpy-jump-mode'
-            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-            $(overlayer).append '<div class="jumpy jumpy-label-container"></div>'
+            overlayer = @getOverlayer editorView
+            $(overlayer)
+                .append '<div class="jumpy jumpy-label-container"></div>'
             labelContainer = overlayer.querySelector '.jumpy-label-container'
 
             drawLabels = (column, labelContainer) =>
@@ -222,7 +226,7 @@ class JumpyView extends View
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
             return if $(editorView).is ':not(:visible)'
-            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
+            overlayer = @getOverlayer editorView
             $(overlayer).find('.jumpy').remove()
             editorView.classList.remove 'jumpy-jump-mode'
             for e in ['blur', 'click']
@@ -254,7 +258,8 @@ class JumpyView extends View
             else
                 currentEditor.setCursorScreenPosition location.position
 
-            useHomingBeacon = atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
+            useHomingBeacon =
+                atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
             if useHomingBeacon
                 cursor = editorView.shadowRoot.querySelector '.cursors .cursor'
                 if cursor
