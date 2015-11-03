@@ -10,11 +10,14 @@ module.exports =
             minimum: 0
             maximum: 1
         highContrast:
-            description: 'This will display a high contrast label, usually green.  It is dynamic per theme.'
+            description: 'This will display a high contrast label,
+            usually green.  It is dynamic per theme.'
             type: 'boolean'
             default: false
         useHomingBeaconEffectOnJumps:
-            description: 'This will animate a short lived homing beacon upon jump.  It is *temporarily* not working due to architectural changes in Atom.'
+            description: 'This will animate a short lived homing beacon upon
+            jump.  It is *temporarily* not working due to architectural
+            changes in Atom.'
             type: 'boolean'
             default: true
         matchPattern:
