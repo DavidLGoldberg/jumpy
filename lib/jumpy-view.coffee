@@ -71,7 +71,7 @@ class JumpyView extends View
 
         isMatchOfCurrentLabels = (character, labelPosition) =>
             found = false
-            @disposables.add atom.workspace.observeTextEditors (editor) ->
+            @disposables.add atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
@@ -114,7 +114,7 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        @disposables.add atom.workspace.observeTextEditors (editor) ->
+        @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
             overlayer = @getOverlayer editorView
             $(overlayer).find '.irrelevant'
@@ -238,9 +238,8 @@ class JumpyView extends View
     jump: ->
         location = @findLocation()
         if location == null
-            console.log "Jumpy canceled jump.  No location found."
             return
-        @disposables.add atom.workspace.observeTextEditors (currentEditor) =>
+        @disposables.add atom.workspace.observeTextEditors (currentEditor) ->
             editorView = atom.views.getView(currentEditor)
 
             # Prevent other editors from jumping cursors as well
@@ -267,8 +266,6 @@ class JumpyView extends View
                     setTimeout ->
                         cursor.classList.remove 'beacon'
                     , 150
-            console.log "Jumpy jumped to: #{@firstChar}#{@secondChar} at " +
-                "(#{location.position.row},#{location.position.column})"
 
     findLocation: ->
         label = "#{@firstChar}#{@secondChar}"
@@ -282,6 +279,5 @@ class JumpyView extends View
 
     # Tear down any state and detach
     destroy: ->
-        console.log 'Jumpy: "destroy" called.'
         @commands?.dispose()
         @clearJumpMode()
