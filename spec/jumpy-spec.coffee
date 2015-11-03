@@ -1,7 +1,6 @@
 path = require 'path'
 {Views, Commands} = require 'atom'
 {$} = require 'space-pen'
-_ = require 'lodash'
 
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
