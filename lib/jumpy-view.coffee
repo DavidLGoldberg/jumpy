@@ -169,7 +169,7 @@ class JumpyView extends View
                 .append '<div class="jumpy jumpy-label-container"></div>'
             labelContainer = overlayer.querySelector '.jumpy-label-container'
 
-            drawLabels = (column, labelContainer) =>
+            drawLabels = (column, labelContainer, scrollLeft, scrollTop) =>
                 return unless nextKeys.length
 
                 keyLabel = nextKeys.shift()
@@ -185,8 +185,8 @@ class JumpyView extends View
                 labelElement =
                     $("<div class='jumpy label'>#{keyLabel}</div>")
                         .css
-                            left: pixelPosition.left - editor.getScrollLeft()
-                            top: pixelPosition.top - editor.getScrollTop()
+                            left: pixelPosition.left - scrollLeft
+                            top: pixelPosition.top - scrollTop
                             fontSize: fontSize
                 if highContrast
                     labelElement.addClass 'high-contrast'
@@ -194,13 +194,16 @@ class JumpyView extends View
                     .append labelElement
 
             [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
+            scrollLeft = editor.getScrollLeft()
+            scrollTop = editor.getScrollTop()
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
-                    drawLabels 0, labelContainer
+                    drawLabels 0, labelContainer, scrollLeft, scrollTop
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels word.index, labelContainer
+                        drawLabels word.index, labelContainer,
+                            scrollLeft, scrollTop
 
             @initializeClearEvents(editor, editorView)
 
