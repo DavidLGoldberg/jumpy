@@ -7,7 +7,7 @@
 # TODO: Investigate using markers, else my own custom elements.
 # TODO: Remove space-pen? Probably alongside markers todo above.
 
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, Point, Range} = require 'atom'
 {View, $} = require 'space-pen'
 _ = require 'lodash'
 
@@ -169,7 +169,8 @@ class JumpyView extends View
                 .append '<div class="jumpy jumpy-label-container"></div>'
             labelContainer = overlayer.querySelector '.jumpy-label-container'
 
-            drawLabels = (column, labelContainer, scrollLeft, scrollTop) =>
+            drawLabels = (column, labelContainer) =>
+                console.time 'drawLabels'
                 return unless nextKeys.length
 
                 keyLabel = nextKeys.shift()
@@ -177,33 +178,35 @@ class JumpyView extends View
                 # creates a reference:
                 @allPositions[keyLabel] = {
                     editor: editor.id
-                    position: position
+                    position: position #todo replace with a marker..
+                    #doesn't really matter though?
                 }
-                pixelPosition = editorView
-                    .pixelPositionForScreenPosition [lineNumber,
-                    column]
-                labelElement =
-                    $("<div class='jumpy label'>#{keyLabel}</div>")
-                        .css
-                            left: pixelPosition.left - scrollLeft
-                            top: pixelPosition.top - scrollTop
-                            fontSize: fontSize
+
+                marker = editor.markBufferRange new Range(
+                    new Point(lineNumber - 1, column),
+                    new Point(lineNumber - 1, column))
+                label = document.createElement('div')
+                label.textContent = keyLabel
+                label.style.fontSize = fontSize
+                label.classList.add 'jumpy-label'
                 if highContrast
-                    labelElement.addClass 'high-contrast'
-                $(labelContainer)
-                    .append labelElement
+                    label.classList.add 'high-contrast'
+                editor.decorateMarker marker,
+                    type: 'overlay'
+                    item: label
+                    # onlyHead: true
+                    position: 'head'
+
+                console.timeEnd 'drawLabels'
 
             [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
-            scrollLeft = editor.getScrollLeft()
-            scrollTop = editor.getScrollTop()
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
-                    drawLabels 0, labelContainer, scrollLeft, scrollTop
+                    drawLabels 0, labelContainer
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels word.index, labelContainer,
-                            scrollLeft, scrollTop
+                        drawLabels word.index, labelContainer
 
             @initializeClearEvents(editor, editorView)
 

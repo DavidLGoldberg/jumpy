@@ -1,3 +1,8 @@
+## 2.0.11
+* Fix new Atom releases performance issue (tiling changes) by using
+  markers and decorations.
+* Update README.md a bit.
+
 ## 2.0.10
 * Fix broken labels with atom-material-ui theme.  Thanks to @livelazily for some help with this!
 
