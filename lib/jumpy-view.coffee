@@ -164,12 +164,12 @@ class JumpyView extends View
 
             editorView.classList.add 'jumpy-jump-mode'
 
-            drawLabels = (column) =>
+            drawLabels = (lineNumber, column) =>
                 console.time 'drawLabels'
                 return unless nextKeys.length
 
                 keyLabel = nextKeys.shift()
-                position = {row: lineNumber, column: column}
+                position = {row: lineNumber, column: column} # TODO: needs work!
                 # creates a reference:
                 @allPositions[keyLabel] = {
                     editor: editor.id
@@ -178,18 +178,21 @@ class JumpyView extends View
                 }
 
                 marker = editor.markBufferRange new Range(
-                    new Point(lineNumber - 1, column),
-                    new Point(lineNumber - 1, column))
+                    new Point(lineNumber, column),
+                    new Point(lineNumber, column)),
+                    invalidate: 'touch'
                 label = document.createElement('div')
                 label.textContent = keyLabel
                 label.style.fontSize = fontSize
+                lineHeight = window.getComputedStyle(editorView
+                    .shadowRoot.querySelector('.line'))['line-height']
+                label.style.top = '-' + lineHeight
                 label.classList.add 'jumpy-label'
                 if highContrast
                     label.classList.add 'high-contrast'
                 editor.decorateMarker marker,
                     type: 'overlay'
                     item: label
-                    # onlyHead: true
                     position: 'head'
 
                 console.timeEnd 'drawLabels'
@@ -198,10 +201,10 @@ class JumpyView extends View
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
-                    drawLabels 0
+                    drawLabels lineNumber, 0
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels word.index
+                        drawLabels lineNumber, word.index
 
             @initializeClearEvents(editor, editorView)
 

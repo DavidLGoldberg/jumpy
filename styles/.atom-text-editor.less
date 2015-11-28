@@ -23,11 +23,6 @@
     &.irrelevant { // This is a marker to indicate not applicable (when 1 key is entered/known).
         display: none;
     }
-    z-index: 2147483647; /* Really high.
-    I always want this on top!
-    This is necessary
-    for atom-color-highlight package
-    and others to come I'm sure. */
     color: @base-background-color;
     background: @text-color;
     position: absolute;
@@ -38,6 +33,7 @@
     &.high-contrast {
         background-color: @background-color-success;
     }
+    left: 10px;
 }
 
 @import "beacon.less";
