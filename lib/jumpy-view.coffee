@@ -200,6 +200,7 @@ class JumpyView extends View
                 console.timeEnd 'drawLabels'
 
             [firstVisibleRow, lastVisibleRow] = editorView.getVisibleRowRange()
+            # TODO: Right now there are issues with lastVisbleRow
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
