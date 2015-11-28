@@ -172,6 +172,7 @@ class JumpyView extends View
                     new Point(lineNumber, column),
                     new Point(lineNumber, column)),
                     invalidate: 'touch'
+
                 labelElement = document.createElement('div')
                 labelElement.textContent = keyLabel
                 labelElement.style.fontSize = fontSize
@@ -181,6 +182,7 @@ class JumpyView extends View
                 labelElement.classList.add 'jumpy-label'
                 if highContrast
                     labelElement.classList.add 'high-contrast'
+
                 decoration = editor.decorateMarker marker,
                     type: 'overlay'
                     item: labelElement
