@@ -4,8 +4,7 @@
 # FIXME: Beacon code (currently broken in shadow).  This will probably return
 # in the form of a decoration with a "flash", not sure yet.
 # TODO: Merge in @willdady's code for better accuracy.
-# TODO: Investigate using markers, else my own custom elements.
-# TODO: Remove space-pen? Probably alongside markers todo above.
+# TODO: Remove space-pen?
 
 {CompositeDisposable, Point, Range} = require 'atom'
 {View, $} = require 'space-pen'
@@ -164,12 +163,8 @@ class JumpyView extends View
             return if $editorView.is ':not(:visible)'
 
             editorView.classList.add 'jumpy-jump-mode'
-            overlayer = @getOverlayer editorView
-            $(overlayer)
-                .append '<div class="jumpy jumpy-label-container"></div>'
-            labelContainer = overlayer.querySelector '.jumpy-label-container'
 
-            drawLabels = (column, labelContainer) =>
+            drawLabels = (column) =>
                 console.time 'drawLabels'
                 return unless nextKeys.length
 
@@ -203,10 +198,10 @@ class JumpyView extends View
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
-                    drawLabels 0, labelContainer
+                    drawLabels 0
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels word.index, labelContainer
+                        drawLabels word.index
 
             @initializeClearEvents(editor, editorView)
 
