@@ -197,7 +197,7 @@ class JumpyView extends View
 
                 console.timeEnd 'drawLabels'
 
-            [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
+            [firstVisibleRow, lastVisibleRow] = editorView.getVisibleRowRange()
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
                 if editor.isFoldedAtScreenRow(lineNumber)
@@ -206,15 +206,15 @@ class JumpyView extends View
                     while ((word = wordsPattern.exec(lineContents)) != null)
                         drawLabels lineNumber, word.index
 
-            @initializeClearEvents(editor, editorView)
+            @initializeClearEvents(editorView)
 
     clearJumpModeHandler: (e) =>
         @clearJumpMode()
 
-    initializeClearEvents: (editor, editorView) ->
-        @disposables.add editor.onDidChangeScrollTop =>
+    initializeClearEvents: (editorView) ->
+        @disposables.add editorView.onDidChangeScrollTop =>
             @clearJumpModeHandler()
-        @disposables.add editor.onDidChangeScrollLeft =>
+        @disposables.add editorView.onDidChangeScrollLeft =>
             @clearJumpModeHandler()
 
         for e in ['blur', 'click']
