@@ -35,12 +35,9 @@ class JumpyView extends View
     @content: ->
         @div ''
 
-    getOverlayer: (editorView) ->
-        editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-
     initialize: (serializeState) ->
         @disposables = new CompositeDisposable()
-        @markers = []
+        @labels = []
         @commands = new CompositeDisposable()
 
         @commands.add atom.commands.add 'atom-workspace',
@@ -75,9 +72,8 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                overlayer = @getOverlayer editorView
-                $(overlayer).find('.label:not(.irrelevant)').each (i, label) ->
-                    if label.innerHTML[labelPosition] == character
+                for label in @labels
+                    if label.element.textContent[labelPosition] == character
                         found = true
                         return false
             return found
@@ -97,10 +93,9 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                overlayer = @getOverlayer editorView
-                for label in overlayer.querySelectorAll '.jumpy.label'
-                    if label.innerHTML.indexOf(@firstChar) != 0
-                        label.classList.add 'irrelevant'
+                for label in @labels
+                    if label.element.textContent.indexOf(@firstChar) != 0
+                        label.element.classList.add 'irrelevant'
         else if not @secondChar
             @secondChar = character
 
@@ -114,11 +109,8 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        @disposables.add atom.workspace.observeTextEditors (editor) =>
-            editorView = atom.views.getView(editor)
-            overlayer = @getOverlayer editorView
-            $(overlayer).find '.irrelevant'
-                .removeClass 'irrelevant'
+        for label in @labels
+            label.element.classList.remove 'irrelevant'
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
@@ -137,6 +129,7 @@ class JumpyView extends View
         atom.keymaps.keyBindings = @filteredJumpyKeys
 
     toggle: ->
+        console.time 'toggle'
         @clearJumpMode()
 
         # Set dirty for @clearJumpMode
@@ -166,7 +159,6 @@ class JumpyView extends View
             editorView.classList.add 'jumpy-jump-mode'
 
             drawLabels = (lineNumber, column) =>
-                console.time 'drawLabels'
                 return unless nextKeys.length
 
                 keyLabel = nextKeys.shift()
@@ -182,22 +174,22 @@ class JumpyView extends View
                     new Point(lineNumber, column),
                     new Point(lineNumber, column)),
                     invalidate: 'touch'
-                @markers.push marker
-                label = document.createElement('div')
-                label.textContent = keyLabel
-                label.style.fontSize = fontSize
+                labelElement = document.createElement('div')
+                labelElement.textContent = keyLabel
+                labelElement.style.fontSize = fontSize
                 lineHeight = window.getComputedStyle(editorView
                     .shadowRoot.querySelector('.line'))['line-height']
-                label.style.top = '-' + lineHeight
-                label.classList.add 'jumpy-label'
+                labelElement.style.top = '-' + lineHeight
+                labelElement.classList.add 'jumpy-label'
                 if highContrast
-                    label.classList.add 'high-contrast'
-                editor.decorateMarker marker,
+                    labelElement.classList.add 'high-contrast'
+                decoration = editor.decorateMarker marker,
                     type: 'overlay'
-                    item: label
+                    item: labelElement
                     position: 'head'
-
-                console.timeEnd 'drawLabels'
+                @labels.push
+                    element: labelElement
+                    marker: marker
 
             [firstVisibleRow, lastVisibleRow] = editorView.getVisibleRowRange()
             # TODO: Right now there are issues with lastVisbleRow
@@ -210,6 +202,7 @@ class JumpyView extends View
                         drawLabels lineNumber, word.index
 
             @initializeClearEvents(editorView)
+        console.timeEnd 'toggle'
 
     clearJumpModeHandler: (e) =>
         @clearJumpMode()
@@ -225,8 +218,8 @@ class JumpyView extends View
 
     clearJumpMode: ->
         clearAllMarkers = =>
-            for marker in @markers
-                marker.destroy()
+            for label in @labels
+                label.marker.destroy()
 
         if @cleared
             return
