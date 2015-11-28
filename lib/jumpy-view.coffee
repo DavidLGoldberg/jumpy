@@ -40,6 +40,7 @@ class JumpyView extends View
 
     initialize: (serializeState) ->
         @disposables = new CompositeDisposable()
+        @markers = []
         @commands = new CompositeDisposable()
 
         @commands.add atom.commands.add 'atom-workspace',
@@ -181,6 +182,7 @@ class JumpyView extends View
                     new Point(lineNumber, column),
                     new Point(lineNumber, column)),
                     invalidate: 'touch'
+                @markers.push marker
                 label = document.createElement('div')
                 label.textContent = keyLabel
                 label.style.fontSize = fontSize
@@ -221,6 +223,10 @@ class JumpyView extends View
             editorView.addEventListener e, @clearJumpModeHandler, true
 
     clearJumpMode: ->
+        clearAllMarkers = =>
+            for marker in @markers
+                marker.destroy()
+
         if @cleared
             return
 
@@ -229,13 +235,14 @@ class JumpyView extends View
         @statusBarJumpy?.innerHTML = ''
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            return if $(editorView).is ':not(:visible)'
-            overlayer = @getOverlayer editorView
-            $(overlayer).find('.jumpy').remove()
+            return if $(editorView).is ':not(:visible)' # questionable with
+            # rewrite using markers
+
             editorView.classList.remove 'jumpy-jump-mode'
             for e in ['blur', 'click']
                 editorView.removeEventListener e, @clearJumpModeHandler, true
         atom.keymaps.keyBindings = @backedUpKeyBindings
+        clearAllMarkers()
         @disposables?.dispose()
         @detach()
 
