@@ -162,13 +162,11 @@ class JumpyView extends View
                 return unless nextKeys.length
 
                 keyLabel = nextKeys.shift()
-                position = {row: lineNumber, column: column} # TODO: needs work!
+                position = {row: lineNumber, column: column}
                 # creates a reference:
-                @allPositions[keyLabel] = {
+                @allPositions[keyLabel] =
                     editor: editor.id
-                    position: position #todo replace with a marker..
-                    #doesn't really matter though?
-                }
+                    position: position
 
                 marker = editor.markBufferRange new Range(
                     new Point(lineNumber, column),
@@ -229,8 +227,7 @@ class JumpyView extends View
         @statusBarJumpy?.innerHTML = ''
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            return if $(editorView).is ':not(:visible)' # questionable with
-            # rewrite using markers
+            return if $(editorView).is ':not(:visible)'
 
             editorView.classList.remove 'jumpy-jump-mode'
             for e in ['blur', 'click']
