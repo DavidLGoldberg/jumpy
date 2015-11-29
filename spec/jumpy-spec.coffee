@@ -394,7 +394,6 @@ describe "Jumpy", ->
                     'fuzzy-finder:toggle-file-finder'
                 expect(textEditorElement
                     .classList.contains('jumpy-jump-mode')).toBe false
-                expect(textEditorElement
-                    .parentElement.querySelectorAll('.jumpy')).toHaveLength 0
+                expect(textEditor.getOverlayDecorations()).toHaveLength 0
                 expect(workspaceElement
                     .querySelectorAll('.fuzzy-finder')).toHaveLength 1
