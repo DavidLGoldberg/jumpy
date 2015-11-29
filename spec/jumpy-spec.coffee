@@ -73,6 +73,7 @@ describe "Jumpy", ->
     afterEach ->
         atom.commands.dispatch textEditorElement, 'jumpy:clear'
 
+    describe 'activate', ->
         it 'creates the commands', ->
             expect(hasCommand(workspaceElement, 'jumpy:toggle')).toBeTruthy()
             expect(hasCommand(workspaceElement, 'jumpy:reset')).toBeTruthy()
@@ -305,9 +306,10 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 1
         it "leaves the labels up", ->
             atom.commands.dispatch textEditorElement, 'jumpy:z'
-            relevantLabels = textEditorElement.shadowRoot
-                .querySelectorAll('.label:not(.irrelevant)')
-            expect(relevantLabels.length > 0).toBeTruthy()
+            decorations = textEditor.getOverlayDecorations()
+            relevantDecorations = decorations.filter (d) ->
+                not d.getProperties().item.classList.contains 'irrelevant'
+            expect(relevantDecorations.length > 0).toBeTruthy()
 
     describe "when toggle is called with a split tab", ->
         it "continues to label consecutively", ->
