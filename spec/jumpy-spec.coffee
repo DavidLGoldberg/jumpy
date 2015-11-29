@@ -70,7 +70,9 @@ describe "Jumpy", ->
         waitsForPromise ->
             statusBarPromise
 
-    describe 'activate', ->
+    afterEach ->
+        atom.commands.dispatch textEditorElement, 'jumpy:clear'
+
         it 'creates the commands', ->
             expect(hasCommand(workspaceElement, 'jumpy:toggle')).toBeTruthy()
             expect(hasCommand(workspaceElement, 'jumpy:reset')).toBeTruthy()
@@ -87,14 +89,13 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws correct labels", ->
-            labels = textEditorElement.shadowRoot
-                .querySelectorAll '.jumpy.label'
-            expect(labels.length)
+            decorations = textEditor.getOverlayDecorations()
+            expect(decorations.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
-            expect(labels[0].innerHTML).toBe 'aa'
-            expect(labels[1].innerHTML).toBe 'ab'
-            expect(labels[82].innerHTML).toBe 'de'
-            expect(labels[83].innerHTML).toBe 'df'
+            expect(decorations[0].getProperties().item.textContent).toBe 'aa'
+            expect(decorations[1].getProperties().item.textContent).toBe 'ab'
+            expect(decorations[82].getProperties().item.textContent).toBe 'de'
+            expect(decorations[83].getProperties().item.textContent).toBe 'df'
         it "clears beacon effect", ->
             expect(textEditorElement.
                 querySelectorAll('cursors .cursor.beacon').length).toBe 0
