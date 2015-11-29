@@ -146,7 +146,7 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered
     and invalid hotkeys are entered", ->
-        it "jumpy is cleared", ->
+        it "does nothing", ->
             atom.commands.dispatch workspaceElement, 'jumpy:z'
             atom.commands.dispatch workspaceElement, 'jumpy:z'
             cursorPosition = textEditor.getCursorBufferPosition()
