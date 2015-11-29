@@ -228,15 +228,16 @@ describe "Jumpy", ->
 
     describe "when the jumpy:a event is triggered", ->
         it "updates the status bar with a", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
             expect(document
                 .querySelector '#status-bar-jumpy .status'
                     .innerHTML).toBe 'a'
         it "removes all labels that don't begin with a", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
-            expect(textEditorElement.shadowRoot
-                .querySelectorAll('.jumpy.label:not(.irrelevant)').length)
-                    .toBe 26
+            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            decorations = textEditor.getOverlayDecorations()
+            relevantDecorations = decorations.filter (d) ->
+                not d.getProperties().item.classList.contains 'irrelevant'
+            expect(relevantDecorations).toHaveLength 26
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
