@@ -353,11 +353,11 @@ describe "Jumpy", ->
                 # now that we're on the 2nd file.
                 atom.commands.dispatch currentTextEditorElement, 'jumpy:toggle'
 
-                labels = getLabelsArrayFromAllEditors()
+                decorations = getDecorationsArrayFromAllEditors()
                 expectedTotalNumberWith2TabsOpenInOnePane =
                     (NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES + 3)
-                expect(labels.length)
-                    .toBe (expectedTotalNumberWith2TabsOpenInOnePane)
+                expect(decorations)
+                    .toHaveLength expectedTotalNumberWith2TabsOpenInOnePane
 
     describe "when a jump mode is enabled", ->
         activationPromise = []
