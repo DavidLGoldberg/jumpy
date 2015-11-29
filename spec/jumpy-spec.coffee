@@ -259,9 +259,11 @@ describe "Jumpy", ->
         it "resets all labels even those that don't begin with a", ->
             atom.commands.dispatch textEditorElement, 'jumpy:a'
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
-            expect(textEditorElement.shadowRoot
-                .querySelectorAll('.jumpy.label:not(.irrelevant)')
-                    .length).toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
+            decorations = textEditor.getOverlayDecorations()
+            relevantDecorations = decorations.filter (d) ->
+                not d.getProperties().item.classList.contains 'irrelevant'
+            expect(relevantDecorations).toHaveLength NUM_TOTAL_WORDS +
+                NUM_CAMEL_SPECIFIC_MATCHES
 
     describe "when the a text selection has begun
     before a jumpy:toggle event is triggered", ->
