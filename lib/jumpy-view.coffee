@@ -37,7 +37,7 @@ class JumpyView extends View
 
     initialize: (serializeState) ->
         @disposables = new CompositeDisposable()
-        @labels = []
+        @decorations = []
         @commands = new CompositeDisposable()
 
         @commands.add atom.commands.add 'atom-workspace',
@@ -72,8 +72,9 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                for label in @labels
-                    if label.element.textContent[labelPosition] == character
+                for decoration in @decorations
+                    element = decoration.getProperties().item
+                    if element.textContent[labelPosition] == character
                         found = true
                         return false
             return found
@@ -93,9 +94,10 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                for label in @labels
-                    if label.element.textContent.indexOf(@firstChar) != 0
-                        label.element.classList.add 'irrelevant'
+                for decoration in @decorations
+                    element = decoration.getProperties().item
+                    if element.textContent.indexOf(@firstChar) != 0
+                        element.classList.add 'irrelevant'
         else if not @secondChar
             @secondChar = character
 
@@ -109,8 +111,8 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        for label in @labels
-            label.element.classList.remove 'irrelevant'
+        for decoration in @decorations
+            decoration.getProperties().item.classList.remove 'irrelevant'
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
@@ -187,9 +189,7 @@ class JumpyView extends View
                     type: 'overlay'
                     item: labelElement
                     position: 'head'
-                @labels.push
-                    element: labelElement
-                    marker: marker
+                @decorations.push decoration
 
             [firstVisibleRow, lastVisibleRow] = editorView.getVisibleRowRange()
             # TODO: Right now there are issues with lastVisbleRow
@@ -218,8 +218,8 @@ class JumpyView extends View
 
     clearJumpMode: ->
         clearAllMarkers = =>
-            for label in @labels
-                label.marker.destroy()
+            for decoration in @decorations
+                decoration.getMarker().destroy()
 
         if @cleared
             return
