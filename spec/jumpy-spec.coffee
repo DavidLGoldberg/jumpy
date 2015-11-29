@@ -107,8 +107,7 @@ describe "Jumpy", ->
             atom.commands.dispatch workspaceElement, 'jumpy:clear'
             expect(textEditorElement
                 .classList.contains('jumpy-jump-mode')).toBe false
-            expect(textEditorElement
-                .parentElement.querySelectorAll('.jumpy')).toHaveLength 0
+            expect(textEditor.getOverlayDecorations()).toHaveLength 0
 
     describe "when the jumpy:toggle event is triggered
     and a click event is fired", ->
@@ -143,8 +142,7 @@ describe "Jumpy", ->
             atom.commands.dispatch workspaceElement, 'jumpy:c'
             expect(textEditorElement.classList
                 .contains('jumpy-jump-mode')).toBe false
-            expect(textEditorElement
-                .parentElement.querySelectorAll('.jumpy')).toHaveLength 0
+            expect(textEditor.getOverlayDecorations()).toHaveLength 0
 
     describe "when the jumpy:toggle event is triggered
     and invalid hotkeys are entered", ->
