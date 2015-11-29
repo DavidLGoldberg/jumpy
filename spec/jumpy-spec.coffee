@@ -373,8 +373,7 @@ describe "Jumpy", ->
             runs ->
                 expect(textEditorElement
                     .classList.contains('jumpy-jump-mode')).toBe false
-                expect(textEditorElement
-                    .parentElement .querySelectorAll('.jumpy')).toHaveLength 0
+                expect(textEditor.getOverlayDecorations()).toHaveLength 0
                 expect(workspaceElement
                     .querySelectorAll('.find-and-replace')).toHaveLength 1
 
