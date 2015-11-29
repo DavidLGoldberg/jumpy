@@ -15,16 +15,14 @@ NUM_TOTAL_WORDS =
 
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
-getLabelsArrayFromAllEditors = ->
-    labels = []
+getDecorationsArrayFromAllEditors = ->
+    decorations = []
     atom.workspace.observeTextEditors (editor) ->
         currentTextEditorElement = atom.views.getView(editor)
         return if $(currentTextEditorElement).is ':not(:visible)'
 
-        labels = labels.concat([].slice.call(
-            currentTextEditorElement.shadowRoot
-                .querySelectorAll('.jumpy.label')))
-    return labels
+        decorations = decorations.concat(editor.getOverlayDecorations())
+    return decorations
 
 # Borrowed from: @lee-dohm
 # Public: Indicates whether an element has a command.
@@ -320,24 +318,23 @@ describe "Jumpy", ->
             # NOTE: This also ensures that I shouldn't have to clear the labels
             # In the test, but rather the code does that! (Because the test
             # setup does one toggle always)
-            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            atom.commands.dispatch workspaceElement, 'jumpy:toggle'
 
-            labels = getLabelsArrayFromAllEditors()
+            decorations = getDecorationsArrayFromAllEditors()
             expectedTotalNumberWith2Panes =
                 (NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES) * 2
-            expect(labels.length)
-                .toBe (expectedTotalNumberWith2Panes)
+            expect(decorations).toHaveLength expectedTotalNumberWith2Panes
             # Beginning of first file
-            expect(labels[0].innerHTML).toBe 'aa'
-            expect(labels[1].innerHTML).toBe 'ab'
+            expect(decorations[0].getProperties().item.textContent).toBe 'aa'
+            expect(decorations[1].getProperties().item.textContent).toBe 'ab'
 
             # End of first file
-            expect(labels[116].innerHTML).toBe 'em'
-            expect(labels[117].innerHTML).toBe 'en'
+            expect(decorations[116].getProperties().item.textContent).toBe 'em'
+            expect(decorations[117].getProperties().item.textContent).toBe 'en'
 
             # Beginning of second file
-            expect(labels[118].innerHTML).toBe 'eo'
-            expect(labels[119].innerHTML).toBe 'ep'
+            expect(decorations[118].getProperties().item.textContent).toBe 'eo'
+            expect(decorations[119].getProperties().item.textContent).toBe 'ep'
 
     describe "when toggle is called with 2 tabs open in same pane", ->
         it "continues to label consecutively", ->
