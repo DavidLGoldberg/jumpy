@@ -46,7 +46,7 @@ describe "Jumpy with non default settings on", ->
         waitsForPromise ->
             jumpyPromise
 
-    fdescribe "when the jumpy:toggle event is triggered", ->
+    describe "when the jumpy:toggle event is triggered", ->
         it "draws correctly colored labels", ->
             expect(textEditor.getOverlayDecorations()[0].getProperties().item
                 .classList.contains 'high-contrast').toBe true
@@ -66,27 +66,27 @@ describe "Jumpy with non default settings on", ->
 
     describe "when a custom match (jumpy default) is used", ->
         it "draws correct labels", ->
-            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
+            labels = textEditor.getOverlayDecorations()
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS
-            expect(labels[0].innerHTML).toBe 'aa'
-            expect(labels[1].innerHTML).toBe 'ab'
-            expect(labels[82].innerHTML).toBe 'de'
-            expect(labels[83].innerHTML).toBe 'df'
+            expect(labels[0].getProperties().item.textContent).toBe 'aa'
+            expect(labels[1].getProperties().item.textContent).toBe 'ab'
+            expect(labels[82].getProperties().item.textContent).toBe 'de'
+            expect(labels[83].getProperties().item.textContent).toBe 'df'
 
     describe "when a custom match is used (camel case)", ->
         it "draws correct labels and jumps appropriately", ->
             atom.commands.dispatch textEditorElement, 'jumpy:clear'
             atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
+            labels = textEditor.getOverlayDecorations()
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
             # BASE CASE WORDS:
-            expect(labels[0].innerHTML).toBe 'aa'
-            expect(labels[1].innerHTML).toBe 'ab'
-            expect(labels[82].innerHTML).toBe 'de'
-            expect(labels[83].innerHTML).toBe 'df'
+            expect(labels[0].getProperties().item.textContent).toBe 'aa'
+            expect(labels[1].getProperties().item.textContent).toBe 'ab'
+            expect(labels[82].getProperties().item.textContent).toBe 'de'
+            expect(labels[83].getProperties().item.textContent).toBe 'df'
 
             #CAMELS:
             atom.commands.dispatch textEditorElement, 'jumpy:e'
