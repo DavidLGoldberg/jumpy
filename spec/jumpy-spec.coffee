@@ -49,6 +49,8 @@ describe "Jumpy", ->
         # He found it in the wrap-guide.
         workspaceElement.style.height = "5000px" # big enough
         workspaceElement.style.width = "5000px"
+        jumpyPromise = atom.packages.activatePackage 'jumpy'
+        statusBarPromise = atom.packages.activatePackage 'status-bar'
         jasmine.attachToDOM(workspaceElement)
         # TODO: Abstract the following out, (DRY) --------------
 
@@ -58,8 +60,6 @@ describe "Jumpy", ->
         runs ->
             textEditor = atom.workspace.getActiveTextEditor()
             textEditorElement = atom.views.getView(textEditor)
-            jumpyPromise = atom.packages.activatePackage 'jumpy'
-            statusBarPromise = atom.packages.activatePackage 'status-bar'
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
 
