@@ -48,10 +48,10 @@ describe "Jumpy with non default settings on", ->
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws correctly colored labels", ->
-            expect(textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')[0].classList
+            expect(textEditorElement.querySelectorAll('.jumpy.label')[0].classList
                 .contains 'high-contrast').toBe true
         it "draws labels of the right font size", ->
-            expect(textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')[0]
+            expect(textEditorElement.querySelectorAll('.jumpy.label')[0]
                 .style.fontSize).toBe '50%'
 
     describe "when the jumpy:toggle event is triggered
@@ -66,7 +66,7 @@ describe "Jumpy with non default settings on", ->
 
     describe "when a custom match (jumpy default) is used", ->
         it "draws correct labels", ->
-            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS
             expect(labels[0].innerHTML).toBe 'aa'
@@ -79,7 +79,7 @@ describe "Jumpy with non default settings on", ->
             atom.commands.dispatch textEditorElement, 'jumpy:clear'
             atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
             # BASE CASE WORDS:
