@@ -46,12 +46,12 @@ describe "Jumpy with non default settings on", ->
         waitsForPromise ->
             jumpyPromise
 
-    describe "when the jumpy:toggle event is triggered", ->
+    fdescribe "when the jumpy:toggle event is triggered", ->
         it "draws correctly colored labels", ->
-            expect(textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')[0].classList
-                .contains 'high-contrast').toBe true
+            expect(textEditor.getOverlayDecorations()[0].getProperties().item
+                .classList.contains 'high-contrast').toBe true
         it "draws labels of the right font size", ->
-            expect(textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')[0]
+            expect(textEditor.getOverlayDecorations()[0].getProperties().item
                 .style.fontSize).toBe '50%'
 
     describe "when the jumpy:toggle event is triggered
