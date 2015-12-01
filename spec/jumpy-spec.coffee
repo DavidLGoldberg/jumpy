@@ -49,10 +49,10 @@ describe "Jumpy", ->
         # He found it in the wrap-guide.
         workspaceElement.style.height = "5000px" # big enough
         workspaceElement.style.width = "5000px"
+        # TODO: Abstract the following out, (DRY) --------------
         jumpyPromise = atom.packages.activatePackage 'jumpy'
         statusBarPromise = atom.packages.activatePackage 'status-bar'
         jasmine.attachToDOM(workspaceElement)
-        # TODO: Abstract the following out, (DRY) --------------
 
         waitsForPromise ->
             atom.workspace.open 'test_text.md'
