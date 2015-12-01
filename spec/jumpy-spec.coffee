@@ -22,7 +22,7 @@ getLabelsArrayFromAllEditors = ->
         return if $(currentTextEditorElement).is ':not(:visible)'
 
         labels = labels.concat([].slice.call(
-            currentTextEditorElement.shadowRoot.querySelectorAll('.jumpy.label')))
+            currentTextEditorElement.querySelectorAll('.jumpy.label')))
     return labels
 
 # Borrowed from: @lee-dohm
@@ -86,7 +86,7 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws correct labels", ->
-            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
             expect(labels[0].innerHTML).toBe 'aa'

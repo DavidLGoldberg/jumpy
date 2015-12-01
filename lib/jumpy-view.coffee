@@ -30,6 +30,8 @@ for c1 in lowerCharacters
     for c2 in upperCharacters
         keys.push c1 + c2
 
+JumpyLabelContainerElement = document.registerElement('jumpy-label-container')
+
 module.exports =
 class JumpyView extends View
 
@@ -72,8 +74,8 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-                $(overlayer).find('.label:not(.irrelevant)').each (i, label) ->
+                container = editorView.querySelector('.jumpy-label-container')
+                $(container).find('.label:not(.irrelevant)').each (i, label) ->
                     if label.innerHTML[labelPosition] == character
                         found = true
                         return false
@@ -94,8 +96,8 @@ class JumpyView extends View
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
 
-                overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-                for label in overlayer.querySelectorAll '.jumpy.label'
+                container = editorView.querySelector('.jumpy-label-container')
+                for label in container.querySelectorAll '.jumpy.label'
                     if label.innerHTML.indexOf(@firstChar) != 0
                         label.classList.add 'irrelevant'
         else if not @secondChar
@@ -113,8 +115,8 @@ class JumpyView extends View
         @clearKeys()
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-            $(overlayer).find '.irrelevant'
+            container = editorView.querySelector('.jumpy-label-container')
+            $(container).find '.irrelevant'
                 .removeClass 'irrelevant'
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
@@ -161,9 +163,11 @@ class JumpyView extends View
             return if $editorView.is ':not(:visible)'
 
             editorView.classList.add 'jumpy-jump-mode'
-            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-            $(overlayer).append '<div class="jumpy jumpy-label-container"></div>'
-            labelContainer = overlayer.querySelector '.jumpy-label-container'
+            labelContainer = new JumpyLabelContainerElement()
+            labelContainer.classList.add('jumpy')
+            labelContainer.classList.add('jumpy-label-container')
+            labelContainer.classList.add('overlayer')
+            editorView.appendChild(labelContainer)
 
             drawLabels = (column, labelContainer) =>
                 return unless nextKeys.length
@@ -222,8 +226,7 @@ class JumpyView extends View
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
             return if $(editorView).is ':not(:visible)'
-            overlayer = editorView.shadowRoot.querySelector('content[select=".overlayer"]')
-            $(overlayer).find('.jumpy').remove()
+            $(editorView).find('.jumpy').remove()
             editorView.classList.remove 'jumpy-jump-mode'
             for e in ['blur', 'click']
                 editorView.removeEventListener e, @clearJumpModeHandler, true

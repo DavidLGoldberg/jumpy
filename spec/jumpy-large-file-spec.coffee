@@ -29,7 +29,7 @@ describe "Jumpy", ->
 
     describe "when jumpy:toggle event is triggered on a large file", ->
         it "prints the right labels beyond zz", ->
-            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels[0].innerHTML).toBe 'aa'
             expect(labels[1].innerHTML).toBe 'ab'
             expect(labels[676].innerHTML).toBe 'Aa'
@@ -37,6 +37,6 @@ describe "Jumpy", ->
             expect(labels[676+676].innerHTML).toBe 'aA'
             expect(labels[676+676+1].innerHTML).toBe 'aB'
         it "does not print undefined labels beyond zA", ->
-            labels = textEditorElement.shadowRoot.querySelectorAll('.jumpy.label')
+            labels = textEditorElement.querySelectorAll('.jumpy.label')
             expect(labels.length)
                 .toBe NUM_TOTAL_WORDS - 2
