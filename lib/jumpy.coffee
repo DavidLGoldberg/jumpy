@@ -30,6 +30,7 @@ module.exports =
 
     deactivate: ->
         @jumpyView.destroy()
+        @jumpyView = null
 
     serialize: ->
         jumpyViewState: @jumpyView.serialize()

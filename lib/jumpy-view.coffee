@@ -202,7 +202,7 @@ class JumpyView extends View
                         drawLabels lineNumber, word.index
 
             @initializeClearEvents(editorView)
-        console.timeEnd 'toggle'
+        console.timeEnd 'toggle' #TODO: REMOVE THESE
 
     clearJumpModeHandler: (e) =>
         @clearJumpMode()
@@ -220,6 +220,8 @@ class JumpyView extends View
         clearAllMarkers = =>
             for decoration in @decorations
                 decoration.getMarker().destroy()
+            @decorations = [] # Very important for GC.
+            # Verifiable in Dev Tools -> Timeline -> Nodes.
 
         if @cleared
             return
