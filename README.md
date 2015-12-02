@@ -1,5 +1,8 @@
 # Jumpy
 
+![](https://img.shields.io/apm/dm/jumpy.svg)
+![](https://img.shields.io/apm/v/jumpy.svg)
+
 An Atom package that creates dynamic hotkeys to jump around files and across visible panes.
 
 ## How to jump
