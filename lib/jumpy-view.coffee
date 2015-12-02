@@ -35,7 +35,7 @@ class JumpyView extends View
     @content: ->
         @div ''
 
-    initialize: (serializeState) ->
+    initialize: () ->
         @disposables = new CompositeDisposable()
         @decorations = []
         @commands = new CompositeDisposable()
@@ -204,7 +204,7 @@ class JumpyView extends View
             @initializeClearEvents(editorView)
         console.timeEnd 'toggle' #TODO: REMOVE THESE
 
-    clearJumpModeHandler: (e) =>
+    clearJumpModeHandler: =>
         @clearJumpMode()
 
     initializeClearEvents: (editorView) ->
