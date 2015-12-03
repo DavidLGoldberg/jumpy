@@ -171,7 +171,7 @@ class JumpyView extends View
                     editor: editor.id
                     position: position
 
-                marker = editor.markBufferRange new Range(
+                marker = editor.markScreenRange new Range(
                     new Point(lineNumber, column),
                     new Point(lineNumber, column)),
                     invalidate: 'touch'
