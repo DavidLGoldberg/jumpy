@@ -6,6 +6,7 @@
 # TODO: Merge in @willdady's code for better accuracy.
 # TODO: Remove space-pen?
 
+### global atom ###
 {CompositeDisposable, Point, Range} = require 'atom'
 {View, $} = require 'space-pen'
 _ = require 'lodash'
