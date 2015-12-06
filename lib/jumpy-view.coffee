@@ -179,9 +179,6 @@ class JumpyView extends View
                 labelElement = document.createElement('div')
                 labelElement.textContent = keyLabel
                 labelElement.style.fontSize = fontSize
-                lineHeight = window.getComputedStyle(editorView
-                    .shadowRoot.querySelector('.line'))['line-height']
-                labelElement.style.top = '-' + lineHeight
                 labelElement.classList.add 'jumpy-label'
                 if highContrast
                     labelElement.classList.add 'high-contrast'

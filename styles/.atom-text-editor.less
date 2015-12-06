@@ -1,16 +1,5 @@
 @import "ui-variables";
 
-@-webkit-keyframes scale-in {
-    from {
-        opacity: 0;
-        -webkit-transform: scale(.1);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: scale(1);
-    }
-}
-
 #status-bar-jumpy {
     color: @text-color-info;
     &.no-match,
@@ -26,14 +15,15 @@
     color: @base-background-color;
     background: @text-color;
     position: absolute;
+    left: 10px;
+    vertical-align: bottom;
+    transform: translate(0, -100%);
     padding: .15em;
     border-radius: @component-border-radius;
     font-family: @font-family;
-    -webkit-animation: scale-in .08s alternate;
     &.high-contrast {
         background-color: @background-color-success;
     }
-    left: 10px;
 }
 
 @import "beacon.less";
