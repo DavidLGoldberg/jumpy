@@ -1,6 +1,3 @@
-# Shortly after 2.0 release action items:
-# (need to rush release a little bit because
-# the default shadow dom option has been enabled by atom!)
 # FIXME: Beacon code (currently broken in shadow).  This will probably return
 # in the form of a decoration with a "flash", not sure yet.
 # TODO: Merge in @willdady's code for better accuracy.
