@@ -128,7 +128,6 @@ class JumpyView extends View
         atom.keymaps.keyBindings = @filteredJumpyKeys
 
     toggle: ->
-        console.time 'toggle'
         @clearJumpMode()
 
         # Set dirty for @clearJumpMode
@@ -185,7 +184,7 @@ class JumpyView extends View
                     position: 'head'
                 @decorations.push decoration
 
-            [firstVisibleRow, lastVisibleRow] = editorView.getVisibleRowRange()
+            [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
             # TODO: Right now there are issues with lastVisbleRow
             for lineNumber in [firstVisibleRow...lastVisibleRow]
                 lineContents = editor.lineTextForScreenRow(lineNumber)
@@ -196,7 +195,6 @@ class JumpyView extends View
                         drawLabels lineNumber, word.index
 
             @initializeClearEvents(editorView)
-        console.timeEnd 'toggle' #TODO: REMOVE THESE
 
     clearJumpModeHandler: =>
         @clearJumpMode()
