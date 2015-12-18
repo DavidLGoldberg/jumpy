@@ -90,15 +90,18 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 (see examples below)
 
 ```less
-atom-text-editor::shadow .jumpy {
-    &.label {
-    }
-    &.jump {
+atom-text-editor /deep/ {
+    .jumpy-label {
+        // Regular labels
+        background-color: black;
+        color: white;
+        &.high-contrast {
+            // High Contrast labels (activated in settings)
+            background-color: green;
+        }
     }
 }
 ```
-
-[Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
 ## My other Atom package :)
 
