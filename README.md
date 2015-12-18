@@ -23,15 +23,13 @@ apm install jumpy
 ```
 
 ## Notes
-* Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
-    * Vim modes supported:
-        * command mode
-        * insert mode
-        * visual mode (expands selections with <kbd>v</kbd> or <kbd>V</kbd>)
-    * Recommended key mappings to replace 'f' in vim-mode see 'Settings' below.
-* Recommended custom cursors:
-    * [slightly pulsing green cursor](https://gist.github.com/DavidLGoldberg/166646fce043710ef920 "green cursor gist")
-    * [neon-cursor](https://atom.io/packages/neon-cursor) (This conflicts with the Jumpy homing beacon effect, but you *probably* won't need the beacon anymore!)
+
+*   Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
+  *   Vim modes supported:
+      *   command mode
+      *   insert mode
+      *   visual mode (expands selections with <kbd>v</kbd> or <kbd>V</kbd>)
+  *   Recommended key mappings to replace 'f' in vim-mode see 'Settings' below.
 
 ## Key Bindings
 
