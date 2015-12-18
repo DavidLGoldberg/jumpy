@@ -27,7 +27,6 @@ for c1 in lowerCharacters
     for c2 in upperCharacters
         keys.push c1 + c2
 
-module.exports =
 class JumpyView extends View
 
     @content: ->
@@ -282,3 +281,5 @@ class JumpyView extends View
     destroy: ->
         @commands?.dispose()
         @clearJumpMode()
+
+module.exports = JumpyView
