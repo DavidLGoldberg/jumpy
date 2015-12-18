@@ -100,6 +100,10 @@ atom-text-editor::shadow .jumpy {
 
 [Example](https://gist.github.com/DavidLGoldberg/58b96b80902724ba3c5a "Example orange labels") (orange labels)
 
+## My other Atom package :)
+
+*   [Qolor](https://atom.io/packages/qolor)
+
 ## Keywords
 
 (A little SEO juice)
