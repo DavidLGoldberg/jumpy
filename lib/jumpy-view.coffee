@@ -156,6 +156,18 @@ class JumpyView extends View
 
             editorView.classList.add 'jumpy-jump-mode'
 
+            getVisibleColumnRange = (editorView) ->
+                charWidth = editorView.getDefaultCharacterWidth()
+                # FYI: asserts:
+                # numberOfVisibleColumns = editorView.getWidth() / charWidth
+                minColumn = editorView.getScrollLeft() / charWidth
+                maxColumn = editorView.getScrollRight() / charWidth
+
+                return [
+                    minColumn
+                    maxColumn
+                ]
+
             drawLabels = (lineNumber, column) =>
                 return unless nextKeys.length
 
@@ -184,6 +196,7 @@ class JumpyView extends View
                     position: 'head'
                 @decorations.push decoration
 
+            [minColumn, maxColumn] = getVisibleColumnRange editorView
             [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
             # TODO: Right now there are issues with lastVisbleRow
             for lineNumber in [firstVisibleRow...lastVisibleRow]
@@ -192,7 +205,11 @@ class JumpyView extends View
                     drawLabels lineNumber, 0
                 else
                     while ((word = wordsPattern.exec(lineContents)) != null)
-                        drawLabels lineNumber, word.index
+                        column = word.index
+                        # Do not do anything... markers etc.
+                        # if the columns are out of bounds...
+                        if column > minColumn && column < maxColumn
+                            drawLabels lineNumber, column
 
             @initializeClearEvents(editorView)
 
