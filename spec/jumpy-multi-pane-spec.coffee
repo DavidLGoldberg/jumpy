@@ -1,5 +1,8 @@
+### global
+atom
+jasmine describe xdescribe beforeEach it runs waitsForPromise
+###
 path = require 'path'
-{Views, Commands} = require 'atom'
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
 NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.

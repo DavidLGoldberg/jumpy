@@ -1,5 +1,8 @@
+### global
+atom
+jasmine describe xdescribe beforeEach afterEach it runs expect waitsFor waitsForPromise
+###
 path = require 'path'
-{Views, Commands} = require 'atom'
 {$} = require 'space-pen'
 
 

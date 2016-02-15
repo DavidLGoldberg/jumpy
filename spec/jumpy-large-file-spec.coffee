@@ -1,5 +1,8 @@
+### global
+atom
+jasmine describe xdescribe beforeEach afterEach it runs expect waitsForPromise
+###
 path = require 'path'
-{Views, Commands} = require 'atom'
 
 NUM_TOTAL_WORDS = 676 + 676 + 676 + 2 # 2 extra
 

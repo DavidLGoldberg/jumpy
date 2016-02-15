@@ -1,6 +1,8 @@
+### global
+atom
+jasmine describe beforeEach it xit runs expect waitsForPromise
+###
 path = require 'path'
-{Views} = require 'atom'
-Jumpy = require '../lib/jumpy'
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
 NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
