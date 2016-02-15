@@ -160,7 +160,7 @@ class JumpyView extends View
                 charWidth = editorView.getDefaultCharacterWidth()
                 # FYI: asserts:
                 # numberOfVisibleColumns = editorView.getWidth() / charWidth
-                minColumn = editorView.getScrollLeft() / charWidth
+                minColumn = (editorView.getScrollLeft() / charWidth) - 1
                 maxColumn = editorView.getScrollRight() / charWidth
 
                 return [
