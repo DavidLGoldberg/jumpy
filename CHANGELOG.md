@@ -1,3 +1,9 @@
+## 3.0.2
+* Fix issue when switching tabs if jump mode is open.
+
+## 3.0.1
+* Is the actual released version of the below (had to deal with some publishing issues in core).
+
 ## 3.0.0
 * Fix new Atom releases performance issue (tiling changes) by using
   markers and decorations.

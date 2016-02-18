@@ -154,6 +154,7 @@ class JumpyView extends View
             $editorView = $(editorView)
             return if $editorView.is ':not(:visible)'
 
+            # 'jumpy-jump-mode is for keymaps and utilized by tests
             editorView.classList.add 'jumpy-jump-mode'
 
             getVisibleColumnRange = (editorView) ->
@@ -240,7 +241,6 @@ class JumpyView extends View
         @statusBarJumpy?.innerHTML = ''
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            return if $(editorView).is ':not(:visible)'
 
             editorView.classList.remove 'jumpy-jump-mode'
             for e in ['blur', 'click']
