@@ -198,19 +198,21 @@ class JumpyView extends View
                 @decorations.push decoration
 
             [minColumn, maxColumn] = getVisibleColumnRange editorView
-            [firstVisibleRow, lastVisibleRow] = editor.getVisibleRowRange()
-            # TODO: Right now there are issues with lastVisbleRow
-            for lineNumber in [firstVisibleRow...lastVisibleRow]
-                lineContents = editor.lineTextForScreenRow(lineNumber)
-                if editor.isFoldedAtScreenRow(lineNumber)
-                    drawLabels lineNumber, 0
-                else
-                    while ((word = wordsPattern.exec(lineContents)) != null)
-                        column = word.index
-                        # Do not do anything... markers etc.
-                        # if the columns are out of bounds...
-                        if column > minColumn && column < maxColumn
-                            drawLabels lineNumber, column
+            rows = editor.getVisibleRowRange()
+            if rows
+                [firstVisibleRow, lastVisibleRow] = rows
+                # TODO: Right now there are issues with lastVisbleRow
+                for lineNumber in [firstVisibleRow...lastVisibleRow]
+                    lineContents = editor.lineTextForScreenRow(lineNumber)
+                    if editor.isFoldedAtScreenRow(lineNumber)
+                        drawLabels lineNumber, 0
+                    else
+                        while ((word = wordsPattern.exec(lineContents)) != null)
+                            column = word.index
+                            # Do not do anything... markers etc.
+                            # if the columns are out of bounds...
+                            if column > minColumn && column < maxColumn
+                                drawLabels lineNumber, column
 
             @initializeClearEvents(editorView)
 
