@@ -1,3 +1,6 @@
+## 3.0.3
+* Fix issue #84 (PR: #85) from Danny Arnold (@despairblue)
+
 ## 3.0.2
 * Fix issue when switching tabs if jump mode is open.
 
