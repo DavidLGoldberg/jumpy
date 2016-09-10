@@ -1,3 +1,7 @@
+## 3.1.0 Gitter and Travis Continuous Integration
+*   Adds .travis.yml to project for Travis Continuous Integration.
+*   Adds a gitter badge to the README.md.
+
 ## 3.0.3
 * Fix issue #84 (PR: #85) from Danny Arnold (@despairblue)
 
