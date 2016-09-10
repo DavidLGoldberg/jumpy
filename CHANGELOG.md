@@ -1,3 +1,6 @@
+## 3.1.1 - Add Travis CI Badge
+*   First run of Travis!
+
 ## 3.1.0 Gitter and Travis Continuous Integration
 *   Adds .travis.yml to project for Travis Continuous Integration.
 *   Adds a gitter badge to the README.md.
