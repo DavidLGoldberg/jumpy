@@ -278,7 +278,7 @@ class JumpyView extends View
                 @drawBeacon currentEditor, location
 
     drawBeacon: (editor, location) ->
-        range = Range.fromObject [location.position, location.position]
+        range = Range location.position, location.position
         marker = editor.markScreenRange range, invalidate: 'never'
         beacon = document.createElement 'span'
         beacon.classList.add 'beacon'
