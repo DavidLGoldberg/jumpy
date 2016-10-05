@@ -285,7 +285,7 @@ class JumpyView extends View
         marker = editor.markScreenRange range, invalidate: 'never'
         beacon = document.createElement 'span'
         beacon.classList.add 'beacon'
-        decoration = editor.decorateMarker marker,
+        editor.decorateMarker marker,
             item: beacon,
             type: 'overlay'
         setTimeout ->
