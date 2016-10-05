@@ -256,7 +256,7 @@ class JumpyView extends View
         location = @findLocation()
         if location == null
             return
-        @disposables.add atom.workspace.observeTextEditors (currentEditor) ->
+        @disposables.add atom.workspace.observeTextEditors (currentEditor) =>
             editorView = atom.views.getView(currentEditor)
 
             # Prevent other editors from jumping cursors as well
@@ -274,15 +274,22 @@ class JumpyView extends View
             else
                 currentEditor.setCursorScreenPosition location.position
 
-            useHomingBeacon =
-                atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-            if useHomingBeacon
-                cursor = editorView.shadowRoot.querySelector '.cursors .cursor'
-                if cursor
-                    cursor.classList.add 'beacon'
-                    setTimeout ->
-                        cursor.classList.remove 'beacon'
-                    , 150
+            @beacon currentEditor, location
+
+    beacon: (editor, location) ->
+      useHomingBeacon =
+          atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
+      return unless useHomingBeacon
+      range = Range.fromObject [location.position, location.position]
+      marker = editor.markScreenRange range, invalidate: 'never'
+      beacon = document.createElement 'span'
+      beacon.classList.add 'beacon'
+      decoration = editor.decorateMarker marker,
+        item: beacon,
+        type: 'overlay'
+      setTimeout ->
+        marker.destroy()
+      , 150
 
     findLocation: ->
         label = "#{@firstChar}#{@secondChar}"

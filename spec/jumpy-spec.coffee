@@ -101,7 +101,7 @@ describe "Jumpy", ->
             expect(decorations[83].getProperties().item.textContent).toBe 'df'
         it "clears beacon effect", ->
             expect(textEditorElement.
-                querySelectorAll('cursors .cursor.beacon').length).toBe 0
+                querySelectorAll('span.beacon').length).toBe 0
         it "only uses jumpy keymaps", ->
             expect(atom.keymaps.keyBindings.length).toBe (26 * 2) + 5 + 1
 
@@ -140,12 +140,15 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
-        it "jumpy is cleared", ->
+        it "jumpy is cleared", (done) ->
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
             expect(textEditorElement.classList
                 .contains('jumpy-jump-mode')).toBe false
-            expect(textEditor.getOverlayDecorations()).toHaveLength 0
+            setTimeout ->
+              expect(textEditor.getOverlayDecorations()).toHaveLength 0
+              done()
+            , 160
 
     describe "when the jumpy:toggle event is triggered
     and invalid hotkeys are entered", ->
@@ -205,7 +208,7 @@ describe "Jumpy", ->
         it "the beacon animation class is added", ->
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
-            expect(textEditorElement.shadowRoot
+            expect(textEditorElement
                 .querySelectorAll('.beacon').length)
                 .toBe 1
         it "the beacon animation class is removed", ->
@@ -214,7 +217,7 @@ describe "Jumpy", ->
                 ->
                     atom.commands.dispatch workspaceElement, 'jumpy:c'
             runs ->
-                expect(textEditorElement.shadowRoot
+                expect(textEditorElement
                     .querySelectorAll('.beacon').length)
                     .toBe 0
 
