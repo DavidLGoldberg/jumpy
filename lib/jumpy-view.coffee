@@ -277,19 +277,20 @@ class JumpyView extends View
             @beacon currentEditor, location
 
     beacon: (editor, location) ->
-      useHomingBeacon =
-          atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-      return unless useHomingBeacon
-      range = Range.fromObject [location.position, location.position]
-      marker = editor.markScreenRange range, invalidate: 'never'
-      beacon = document.createElement 'span'
-      beacon.classList.add 'beacon'
-      decoration = editor.decorateMarker marker,
-        item: beacon,
-        type: 'overlay'
-      setTimeout ->
-        marker.destroy()
-      , 150
+        useHomingBeacon =
+            atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
+        return unless useHomingBeacon
+
+        range = Range.fromObject [location.position, location.position]
+        marker = editor.markScreenRange range, invalidate: 'never'
+        beacon = document.createElement 'span'
+        beacon.classList.add 'beacon'
+        decoration = editor.decorateMarker marker,
+            item: beacon,
+            type: 'overlay'
+        setTimeout ->
+            marker.destroy()
+        , 150
 
     findLocation: ->
         label = "#{@firstChar}#{@secondChar}"
