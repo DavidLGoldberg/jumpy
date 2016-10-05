@@ -274,13 +274,10 @@ class JumpyView extends View
             else
                 currentEditor.setCursorScreenPosition location.position
 
-            @beacon currentEditor, location
+            if atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
+                @beacon currentEditor, location
 
     beacon: (editor, location) ->
-        useHomingBeacon =
-            atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-        return unless useHomingBeacon
-
         range = Range.fromObject [location.position, location.position]
         marker = editor.markScreenRange range, invalidate: 'never'
         beacon = document.createElement 'span'
