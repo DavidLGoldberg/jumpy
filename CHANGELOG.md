@@ -1,3 +1,6 @@
+## 3.1.2 - Fix beacon
+*   Merge @johngeorgewright PR to restore the beacon functionality!
+
 ## 3.1.1 - Add Travis CI Badge
 *   First run of Travis!
 
