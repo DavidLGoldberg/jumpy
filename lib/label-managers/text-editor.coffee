@@ -3,8 +3,8 @@
 LabelManager = require '../label-manager'
 
 class TextEditorLabelManager extends LabelManager
-    constructor: (args...) ->
-        super args...
+    constructor: ->
+        super
         @allPositions = {}
         @decorations = []
 

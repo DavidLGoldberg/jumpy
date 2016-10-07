@@ -1,4 +1,4 @@
-{CompositeDisposable, Point, Range} = require 'atom'
+{Point, Range} = require 'atom'
 fs = require 'fs'
 pathHelper = require 'path'
 _ = require 'lodash'

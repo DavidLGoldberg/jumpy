@@ -6,8 +6,8 @@ triggerMouseEvent = (element, eventType) ->
     element.dispatchEvent clickEvent
 
 class TreeViewManager extends LabelManager
-    constructor: (args...) ->
-        super args...
+    constructor: ->
+        super
         @locations = []
 
     toggle: (keys) ->
