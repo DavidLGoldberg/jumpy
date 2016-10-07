@@ -38,10 +38,7 @@ class TreeViewManager extends LabelManager
         @select location
 
     select: ({element}) ->
-        atom.commands.dispatch(
-            document.querySelector('atom-workspace'),
-            'tree-view:show'
-        )
+        atom.commands.dispatch element, 'tree-view:show'
         triggerMouseEvent element, 'mousedown'
         atom.commands.dispatch element, 'tree-view:open-selected-entry'
 
