@@ -32,7 +32,7 @@ class TreeViewManager extends LabelManager
 
     jumpTo: (firstChar, secondChar) ->
         match = "#{firstChar}#{secondChar}"
-        location = @locations.find(({label}) -> label.textContent is match)
+        location = @locations.find ({label}) -> label.textContent is match
         return unless location
         @drawBeacon location
         @select location
