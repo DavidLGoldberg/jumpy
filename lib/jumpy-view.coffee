@@ -33,8 +33,8 @@ class JumpyView extends View
 
     initialize: () ->
         @disposables = new CompositeDisposable()
-        @decorations = []
         @commands = new CompositeDisposable()
+        @labels = new Labels @disposables
 
         @commands.add atom.commands.add 'atom-workspace',
             'jumpy:toggle': => @toggle()
@@ -67,12 +67,9 @@ class JumpyView extends View
             @disposables.add atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
-
-                for decoration in @decorations
-                    element = decoration.getProperties().item
-                    if element.textContent[labelPosition] == character
-                        found = true
-                        return false
+                if @labels.findByCharacterAndPosition character, labelPosition
+                    found = true
+                    return false
             return found
 
         # Assert: labelPosition will start at 0!
@@ -89,11 +86,7 @@ class JumpyView extends View
             @disposables.add atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
-
-                for decoration in @decorations
-                    element = decoration.getProperties().item
-                    if element.textContent.indexOf(@firstChar) != 0
-                        element.classList.add 'irrelevant'
+                @labels.markIrrelevant @firstChar
         else if not @secondChar
             @secondChar = character
 
@@ -107,8 +100,7 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        for decoration in @decorations
-            decoration.getProperties().item.classList.remove 'irrelevant'
+        @labels.unmarkIrrelevant()
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
@@ -133,12 +125,6 @@ class JumpyView extends View
         @cleared = false
 
         # TODO: Can the following few lines be singleton'd up? ie. instance var?
-        wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
-        fontSize = atom.config.get 'jumpy.fontSize'
-        fontSize = .75 if isNaN(fontSize) or fontSize > 1
-        fontSize = (fontSize * 100) + '%'
-        highContrast = atom.config.get 'jumpy.highContrast'
-
         @turnOffSlowKeys()
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpy?.innerHTML =
@@ -146,73 +132,10 @@ class JumpyView extends View
         @statusBarJumpyStatus =
             document.querySelector '#status-bar-jumpy .status'
 
-        @allPositions = {}
-        nextKeys = _.clone keys
+        @labels.toggle()
+
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
-            $editorView = $(editorView)
-            return if $editorView.is ':not(:visible)'
-
-            # 'jumpy-jump-mode is for keymaps and utilized by tests
-            editorView.classList.add 'jumpy-jump-mode'
-
-            getVisibleColumnRange = (editorView) ->
-                charWidth = editorView.getDefaultCharacterWidth()
-                # FYI: asserts:
-                # numberOfVisibleColumns = editorView.getWidth() / charWidth
-                minColumn = (editorView.getScrollLeft() / charWidth) - 1
-                maxColumn = editorView.getScrollRight() / charWidth
-
-                return [
-                    minColumn
-                    maxColumn
-                ]
-
-            drawLabels = (lineNumber, column) =>
-                return unless nextKeys.length
-
-                keyLabel = nextKeys.shift()
-                position = {row: lineNumber, column: column}
-                # creates a reference:
-                @allPositions[keyLabel] =
-                    editor: editor.id
-                    position: position
-
-                marker = editor.markScreenRange new Range(
-                    new Point(lineNumber, column),
-                    new Point(lineNumber, column)),
-                    invalidate: 'touch'
-
-                labelElement = document.createElement('div')
-                labelElement.textContent = keyLabel
-                labelElement.style.fontSize = fontSize
-                labelElement.classList.add 'jumpy-label'
-                if highContrast
-                    labelElement.classList.add 'high-contrast'
-
-                decoration = editor.decorateMarker marker,
-                    type: 'overlay'
-                    item: labelElement
-                    position: 'head'
-                @decorations.push decoration
-
-            [minColumn, maxColumn] = getVisibleColumnRange editorView
-            rows = editor.getVisibleRowRange()
-            if rows
-                [firstVisibleRow, lastVisibleRow] = rows
-                # TODO: Right now there are issues with lastVisbleRow
-                for lineNumber in [firstVisibleRow...lastVisibleRow]
-                    lineContents = editor.lineTextForScreenRow(lineNumber)
-                    if editor.isFoldedAtScreenRow(lineNumber)
-                        drawLabels lineNumber, 0
-                    else
-                        while ((word = wordsPattern.exec(lineContents)) != null)
-                            column = word.index
-                            # Do not do anything... markers etc.
-                            # if the columns are out of bounds...
-                            if column > minColumn && column < maxColumn
-                                drawLabels lineNumber, column
-
             @initializeClearEvents(editorView)
 
     clearJumpModeHandler: =>
@@ -228,12 +151,6 @@ class JumpyView extends View
             editorView.addEventListener e, @clearJumpModeHandler, true
 
     clearJumpMode: ->
-        clearAllMarkers = =>
-            for decoration in @decorations
-                decoration.getMarker().destroy()
-            @decorations = [] # Very important for GC.
-            # Verifiable in Dev Tools -> Timeline -> Nodes.
-
         if @cleared
             return
 
@@ -247,12 +164,12 @@ class JumpyView extends View
             for e in ['blur', 'click']
                 editorView.removeEventListener e, @clearJumpModeHandler, true
         atom.keymaps.keyBindings = @backedUpKeyBindings
-        clearAllMarkers()
+        @labels.destroy()
         @disposables?.dispose()
         @detach()
 
     jump: ->
-        location = @findLocation()
+        location = @labels.findLocation @firstChar, @secondChar
         if location == null
             return
         @disposables.add atom.workspace.observeTextEditors (currentEditor) =>
@@ -287,13 +204,6 @@ class JumpyView extends View
         setTimeout ->
             marker.destroy()
         , 150
-
-    findLocation: ->
-        label = "#{@firstChar}#{@secondChar}"
-        if label of @allPositions
-            return @allPositions[label]
-
-        return null
 
     # Returns an object that can be retrieved when package is activated
     serialize: ->
