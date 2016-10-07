@@ -2,7 +2,7 @@
 # TODO: Remove space-pen?
 
 ### global atom ###
-Labels = require './labels'
+LabelManagerIterator = require './label-manager-iterator'
 {CompositeDisposable, Point, Range} = require 'atom'
 {View, $} = require 'space-pen'
 _ = require 'lodash'
@@ -34,7 +34,7 @@ class JumpyView extends View
     initialize: () ->
         @disposables = new CompositeDisposable()
         @commands = new CompositeDisposable()
-        @labels = new Labels @disposables
+        @labelManager = new LabelManagerIterator @disposables
 
         @commands.add atom.commands.add 'atom-workspace',
             'jumpy:toggle': => @toggle()
@@ -67,9 +67,9 @@ class JumpyView extends View
             @disposables.add atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
-                if @labels.findByCharacterAndPosition character, labelPosition
-                    found = true
-                    return false
+                found = @labelManager.findByCharacterAndPosition(
+                    character, labelPosition)
+                return false if found
             return found
 
         # Assert: labelPosition will start at 0!
@@ -86,7 +86,7 @@ class JumpyView extends View
             @disposables.add atom.workspace.observeTextEditors (editor) =>
                 editorView = atom.views.getView(editor)
                 return if $(editorView).is ':not(:visible)'
-                @labels.markIrrelevant @firstChar
+                @labelManager.markIrrelevant @firstChar
         else if not @secondChar
             @secondChar = character
 
@@ -100,7 +100,7 @@ class JumpyView extends View
 
     reset: ->
         @clearKeys()
-        @labels.unmarkIrrelevant()
+        @labelManager.unmarkIrrelevant()
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
@@ -124,6 +124,9 @@ class JumpyView extends View
         # Set dirty for @clearJumpMode
         @cleared = false
 
+        # 'jumpy-jump-mode is for keymaps and utilized by tests
+        document.body.classList.add 'jumpy-jump-mode'
+
         # TODO: Can the following few lines be singleton'd up? ie. instance var?
         @turnOffSlowKeys()
         @statusBarJumpy?.classList.remove 'no-match'
@@ -132,7 +135,7 @@ class JumpyView extends View
         @statusBarJumpyStatus =
             document.querySelector '#status-bar-jumpy .status'
 
-        @labels.toggle()
+        @labelManager.toggle()
 
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
@@ -160,50 +163,16 @@ class JumpyView extends View
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
 
-            editorView.classList.remove 'jumpy-jump-mode'
+            document.body.classList.remove 'jumpy-jump-mode'
             for e in ['blur', 'click']
                 editorView.removeEventListener e, @clearJumpModeHandler, true
         atom.keymaps.keyBindings = @backedUpKeyBindings
-        @labels.destroy()
+        @labelManager.destroy()
         @disposables?.dispose()
         @detach()
 
     jump: ->
-        location = @labels.findLocation @firstChar, @secondChar
-        if location == null
-            return
-        @disposables.add atom.workspace.observeTextEditors (currentEditor) =>
-            editorView = atom.views.getView(currentEditor)
-
-            # Prevent other editors from jumping cursors as well
-            # TODO: make a test for this return if
-            return if currentEditor.id != location.editor
-
-            pane = atom.workspace.paneForItem(currentEditor)
-            pane.activate()
-
-            isVisualMode = editorView.classList.contains 'visual-mode'
-            isSelected = (currentEditor.getSelections().length == 1 &&
-                currentEditor.getSelectedText() != '')
-            if (isVisualMode || isSelected)
-                currentEditor.selectToScreenPosition location.position
-            else
-                currentEditor.setCursorScreenPosition location.position
-
-            if atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-                @drawBeacon currentEditor, location
-
-    drawBeacon: (editor, location) ->
-        range = Range location.position, location.position
-        marker = editor.markScreenRange range, invalidate: 'never'
-        beacon = document.createElement 'span'
-        beacon.classList.add 'beacon'
-        editor.decorateMarker marker,
-            item: beacon,
-            type: 'overlay'
-        setTimeout ->
-            marker.destroy()
-        , 150
+        @labelManager.jumpTo @firstChar, @secondChar
 
     # Returns an object that can be retrieved when package is activated
     serialize: ->

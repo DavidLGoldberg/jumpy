@@ -169,7 +169,7 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 6
             expect(textEditor.getSelectedText()).toBe ''
         it "clears jumpy mode", ->
-            expect(textEditorElement
+            expect(atom.document.body
                 .classList.contains('jumpy-jump-mode')).toBeTruthy()
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
