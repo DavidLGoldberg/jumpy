@@ -47,7 +47,7 @@ class TreeViewManager extends LabelManager
 
     markIrrelevant: (firstChar) ->
         @locations
-            .filter(({label}) -> not label.textContent.includes firstChar)
+            .filter(({label}) -> not label.textContent.startsWith firstChar)
             .forEach(({label}) -> label.classList.add 'irrelevant')
 
     unmarkIrrelevant: ->
