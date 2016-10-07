@@ -66,10 +66,10 @@ class LabelManagerIterator
     unmarkIrrelevant: ->
         manager.unmarkIrrelevant() for manager in @labelManagers
 
-    findByCharacterAndPosition: (character, position) ->
+    isMatchOfCurrentLabels: (character, position) ->
         found = null
         for manager in @labelManagers
-            found = manager.findByCharacterAndPosition character, position
+            found = manager.isMatchOfCurrentLabels character, position
             break if found
         found
 

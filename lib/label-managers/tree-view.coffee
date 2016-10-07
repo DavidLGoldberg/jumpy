@@ -50,7 +50,7 @@ class TreeViewManager extends LabelManager
     unmarkIrrelevant: ->
         label.classList.remove 'irrelevant' for {label} in @locations
 
-    findByCharacterAndPosition: (character, position) ->
+    isMatchOfCurrentLabels: (character, position) ->
         for {label} in @locations
             return label if label.textContent[position] is character
         null

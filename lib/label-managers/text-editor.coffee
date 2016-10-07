@@ -127,4 +127,13 @@ class TextEditorLabelManager extends LabelManager
             return decoration if element.textContent[position] == character
         null
 
+    isMatchOfCurrentLabels: (character, labelPosition) =>
+        found = false
+        @disposables.add atom.workspace.observeTextEditors (editor) =>
+            editorView = atom.views.getView(editor)
+            return if $(editorView).is ':not(:visible)'
+            found = @findByCharacterAndPosition character, labelPosition
+            return false if found
+        return !!found
+
 module.exports = TextEditorLabelManager

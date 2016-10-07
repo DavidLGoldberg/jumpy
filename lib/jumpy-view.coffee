@@ -43,19 +43,9 @@ class JumpyView extends View
     getKey: (character) ->
         @statusBarJumpy?.classList.remove 'no-match'
 
-        isMatchOfCurrentLabels = (character, labelPosition) =>
-            found = false
-            @disposables.add atom.workspace.observeTextEditors (editor) =>
-                editorView = atom.views.getView(editor)
-                return if $(editorView).is ':not(:visible)'
-                found = @labelManager.findByCharacterAndPosition(
-                    character, labelPosition)
-                return false if found
-            return found
-
         # Assert: labelPosition will start at 0!
         labelPosition = (if not @firstChar then 0 else 1)
-        if !isMatchOfCurrentLabels character, labelPosition
+        if not @labelManager.isMatchOfCurrentLabels character, labelPosition
             @statusBarJumpy?.classList.add 'no-match'
             @statusBarJumpyStatus?.innerHTML = 'No match!'
             return

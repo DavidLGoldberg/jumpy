@@ -25,7 +25,7 @@ class LabelManager
 
     unmarkIrrelevant: abstractMethod 'unmarkIrrelevant'
 
-    findByCharacterAndPosition: abstractMethod 'findByCharacterAndPosition'
+    isMatchOfCurrentLabels: abstractMethod 'isMatchOfCurrentLabels'
 
     jumpTo: abstractMethod 'jumpTo'
 
