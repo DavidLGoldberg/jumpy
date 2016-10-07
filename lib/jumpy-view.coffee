@@ -3,28 +3,9 @@
 
 ### global atom ###
 LabelManagerIterator = require './label-manager-iterator'
-{CompositeDisposable, Point, Range} = require 'atom'
+{CompositeDisposable} = require 'atom'
 {View, $} = require 'space-pen'
 _ = require 'lodash'
-
-lowerCharacters =
-    (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
-upperCharacters =
-    (String.fromCharCode(a) for a in ['A'.charCodeAt()..'Z'.charCodeAt()])
-keys = []
-
-# A little ugly.
-# I used itertools.permutation in python.
-# Couldn't find a good one in npm.  Don't worry this takes < 1ms once.
-for c1 in lowerCharacters
-    for c2 in lowerCharacters
-        keys.push c1 + c2
-for c1 in upperCharacters
-    for c2 in lowerCharacters
-        keys.push c1 + c2
-for c1 in lowerCharacters
-    for c2 in upperCharacters
-        keys.push c1 + c2
 
 class JumpyView extends View
 
@@ -34,17 +15,17 @@ class JumpyView extends View
     initialize: () ->
         @disposables = new CompositeDisposable()
         @commands = new CompositeDisposable()
-        @labelManager = new LabelManagerIterator @disposables
+        @labelManager = new LabelManagerIterator @disposables, @commands
 
         @commands.add atom.commands.add 'atom-workspace',
             'jumpy:toggle': => @toggle()
             'jumpy:reset': => @reset()
             'jumpy:clear': => @clearJumpMode()
 
-        commands = {}
-        for characterSet in [lowerCharacters, upperCharacters]
-            for c in characterSet
-                do (c) => commands['jumpy:' + c] = => @getKey(c)
+        commands = LabelManagerIterator.chars.reduce(
+            (commands, c) => _.set(commands, "jumpy:#{c}", => @getKey c),
+            {}
+        )
         @commands.add atom.commands.add 'atom-workspace', commands
 
         # TODO: consider moving this into toggle for new bindings.

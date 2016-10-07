@@ -28,7 +28,10 @@ for c1 in lowerCharacters
         keys.push c1 + c2
 
 class LabelManagerIterator
-    constructor: (disposables) ->
+    @keys: keys
+    @chars: lowerCharacters.concat upperCharacters
+
+    constructor: (disposables, commands) ->
         @clickableLabels = []
         @labelManagers = labelManagers.map((Manager) -> new Manager disposables)
         atom.config.observe 'jumpy.fontSize', @setFontSize
