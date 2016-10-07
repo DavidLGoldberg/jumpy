@@ -72,8 +72,8 @@ class JumpyView extends View
             @secondChar = character
 
         if @secondChar
-            @jump() # Jump first.  Currently need the placement of the labels.
-            @clearJumpMode()
+            @jump() # Jump first. Currently need the placement of the labels.
+            _.defer @clearJumpModeHandler
 
     clearKeys: ->
         @firstChar = null
@@ -126,13 +126,12 @@ class JumpyView extends View
         @clearJumpMode()
 
     initializeClearEvents: (editorView) ->
-        @disposables.add editorView.onDidChangeScrollTop =>
-            @clearJumpModeHandler()
-        @disposables.add editorView.onDidChangeScrollLeft =>
-            @clearJumpModeHandler()
+        @disposables.add editorView.onDidChangeScrollTop @clearJumpModeHandler
+        @disposables.add editorView.onDidChangeScrollLeft @clearJumpModeHandler
 
         for e in ['blur', 'click']
-            editorView.addEventListener e, @clearJumpModeHandler, true
+            editorView.addEventListener(e, _.debounce(@clearJumpModeHandler),
+                true)
 
     clearJumpMode: ->
         if @cleared
