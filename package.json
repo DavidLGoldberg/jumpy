@@ -18,7 +18,7 @@
     "extension"
   ],
   "activationCommands": {
-    "atom-text-editor": [
+    "atom-workspace": [
       "jumpy:toggle"
     ]
   },
