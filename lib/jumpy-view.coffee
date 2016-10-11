@@ -58,8 +58,6 @@ class JumpyView extends View
             priority: -1
         @statusBarJumpy = document.getElementById 'status-bar-jumpy'
 
-        @initKeyFilters()
-
     getKey: (character) ->
         @statusBarJumpy?.classList.remove 'no-match'
 
@@ -113,19 +111,13 @@ class JumpyView extends View
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
 
-    initKeyFilters: ->
-        @filteredJumpyKeys = @getFilteredJumpyKeys()
-        Object.observe atom.keymaps.keyBindings, ->
-            @filteredJumpyKeys = @getFilteredJumpyKeys()
-        # Don't think I need a corresponding unobserve
-
     getFilteredJumpyKeys: ->
         atom.keymaps.keyBindings.filter (keymap) ->
             keymap.command
                 .indexOf('jumpy') > -1 if typeof keymap.command is 'string'
 
     turnOffSlowKeys: ->
-        atom.keymaps.keyBindings = @filteredJumpyKeys
+        atom.keymaps.keyBindings = @getFilteredJumpyKeys()
 
     toggle: ->
         @clearJumpMode()
