@@ -90,7 +90,7 @@ Note: Styles can be overridden in **'Atom' -> 'Open Your Stylesheet'**
 (see examples below)
 
 ```less
-atom-text-editor /deep/ {
+atom-text-editor {
     .jumpy-label {
         // Regular labels
         background-color: black;
