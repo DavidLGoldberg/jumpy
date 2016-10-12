@@ -1,5 +1,4 @@
-# FIXME: Beacon code (currently broken in shadow).  This will probably return
-# in the form of a decoration with a "flash", not sure yet.
+# TODO: Merge in @johngeorgewright's code for treeview
 # TODO: Merge in @willdady's code for better accuracy.
 # TODO: Remove space-pen?
 
