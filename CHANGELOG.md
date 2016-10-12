@@ -1,3 +1,6 @@
+## 3.1.3 - Remove deprecation (Object.observe)
+*   Simplify and Remove logic that used Object.observe for key maps.
+
 ## 3.1.2 - Fix beacon
 *   Merge @johngeorgewright PR to restore the beacon functionality!
 
