@@ -1,8 +1,13 @@
-abstractMethod = (name) ->->
-    throw new Error "The abstract method #{name} needs to be created"
+{CompositeDisposable} = require 'atom'
+
+abstractMethod = (cls, methodName) ->
+    cls::[methodName] = ->
+        throw new Error(
+            "The abstract method #{cls.name}::#{methodName} needs to exist")
 
 class LabelManager
-    constructor: (@disposables) ->
+    constructor: ->
+        @disposables = new CompositeDisposable
 
     createLabel: (text) ->
         labelElement = document.createElement('span')
@@ -17,16 +22,20 @@ class LabelManager
         beacon.classList.add 'beacon'
         beacon
 
-    toggle: abstractMethod 'toggle'
+    destroy: ->
+        @disposables.dispose()
+        @disposables = new CompositeDisposable
 
-    destroy: abstractMethod 'destroy'
+    abstractMethod @, 'toggle'
 
-    markIrrelevant: abstractMethod 'markIrrelevant'
+    abstractMethod @, 'markIrrelevant'
 
-    unmarkIrrelevant: abstractMethod 'unmarkIrrelevant'
+    abstractMethod @, 'unmarkIrrelevant'
 
-    isMatchOfCurrentLabels: abstractMethod 'isMatchOfCurrentLabels'
+    abstractMethod @, 'isMatchOfCurrentLabels'
 
-    jumpTo: abstractMethod 'jumpTo'
+    abstractMethod @, 'jumpTo'
+
+    abstractMethod @, 'initializeClearEvents'
 
 module.exports = LabelManager

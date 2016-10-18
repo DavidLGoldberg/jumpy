@@ -13,14 +13,12 @@ class JumpyView extends View
         @div ''
 
     initialize: () ->
-        @disposables = new CompositeDisposable()
+        @labelManager = new LabelManagerIterator
         @commands = new CompositeDisposable()
-        @labelManager = new LabelManagerIterator @disposables, @commands
-
         @commands.add atom.commands.add 'atom-workspace',
             'jumpy:toggle': => @toggle()
             'jumpy:reset': => @reset()
-            'jumpy:clear': => @clearJumpMode()
+            'jumpy:clear': @clearJumpMode
 
         commands = LabelManagerIterator.chars.reduce(
             (commands, c) => _.set(commands, "jumpy:#{c}", => @getKey c),
@@ -53,17 +51,13 @@ class JumpyView extends View
         if not @firstChar
             @firstChar = character
             @statusBarJumpyStatus?.innerHTML = @firstChar
-            # TODO: Refactor this so not 2 calls to observeTextEditors
-            @disposables.add atom.workspace.observeTextEditors (editor) =>
-                editorView = atom.views.getView(editor)
-                return if $(editorView).is ':not(:visible)'
-                @labelManager.markIrrelevant @firstChar
+            @labelManager.markIrrelevant @firstChar
         else if not @secondChar
             @secondChar = character
 
         if @secondChar
             @jump() # Jump first. Currently need the placement of the labels.
-            _.defer @clearJumpModeHandler
+            _.defer @clearJumpMode
 
     clearKeys: ->
         @firstChar = null
@@ -107,38 +101,16 @@ class JumpyView extends View
             document.querySelector '#status-bar-jumpy .status'
 
         @labelManager.toggle()
+        @labelManager.initializeClearEvents @clearJumpMode
 
-        @disposables.add atom.workspace.observeTextEditors (editor) =>
-            editorView = atom.views.getView(editor)
-            @initializeClearEvents(editorView)
-
-    clearJumpModeHandler: =>
-        @clearJumpMode()
-
-    initializeClearEvents: (editorView) ->
-        @disposables.add editorView.onDidChangeScrollTop @clearJumpModeHandler
-        @disposables.add editorView.onDidChangeScrollLeft @clearJumpModeHandler
-
-        for e in ['blur', 'click']
-            editorView.addEventListener(e, _.debounce(@clearJumpModeHandler),
-                true)
-
-    clearJumpMode: ->
-        if @cleared
-            return
-
+    clearJumpMode: =>
+        return if @cleared
         @cleared = true
         @clearKeys()
         @statusBarJumpy?.innerHTML = ''
-        @disposables.add atom.workspace.observeTextEditors (editor) =>
-            editorView = atom.views.getView(editor)
-
-            document.body.classList.remove 'jumpy-jump-mode'
-            for e in ['blur', 'click']
-                editorView.removeEventListener e, @clearJumpModeHandler, true
+        document.body.classList.remove 'jumpy-jump-mode'
         atom.keymaps.keyBindings = @backedUpKeyBindings
         @labelManager.destroy()
-        @disposables?.dispose()
         @detach()
 
     jump: ->

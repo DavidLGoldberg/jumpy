@@ -31,9 +31,8 @@ class LabelManagerIterator
     @keys: keys
     @chars: lowerCharacters.concat upperCharacters
 
-    constructor: (disposables, commands) ->
-        @clickableLabels = []
-        @labelManagers = labelManagers.map((Manager) -> new Manager disposables)
+    constructor: ->
+        @labelManagers = labelManagers.map((Manager) -> new Manager)
         atom.config.observe 'jumpy.fontSize', @setFontSize
         atom.config.observe 'jumpy.matchPattern', @setWordsPattern
         atom.config.observe 'jumpy.highContrast', @setHighContrast
@@ -67,10 +66,10 @@ class LabelManagerIterator
         manager.unmarkIrrelevant() for manager in @labelManagers
 
     isMatchOfCurrentLabels: (character, position) ->
-        found = null
-        for manager in @labelManagers
-            found = manager.isMatchOfCurrentLabels character, position
-            break if found
-        found
+        @labelManagers.find (manager) ->
+            manager.isMatchOfCurrentLabels character, position
+
+    initializeClearEvents: (clear) ->
+        manager.initializeClearEvents clear for manager in @labelManagers
 
 module.exports = LabelManagerIterator

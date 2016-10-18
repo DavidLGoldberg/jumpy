@@ -1,6 +1,7 @@
 {Point, Range} = require 'atom'
 {$} = require 'space-pen'
 LabelManager = require '../label-manager'
+{debounce} = require 'lodash'
 
 class TextEditorLabelManager extends LabelManager
     constructor: ->
@@ -106,6 +107,7 @@ class TextEditorLabelManager extends LabelManager
         decoration.getMarker().destroy() for decoration in @decorations
         @decorations = [] # Very important for GC.
         # Verifiable in Dev Tools -> Timeline -> Nodes.
+        super
 
     findLocation: (firstChar, secondChar) ->
         label = "#{firstChar}#{secondChar}"
@@ -135,5 +137,13 @@ class TextEditorLabelManager extends LabelManager
             found = @findByCharacterAndPosition character, labelPosition
             return false if found
         return !!found
+
+    initializeClearEvents: (clear) ->
+        @disposables.add atom.workspace.observeTextEditors (editor) =>
+            editorView = atom.views.getView(editor)
+            @disposables.add editorView.onDidChangeScrollTop clear
+            @disposables.add editorView.onDidChangeScrollLeft clear
+            for e in ['blur', 'click']
+                editorView.addEventListener e, debounce(clear), true
 
 module.exports = TextEditorLabelManager

@@ -1,4 +1,6 @@
 LabelManager = require '../label-manager'
+{debounce} = require 'lodash'
+{Disposable} = require 'atom'
 
 triggerMouseEvent = (element, eventType) ->
     clickEvent = document.createEvent 'MouseEvents'
@@ -19,6 +21,7 @@ class TreeViewManager extends LabelManager
 
     destroy: ->
         location.label.remove() while location = @locations.shift()
+        super
 
     drawBeacon: ({element}) ->
         beacon = @createBeacon()
@@ -47,5 +50,14 @@ class TreeViewManager extends LabelManager
 
     isMatchOfCurrentLabels: (character, position) ->
         @locations.find ({label}) -> label.textContent[position] is character
+
+    initializeClearEvents: (clear) ->
+        clear = debounce clear
+        for treeView in document.getElementsByClassName('tree-view')
+            for e in ['blur', 'click']
+                do (treeView, e) =>
+                    treeView.addEventListener e, clear
+                    @disposables.add new Disposable ->
+                        treeView.removeEventListener e, clear
 
 module.exports = TreeViewManager
