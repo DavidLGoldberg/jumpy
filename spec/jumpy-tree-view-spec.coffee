@@ -8,7 +8,7 @@ NUM_FILES = 3
 NUM_DIRS = 1
 DIR = path.join __dirname, 'fixtures'
 
-fdescribe 'jumpy-tree-view', ->
+describe 'jumpy-tree-view', ->
 
     {workspaceElement} = {}
 
