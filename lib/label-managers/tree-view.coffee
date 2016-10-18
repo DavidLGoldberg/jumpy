@@ -12,23 +12,18 @@ class TreeViewManager extends LabelManager
 
     toggle: (keys) ->
         elements = document.querySelectorAll '.tree-view *[data-path]'
-        for element in elements
-            return unless keys.length
+        for element in elements when keys.length
             label = @createLabel keys.shift()
             @locations.push {label, element}
             element.parentNode.insertBefore label, element
 
     destroy: ->
-        while location = @locations.shift()
-            location.label.parentNode.removeChild location.label
+        location.label.remove() while location = @locations.shift()
 
     drawBeacon: ({element}) ->
         beacon = @createBeacon()
-        parent = element.parentNode
-        parent.insertBefore beacon, element
-        setTimeout ->
-            parent.removeChild beacon
-        , 150
+        element.parentNode.insertBefore beacon, element
+        setTimeout beacon.remove.bind(beacon), 2000
 
     jumpTo: (firstChar, secondChar) ->
         match = "#{firstChar}#{secondChar}"
@@ -51,8 +46,6 @@ class TreeViewManager extends LabelManager
         label.classList.remove 'irrelevant' for {label} in @locations
 
     isMatchOfCurrentLabels: (character, position) ->
-        for {label} in @locations
-            return label if label.textContent[position] is character
-        null
+        @locations.find ({label}) -> label.textContent[position] is character
 
 module.exports = TreeViewManager
