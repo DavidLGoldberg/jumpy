@@ -29,8 +29,8 @@ class TreeViewManager extends LabelManager
         match = "#{firstChar}#{secondChar}"
         location = @locations.find ({label}) -> label.textContent is match
         return unless location
-        @drawBeacon location
         @select location
+        @drawBeacon location
 
     select: ({element}) ->
         atom.commands.dispatch element, 'tree-view:show'
