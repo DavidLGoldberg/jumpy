@@ -84,7 +84,6 @@ class JumpyView extends View
         # 'jumpy-jump-mode is for keymaps and utilized by tests
         document.body.classList.add 'jumpy-jump-mode'
 
-        # TODO: Can the following few lines be singleton'd up? ie. instance var?
         @turnOffSlowKeys()
         @statusBarJumpy?.classList.remove 'no-match'
         @statusBarJumpy?.innerHTML =
