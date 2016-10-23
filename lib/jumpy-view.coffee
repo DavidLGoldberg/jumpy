@@ -42,16 +42,16 @@ class JumpyView extends View
 
         # Assert: labelPosition will start at 0!
         labelPosition = (if not @firstChar then 0 else 1)
-        if not @labelManager.isMatchOfCurrentLabels character, labelPosition
+        unless @labelManager.isMatchOfCurrentLabels character, labelPosition
             @statusBarJumpy?.classList.add 'no-match'
             @statusBarJumpyStatus?.innerHTML = 'No match!'
             return
 
-        if not @firstChar
+        unless @firstChar
             @firstChar = character
             @statusBarJumpyStatus?.innerHTML = @firstChar
             @labelManager.markIrrelevant @firstChar
-        else if not @secondChar
+        else unless @secondChar
             @secondChar = character
 
         if @secondChar
