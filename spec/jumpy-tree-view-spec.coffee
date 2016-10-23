@@ -32,13 +32,16 @@ describe 'jumpy-tree-view', ->
         labels = atom.document.querySelectorAll '.tree-view .jumpy-label'
         expect(labels.length).toBe NUM_DIRS + NUM_FILES
 
-    xit 'will open a file when selected with jumpy',  ->
-        # TODO: This doesn't work. Maybe use spies & stubs instead.
-        atom.commands.dispatch workspaceElement, 'jump:a'
-        atom.commands.dispatch workspaceElement, 'jump:c'
-        editor = atom.workspace.getActivePaneItem()
-        file = editor?.buffer.file.path
-        expect(file).toBe path.join DIR, 'test_text.md'
+    it 'will open a file when selected with jumpy',  ->
+        file = path.join DIR, 'test_text.md'
+        element = atom.document.querySelector "[data-path=\"#{file}\"]"
+        spyOn element, 'dispatchEvent'
+        atom.commands.dispatch workspaceElement, 'jumpy:a'
+        atom.commands.dispatch workspaceElement, 'jumpy:c'
+        expect(element.dispatchEvent).toHaveBeenCalled()
+        arg = element.dispatchEvent.mostRecentCall.args[0]
+        expect(arg instanceof MouseEvent).toBe yes
+        expect(arg.type).toEqual 'mousedown'
 
     it 'will open/close directories when selected with jumpy', ->
         dir = atom.document.querySelector '.tree-view .directory'
