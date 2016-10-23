@@ -140,15 +140,15 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
-        it "jumpy is cleared", (done) ->
+        beforeEach ->
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
+            advanceClock()
+
+        it "jumpy is cleared", ->
             expect(textEditorElement.classList
                 .contains('jumpy-jump-mode')).toBe false
-            setTimeout ->
-              expect(textEditor.getOverlayDecorations()).toHaveLength 0
-              done()
-            , 160
+            expect(textEditor.getOverlayDecorations()).toHaveLength 1
 
     describe "when the jumpy:toggle event is triggered
     and invalid hotkeys are entered", ->
@@ -169,7 +169,7 @@ describe "Jumpy", ->
             expect(cursorPosition.column).toBe 6
             expect(textEditor.getSelectedText()).toBe ''
         it "clears jumpy mode", ->
-            expect(textEditorElement
+            expect(atom.document.body
                 .classList.contains('jumpy-jump-mode')).toBeTruthy()
             atom.commands.dispatch workspaceElement, 'jumpy:a'
             atom.commands.dispatch workspaceElement, 'jumpy:c'
@@ -367,40 +367,35 @@ describe "Jumpy", ->
                     .toHaveLength expectedTotalNumberWith2TabsOpenInOnePane
 
     describe "when a jump mode is enabled", ->
-        activationPromise = []
         beforeEach ->
-            activationPromise = atom.packages.activatePackage 'find-and-replace'
+            waitsForPromise ->
+                promise = atom.packages.activatePackage 'find-and-replace'
+                atom.commands.dispatch(textEditorElement,
+                    'find-and-replace:show')
+                promise
+            runs advanceClock
 
         it "clears when a find-and-replace mini pane is opened", ->
-            atom.commands.dispatch textEditorElement, 'find-and-replace:show'
-
-            waitsForPromise ->
-                activationPromise
-
-            runs ->
-                expect(textEditorElement
-                    .classList.contains('jumpy-jump-mode')).toBe false
-                expect(textEditor.getOverlayDecorations()).toHaveLength 0
-                expect(workspaceElement
-                    .querySelectorAll('.find-and-replace')).toHaveLength 1
+            expect(workspaceElement
+                .querySelectorAll('.find-and-replace')).toHaveLength 1
+            expect(textEditorElement
+                .classList.contains('jumpy-jump-mode')).toBe false
+            expect(textEditor.getOverlayDecorations()).toHaveLength 0
 
     describe "when a jump mode is enabled", ->
-        activationPromise = []
         beforeEach ->
-            activationPromise = atom.packages.activatePackage 'fuzzy-finder'
+            waitsForPromise ->
+                activationPromise = atom.packages.activatePackage 'fuzzy-finder'
+                atom.commands.dispatch textEditorElement,
+                    'fuzzy-finder:toggle-file-finder'
+                activationPromise
+            runs advanceClock
 
         it "clears when a fuzzy-finder mini pane is opened", ->
             atom.commands.dispatch textEditorElement,
                 'fuzzy-finder:toggle-file-finder'
-
-            waitsForPromise ->
-                activationPromise
-
-            runs ->
-                atom.commands.dispatch textEditorElement,
-                    'fuzzy-finder:toggle-file-finder'
-                expect(textEditorElement
-                    .classList.contains('jumpy-jump-mode')).toBe false
-                expect(textEditor.getOverlayDecorations()).toHaveLength 0
-                expect(workspaceElement
-                    .querySelectorAll('.fuzzy-finder')).toHaveLength 1
+            expect(textEditorElement
+                .classList.contains('jumpy-jump-mode')).toBe false
+            expect(textEditor.getOverlayDecorations()).toHaveLength 0
+            expect(workspaceElement
+                .querySelectorAll('.fuzzy-finder')).toHaveLength 1

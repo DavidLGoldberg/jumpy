@@ -13,7 +13,13 @@
     -webkit-animation: rip .085s;
     content: '';
     top: -6px;
+
+    .tree-view & {
+        position: absolute;
+        z-index: 11;
+    }
 }
+
 @-webkit-keyframes rip {
     0% {
         box-shadow:0 0 0 0 transparent,
