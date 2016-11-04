@@ -27,13 +27,13 @@ getCharacterSets = ->
 getKeySet = ->
     _.clone keys
 
-drawLabels = (editor, allPositions, lineNumber, column, settings) ->
+drawLabels = (editor, setPositions, lineNumber, column, settings) ->
     return unless settings.keys.length
 
     keyLabel = settings.keys.shift()
     position = {row: lineNumber, column: column}
     # creates a reference:
-    allPositions[keyLabel] =
+    setPositions keyLabel,
         editor: editor.id
         position: position
 
