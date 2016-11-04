@@ -3,6 +3,7 @@ atom
 jasmine describe beforeEach it xit runs expect waitsForPromise
 ###
 path = require 'path'
+{keydown} = require './helpers/keydown'
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
 NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
@@ -17,7 +18,7 @@ NUM_TOTAL_WORDS =
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
 describe "Jumpy with non default settings on", ->
-    [textEditor, textEditorElement, jumpyPromise] = []
+    [textEditor, textEditorElement] = []
 
     beforeEach ->
         atom.project.setPaths([path.join(__dirname, 'fixtures')])
@@ -27,6 +28,8 @@ describe "Jumpy with non default settings on", ->
         # He found it in the wrap-guide.
         workspaceElement.style.height = "5000px" # big enough
         workspaceElement.style.width = "5000px"
+        jumpyPromise = atom.packages.activatePackage 'jumpy'
+        statusBarPromise = atom.packages.activatePackage 'status-bar'
         jasmine.attachToDOM(workspaceElement)
         # TODO: Abstract the following out, (DRY) ---------------
 
@@ -41,12 +44,16 @@ describe "Jumpy with non default settings on", ->
         runs ->
             textEditor = atom.workspace.getActiveTextEditor()
             textEditorElement = atom.views.getView(textEditor)
-            jumpyPromise = atom.packages.activatePackage 'jumpy'
             textEditor.setCursorBufferPosition [1,1]
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
 
         waitsForPromise ->
             jumpyPromise
+        waitsForPromise ->
+            statusBarPromise
+
+    afterEach ->
+        expect(atom.workspace.getActivePaneItem().isModified()).toBeFalsy()
 
     describe "when the jumpy:toggle event is triggered", ->
         it "draws correctly colored labels", ->
@@ -58,13 +65,13 @@ describe "Jumpy with non default settings on", ->
 
     describe "when the jumpy:toggle event is triggered
         and a jump is performed", ->
-        xit "contains no beacon", ->
-            expect(textEditorElement.find('.cursors .cursor')[0].classList
-                .contains 'beacon').toBe false
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
-            atom.commands.dispatch textEditorElement, 'jumpy:c'
-            expect(textEditorElement.shadowRoot.querySelectorAll('.cursors .cursor')[0].classList
-                .contains 'beacon').toBe false
+        it "contains no beacon", ->
+            expect(textEditorElement.
+                querySelectorAll('span.beacon').length).toBe 0
+            keydown('a')
+            keydown('c')
+            expect(textEditorElement.
+                querySelectorAll('span.beacon').length).toBe 0
 
     describe "when a custom match (jumpy default) is used", ->
         it "draws correct labels", ->
@@ -77,9 +84,17 @@ describe "Jumpy with non default settings on", ->
             expect(labels[83].getProperties().item.textContent).toBe 'df'
 
     describe "when a custom match is used (camel case)", ->
+        # Only read the jumpy.matchPattern once at initialization now.
+        beforeEach ->
+            atom.packages.deactivatePackage 'jumpy'
+
         it "draws correct labels and jumps appropriately", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:clear'
             atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
+            activate = atom.packages.activatePackage 'jumpy'
+
+            waitsForPromise ->
+                activate
+
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
             labels = textEditor.getOverlayDecorations()
             expect(labels.length)
@@ -91,16 +106,16 @@ describe "Jumpy with non default settings on", ->
             expect(labels[83].getProperties().item.textContent).toBe 'df'
 
             #CAMELS:
-            atom.commands.dispatch textEditorElement, 'jumpy:e'
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            keydown('e')
+            keydown('a')
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 30
             expect(cursorPosition.column).toBe 4
 
             #UNDERSCORES:
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            atom.commands.dispatch textEditorElement, 'jumpy:e'
-            atom.commands.dispatch textEditorElement, 'jumpy:l'
+            keydown('e')
+            keydown('l')
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 32
             expect(cursorPosition.column).toBe 5

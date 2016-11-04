@@ -16,8 +16,8 @@ describe "Jumpy", ->
         # He found it in the wrap-guide.
         workspaceElement.style.height = "5000px" # big enough
         workspaceElement.style.width = "5000px"
-        jasmine.attachToDOM(workspaceElement)
         jumpyPromise = atom.packages.activatePackage 'jumpy'
+        jasmine.attachToDOM(workspaceElement)
 
         waitsForPromise ->
             atom.workspace.open 'test_long_text.MD'
@@ -31,7 +31,7 @@ describe "Jumpy", ->
             jumpyPromise
 
     afterEach ->
-        atom.commands.dispatch textEditorElement, 'jumpy:clear'
+        expect(atom.workspace.getActivePaneItem().isModified()).toBeFalsy()
 
     # TODO: Recent patch has slowed down execution of the tests when
     # jasmine.attachToDOM is called.  Even with decoration (performance

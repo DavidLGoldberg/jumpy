@@ -3,11 +3,14 @@
 # TODO: Remove space-pen?
 
 ### global atom ###
-{ CompositeDisposable } = require 'atom'
+{ CompositeDisposable, Point } = require 'atom'
 { View, $ } = require 'space-pen'
 _ = require 'lodash'
 
-{ getCharacterSets, getKeySet, drawLabels, drawBeacon } = require('./label')
+words = require './labelers/words'
+StateMachine = require 'javascript-state-machine'
+labelReducer= require './label-reducer'
+{ getKeySet, drawLabel, drawBeacon } = require('./label')
 
 class JumpyView extends View
 
@@ -15,165 +18,201 @@ class JumpyView extends View
         @div ''
 
     initialize: ->
+        @workspaceElement = atom.views.getView(atom.workspace)
         @disposables = new CompositeDisposable()
         @decorations = []
         @commands = new CompositeDisposable()
 
-        @commands.add atom.commands.add 'atom-workspace',
-            'jumpy:toggle': => @toggle()
-            'jumpy:reset': => @reset()
-            'jumpy:clear': => @clearJumpMode()
-
-        commands = {}
-        for characterSet in getCharacterSets()
-            for c in characterSet
-                do (c) => commands['jumpy:' + c] = => @getKey(c)
-        @commands.add atom.commands.add 'atom-workspace', commands
-
-        # TODO: consider moving this into toggle for new bindings.
-        @backedUpKeyBindings = _.clone atom.keymaps.keyBindings
-
-        @workspaceElement = atom.views.getView(atom.workspace)
         @statusBar = document.querySelector 'status-bar'
         @statusBar?.addLeftTile
-            item: $('<div id="status-bar-jumpy" class="inline-block"></div>')
+            item: $('<div id="status-bar-jumpy" class="inline-block">
+                    Jumpy: <span class="status"></span>
+                </div>')
             priority: -1
-        @statusBarJumpy = document.getElementById 'status-bar-jumpy'
+        @statusBarJumpy = @statusBar?.querySelector '#status-bar-jumpy'
+        @statusBarJumpyStatus = @statusBarJumpy?.querySelector '.status'
+        @savedInheritedDisplay = @statusBarJumpy?.style.display
 
-    getKey: (character) ->
-        @statusBarJumpy?.classList.remove 'no-match'
-
-        isMatchOfCurrentLabels = (character, labelPosition) =>
-            found = false
-            @disposables.add atom.workspace.observeTextEditors (editor) =>
-                editorView = atom.views.getView(editor)
-                return if $(editorView).is ':not(:visible)'
-
-                for decoration in @decorations
-                    element = decoration.getProperties().item
-                    if element.textContent[labelPosition] == character
-                        found = true
-                        return false
-            return found
-
-        # Assert: labelPosition will start at 0!
-        labelPosition = (if not @firstChar then 0 else 1)
-        if !isMatchOfCurrentLabels character, labelPosition
-            @statusBarJumpy?.classList.add 'no-match'
-            @statusBarJumpyStatus?.innerHTML = 'No match!'
-            return
-
-        if not @firstChar
-            @firstChar = character
-            @statusBarJumpyStatus?.innerHTML = @firstChar
-            # TODO: Refactor this so not 2 calls to observeTextEditors
-            @disposables.add atom.workspace.observeTextEditors (editor) =>
-                editorView = atom.views.getView(editor)
-                return if $(editorView).is ':not(:visible)'
-
-                for decoration in @decorations
-                    element = decoration.getProperties().item
-                    if element.textContent.indexOf(@firstChar) != 0
-                        element.classList.add 'irrelevant'
-        else if not @secondChar
-            @secondChar = character
-
-        if @secondChar
-            @jump() # Jump first.  Currently need the placement of the labels.
-            @clearJumpMode()
-
-    clearKeys: ->
-        @firstChar = null
-        @secondChar = null
-
-    reset: ->
-        @clearKeys()
-        for decoration in @decorations
-            decoration.getProperties().item.classList.remove 'irrelevant'
-        @statusBarJumpy?.classList.remove 'no-match'
-        @statusBarJumpyStatus?.innerHTML = 'Jump Mode!'
-
-    getFilteredJumpyKeys: ->
-        atom.keymaps.keyBindings.filter (keymap) ->
-            keymap.command.includes 'jumpy' if typeof keymap.command is 'string'
-
-    turnOffSlowKeys: ->
-        atom.keymaps.keyBindings = @getFilteredJumpyKeys()
-
-    toggle: ->
-        # Set dirty for @clearJumpMode
-        @cleared = false
-
-        # TODO: Can the following few lines be singleton'd up? ie. instance var?
-        wordsPattern = new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
         fontSize = atom.config.get 'jumpy.fontSize'
         fontSize = .75 if isNaN(fontSize) or fontSize > 1
         fontSize = (fontSize * 100) + '%'
-        highContrast = atom.config.get 'jumpy.highContrast'
+        @settings =
+            fontSize: fontSize
+            highContrast: atom.config.get 'jumpy.highContrast'
+            wordsPattern: new RegExp (atom.config.get 'jumpy.matchPattern'), 'g'
 
-        @turnOffSlowKeys()
-        @statusBarJumpy?.classList.remove 'no-match'
-        @statusBarJumpy?.innerHTML =
-            'Jumpy: <span class="status">Jump Mode!</span>'
-        @statusBarJumpyStatus =
-            document.querySelector '#status-bar-jumpy .status'
+        @fsm = StateMachine.create {
+            initial: 'off',
+            events: [
+                { name: 'activate', from: 'off', to: 'on' },
+                { name: 'key', from: 'on', to: 'on' },
+                { name: 'reset', from: 'on', to: 'on' },
+                { name: 'jump', from: 'on', to: 'off' },
+                { name: 'exit', from: 'on', to: 'off'  }
+            ],
+            callbacks:
+                onactivate: (event, from, to ) =>
+                    @keydownListener = (event) =>
+                        # use the code property for testing if
+                        # the key is relevant to Jumpy
+                        # that is, that it's an alpha char.
+                        # use the key character to pass the exact key
+                        # that is, (upper or lower) to the state machine.
+                        # if jumpy catches it...stop the event propagation.
+                        {code, key, metaKey, ctrlKey, altKey} = event
+                        if metaKey || ctrlKey || altKey
+                            return
 
-        @allPositions = {}
-        keys = getKeySet()
-        @disposables.add atom.workspace.observeTextEditors (editor) =>
-            editorView = atom.views.getView(editor)
-            $editorView = $(editorView)
-            return if $editorView.is ':not(:visible)'
+                        if /^Key[A-Z]{1}$/.test code
+                            event.preventDefault()
+                            event.stopPropagation()
+                            @fsm.key key
 
-            # 'jumpy-jump-mode is for keymaps and utilized by tests
-            editorView.classList.add 'jumpy-jump-mode'
+                    @currentKeys = ''
 
-            getVisibleColumnRange = (editorView) ->
-                charWidth = editorView.getDefaultCharacterWidth()
-                # FYI: asserts:
-                # numberOfVisibleColumns = editorView.getWidth() / charWidth
-                minColumn = (editorView.getScrollLeft() / charWidth) - 1
-                maxColumn = editorView.getScrollRight() / charWidth
+                    # important to keep this up here and not in the observe
+                    # text editor to not crash if no more keys left!
+                    # this shouldn't have to be this way, but for now.
+                    @keys = getKeySet()
 
-                return [
-                    minColumn
-                    maxColumn
-                ]
+                    @allLabels = []
+                    @currentLabels = []
 
-            settings = { keys, highContrast, fontSize }
-            [minColumn, maxColumn] = getVisibleColumnRange editorView
-            rows = editor.getVisibleRowRange()
-            if rows
-                [firstVisibleRow, lastVisibleRow] = rows
-                # TODO: Right now there are issues with lastVisbleRow
-                for lineNumber in [firstVisibleRow...lastVisibleRow]
-                    lineContents = editor.lineTextForScreenRow(lineNumber)
-                    if editor.isFoldedAtScreenRow(lineNumber)
-                        @decorations.push drawLabels editor,
-                            @allPositions, lineNumber, 0, settings
+                    @initializeListeners(@workspaceElement)
+
+                    @settings.wordsPattern.lastIndex = 0 # reset the RegExp for subsequent calls.
+                    @disposables.add atom.workspace.observeTextEditors (editor) =>
+                        editorView = atom.views.getView(editor)
+                        return if $(editorView).is ':not(:visible)'
+
+                        # 'jumpy-jump-mode is for keymaps and utilized by tests
+                        editorView.classList.add 'jumpy-jump-mode',
+                            'jumpy-more-specific1', 'jumpy-more-specific2'
+
+                        # current labels for current editor in observe.
+                        if !@keys.length
+                            return
+                        currentEditorLabels = words.getLabels editor, editorView, @keys, @settings
+                        # only draw new labels
+                        for label in currentEditorLabels
+                            @decorations.push drawLabel label, @settings
+
+                        @allLabels = @allLabels.concat currentEditorLabels
+                        @currentLabels = _.clone @allLabels
+
+                onkey: (event, from, to, character) =>
+                    # instead... of the following, maybe do with
+                    # some substate ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
+                    testKeys = @currentKeys + character
+                    matched = @currentLabels.some (label) =>
+                        label.keyLabel.startsWith testKeys
+
+                    if !matched
+                        @statusBarJumpy?.classList.add 'no-match'
+                        @setStatus 'No Match!'
+                        return
+                    # ^ the above makes this func feel not single responsibility
+                    # some substate ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
+
+                    @currentKeys = testKeys
+
+                    for decoration in @decorations
+                        element = decoration.getProperties().item
+                        if !element.textContent.startsWith(@currentKeys)
+                            element.classList.add 'irrelevant'
+
+                    @setStatus character
+
+                    @currentLabels = labelReducer @currentLabels, @currentKeys
+
+                    if @currentLabels.length == 1 && @currentKeys.length == 2
+                        if @fsm.can 'jump'
+                            @fsm.jump @currentLabels[0]
+
+                onjump: (event, from, to, location) =>
+                    currentEditor = location.editor
+                    editorView = atom.views.getView(currentEditor)
+
+                    # Prevent other editors from jumping cursors as well
+                    # TODO: make a test for this return if
+                    return if currentEditor.id != location.editor.id
+
+                    pane = atom.workspace.paneForItem(currentEditor)
+                    pane.activate()
+
+                    # isVisualMode is for vim-mode or vim-mode-plus:
+                    isVisualMode = editorView.classList.contains 'visual-mode'
+                    # isSelected is for regular selection in atom or in insert-mode in vim
+                    isSelected = (currentEditor.getSelections().length == 1 &&
+                        currentEditor.getSelectedText() != '')
+                    position = Point(location.lineNumber, location.column)
+                    if (isVisualMode || isSelected)
+                        currentEditor.selectToScreenPosition position
                     else
-                        while ((word = wordsPattern.exec(lineContents)) != null)
-                            column = word.index
-                            # Do not do anything... markers etc.
-                            # if the columns are out of bounds...
-                            if column > minColumn && column < maxColumn
-                                @decorations.push drawLabels editor,
-                                    @allPositions, lineNumber, column, settings
+                        currentEditor.setCursorScreenPosition position
 
-            @initializeClearEvents(editorView)
+                    if atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
+                        drawBeacon currentEditor, position
+
+
+                onreset: (event, from, to) =>
+                    @currentKeys = ''
+                    @currentLabels = _.clone @allLabels
+                    for decoration in @decorations
+                        element = decoration.getProperties().item
+                        element.classList.remove 'irrelevant'
+
+                # STATE CHANGES:
+                onoff: (event, from, to) =>
+                    if from == 'on'
+                        @clearJumpMode()
+                    @statusBarJumpy?.style.display = 'none'
+                    @setStatus '' # Just for correctness really
+
+                onbeforeevent: (event, from, to) =>
+                    # Reset statuses:
+                    @setStatus 'Jump Mode!'
+                    @showStatus()
+                    @statusBarJumpy?.classList.remove 'no-match'
+        }
+
+        @commands.add atom.commands.add 'atom-workspace',
+            'jumpy:toggle': => @toggle()
+            'jumpy:reset': =>
+                if @fsm.can 'reset'
+                    @fsm.reset()
+            'jumpy:clear': =>
+                if @fsm.can 'exit'
+                    @fsm.exit()
+
+    showStatus: -> # restore typical status bar display (inherited)
+        @statusBarJumpy?.style.display = @savedInheritedDisplay
+
+    setStatus: (status) ->
+        @statusBarJumpyStatus?.innerHTML = status
+
+    toggle: ->
+        if @fsm.can 'activate'
+            @fsm.activate()
+        else if @fsm.can 'exit'
+            @fsm.exit()
 
     clearJumpModeHandler: =>
-        @clearJumpMode()
+        if @fsm.can 'exit'
+            @fsm.exit()
 
-    initializeClearEvents: (editorView) ->
-        @disposables.add editorView.onDidChangeScrollTop =>
-            @clearJumpModeHandler()
-        @disposables.add editorView.onDidChangeScrollLeft =>
-            @clearJumpModeHandler()
+    # TODO: move up into fsm
+    initializeListeners: (workspace) ->
+        @workspaceElement.addEventListener 'keydown', @keydownListener, true
+        for e in ['blur', 'click', 'scroll']
+            @workspaceElement.addEventListener e, @clearJumpModeHandler, true
 
-        for e in ['blur', 'click']
-            editorView.addEventListener e, @clearJumpModeHandler, true
+    removeListeners: (workspace) ->
+        @workspaceElement.removeEventListener 'keydown', @keydownListener, true
+        for e in ['blur', 'click', 'scroll']
+            @workspaceElement.removeEventListener e, @clearJumpModeHandler, true
 
+    # TODO: move into fsm? change callers too
     clearJumpMode: ->
         clearAllMarkers = =>
             for decoration in @decorations
@@ -181,54 +220,16 @@ class JumpyView extends View
             @decorations = [] # Very important for GC.
             # Verifiable in Dev Tools -> Timeline -> Nodes.
 
-        if @cleared
-            return
-
-        @cleared = true
-        @clearKeys()
-        @statusBarJumpy?.innerHTML = ''
+        @allLabels = []
+        @removeListeners()
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
 
-            editorView.classList.remove 'jumpy-jump-mode'
-            for e in ['blur', 'click']
-                editorView.removeEventListener e, @clearJumpModeHandler, true
-        atom.keymaps.keyBindings = @backedUpKeyBindings
+            editorView.classList.remove 'jumpy-jump-mode',
+                'jumpy-more-specific1', 'jumpy-more-specific2'
         clearAllMarkers()
         @disposables?.dispose()
         @detach()
-
-    jump: ->
-        location = @findLocation()
-        if location == null
-            return
-        @disposables.add atom.workspace.observeTextEditors (currentEditor) ->
-            editorView = atom.views.getView(currentEditor)
-
-            # Prevent other editors from jumping cursors as well
-            # TODO: make a test for this return if
-            return if currentEditor.id != location.editor
-
-            pane = atom.workspace.paneForItem(currentEditor)
-            pane.activate()
-
-            isVisualMode = editorView.classList.contains 'visual-mode'
-            isSelected = (currentEditor.getSelections().length == 1 &&
-                currentEditor.getSelectedText() != '')
-            if (isVisualMode || isSelected)
-                currentEditor.selectToScreenPosition location.position
-            else
-                currentEditor.setCursorScreenPosition location.position
-
-            if atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-                drawBeacon currentEditor, location
-
-    findLocation: ->
-        label = "#{@firstChar}#{@secondChar}"
-        if label of @allPositions
-            return @allPositions[label]
-
-        return null
 
     # Returns an object that can be retrieved when package is activated
     serialize: ->

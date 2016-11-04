@@ -16,7 +16,7 @@ NUM_TOTAL_WORDS =
 
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
-describe "Jumpy", ->
+xdescribe "Jumpy", ->
     [workspaceElement, textEditorElement, textEditor, jumpyPromise] = []
 
     beforeEach ->
@@ -45,8 +45,12 @@ describe "Jumpy", ->
         waitsForPromise ->
             jumpyPromise
 
+    afterEach ->
+        expect(atom.workspace.getActivePaneItem().isModified()).toBeFalsy()
+
     # TODO: IMPLEMENT THIS.  Line 192 `pane.activate()` in jumpy-view.coffee
     # should be enough to make this red to green.
-    xdescribe "when jumpy jumps to another pane", ->
+    describe "when jumpy jumps to another pane", ->
         it "focuses the new pane", ->
         it "does not move cursor of original pane", ->
+        it "does not make edits (with the entered keys)", ->

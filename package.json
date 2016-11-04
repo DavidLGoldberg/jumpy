@@ -28,6 +28,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
+    "javascript-state-machine": "2.4.0",
     "lodash": "^2.4.1",
     "space-pen": "^4.2.2"
   }

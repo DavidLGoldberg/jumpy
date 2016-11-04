@@ -26,7 +26,7 @@ apm install jumpy
 
 ## Notes
 
-*   Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage")!
+*   Works great with or without [vim-mode](https://github.com/atom/vim-mode "vim-mode's Homepage") or [vim-mode-plus](https://atom.io/packages/vim-mode-plus "vim-mode-plus's Homepage")!
   *   Vim modes supported:
       *   command mode
       *   insert mode
@@ -39,6 +39,8 @@ apm install jumpy
 
 *   Enter jump mode
     *   <kbd>shift</kbd> + <kbd>enter</kbd>
+    _**NOTE:** This particular hotkey conflicts with the very awesome [Hydrogen package](https://nteract.io/atom).
+    Please rebind jump mode to something else or override it for Jumpy (see below)_
 *   Reset first character entered
     *   <kbd>backspace</kbd>
 *   Cancel/exit jump mode (any)
@@ -70,11 +72,16 @@ If left on, will display a homing beacon (usually red) after all jumps.
 
 (image after settings set to .85 font size, high contrast, and default camel case matching pattern)
 
-### 'vim-mode' Users (Strongly Recommended Override)
+### 'vim-mode/vim-mode-plus' Users (Strongly Recommended Override)
 
-Put this override in your **'Atom'** -> **'Open Your Keymap'** settings:
+Put this override in your **'Atom'** -> **'Keymap...'** settings:
 
     'atom-text-editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode)':
+        'f': 'jumpy:toggle'
+
+or if `vim-mode-plus`:
+
+    'atom-text-editor:not(.mini).vim-mode-plus:not(.insert-mode):not(.jumpy-jump-mode)':
         'f': 'jumpy:toggle'
 
 This will **bind 'f' to toggle Jumpy**.
@@ -83,6 +90,15 @@ This is not the default because it **changes vim's native behavior**.
 Instead, with Jumpy, after jumping to the nearest word, you can easily word or character jump over to your target.
 The [Vimium chrome extension](https://chrome.google.com/webstore/detail/vimium/dbepggeogbaibhgnhhndojpepiihcmeb?hl=en) chose this binding.
 Please let me know what you think about this binding for Jumpy [here](https://discuss.atom.io/t/introducing-jumpy-new-package/10980/28)!
+
+### 'hydrogen' Users
+If you want to use the original keybinding for Jumpy it's <kbd>shift</kbd>+<kbd>enter</kbd>.  Hydrogen overrides this to simulate the Jupyter notebook behavior.
+Put this override in your **'Atom'** -> **'Keymap...'** settings:
+
+    'atom-workspace atom-text-editor:not(.mini)':
+        'shift-enter': 'jumpy:toggle'
+
+_This is less necessary for vim-mode users because of above binding, although setting up a binding like this will allow jumps from insert mode as well!_
 
 ### Jumpy Styles
 

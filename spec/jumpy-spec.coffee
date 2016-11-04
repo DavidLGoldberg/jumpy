@@ -5,7 +5,7 @@ waitsForPromise
 ###
 path = require 'path'
 {$} = require 'space-pen'
-
+{keydown} = require './helpers/keydown'
 
 NUM_ALPHA_TEST_WORDS = 26 * 3
 NUM_ENGLISH_TEXT = 8 - 2 #For a's that are only 1 character.  *'s don't count.
@@ -53,10 +53,10 @@ describe "Jumpy", ->
         # He found it in the wrap-guide.
         workspaceElement.style.height = "5000px" # big enough
         workspaceElement.style.width = "5000px"
-        # TODO: Abstract the following out, (DRY) --------------
         jumpyPromise = atom.packages.activatePackage 'jumpy'
         statusBarPromise = atom.packages.activatePackage 'status-bar'
         jasmine.attachToDOM(workspaceElement)
+        # TODO: Abstract the following out, (DRY) --------------
 
         waitsForPromise ->
             atom.workspace.open 'test_text.md'
@@ -73,7 +73,7 @@ describe "Jumpy", ->
             statusBarPromise
 
     afterEach ->
-        atom.commands.dispatch textEditorElement, 'jumpy:clear'
+        expect(atom.workspace.getActivePaneItem().isModified()).toBeFalsy()
 
     describe 'activate', ->
         it 'creates the commands', ->
@@ -102,12 +102,6 @@ describe "Jumpy", ->
         it "clears beacon effect", ->
             expect(textEditorElement.
                 querySelectorAll('span.beacon').length).toBe 0
-
-        # this is an important test ...depends on previous tests running
-        # in the series (could make this better)
-        # ensures no += stacking of keymaps (watch for geometric growth)
-        it "only uses jumpy keymaps", ->
-            expect(atom.keymaps.keyBindings.length).toBe (26 * 2) + 5 + 1
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears labels", ->
@@ -144,53 +138,53 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
-        it "jumpy is cleared", (done) ->
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
-            atom.commands.dispatch workspaceElement, 'jumpy:c'
-            expect(textEditorElement.classList
-                .contains('jumpy-jump-mode')).toBe false
-            setTimeout ->
-              expect(textEditor.getOverlayDecorations()).toHaveLength 0
-              done()
-            , 160
+        it "jumpy is cleared", ->
+            keydown('a')
+            keydown('c')
+            expect(textEditor.getOverlayDecorations().filter (d) ->
+                d.properties.item.className == 'jumpy-label').toHaveLength 0
 
     describe "when the jumpy:toggle event is triggered
     and invalid hotkeys are entered", ->
         it "does nothing", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:z'
-            atom.commands.dispatch workspaceElement, 'jumpy:z'
+            keydown('z')
+            keydown('z')
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
 
+    describe "when the jumpy:toggle event is triggered", ->
+        it "loads 'jumpy-jump-mode'", ->
+            expect(textEditorElement
+                .classList.contains('jumpy-jump-mode')).toBeTruthy()
+
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
         it "jumps the cursor", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
-            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            keydown('a')
+            keydown('c')
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 6
             expect(textEditor.getSelectedText()).toBe ''
         it "clears jumpy mode", ->
-            expect(textEditorElement
-                .classList.contains('jumpy-jump-mode')).toBeTruthy()
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
-            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            keydown('a')
+            keydown('c')
             expect(textEditorElement.
                 classList.contains('jumpy-jump-mode')).not.toBeTruthy()
         it "jumps the cursor in folded regions", ->
+            atom.commands.dispatch workspaceElement, 'jumpy:clear'
             textEditor.setCursorBufferPosition [23, 20]
             textEditor.foldBufferRow(22)
             atom.commands.dispatch workspaceElement, 'jumpy:toggle'
-            atom.commands.dispatch workspaceElement, 'jumpy:d'
-            atom.commands.dispatch workspaceElement, 'jumpy:i'
+            keydown('d')
+            keydown('i')
             cursorPosition = textEditor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 23
             expect(cursorPosition.column).toBe 2
             atom.commands.dispatch workspaceElement, 'jumpy:toggle'
-            atom.commands.dispatch workspaceElement, 'jumpy:d'
-            atom.commands.dispatch workspaceElement, 'jumpy:h'
+            keydown('d')
+            keydown('h')
             cursorPosition = textEditor.getCursorScreenPosition()
             expect(cursorPosition.row).toBe 22
             expect(cursorPosition.column).toBe 0
@@ -198,11 +192,11 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered in succession", ->
         it "jumps the cursor twice", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
-            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            keydown('a')
+            keydown('c')
             atom.commands.dispatch workspaceElement, 'jumpy:toggle'
-            atom.commands.dispatch workspaceElement, 'jumpy:b'
-            atom.commands.dispatch workspaceElement, 'jumpy:e'
+            keydown('b')
+            keydown('e')
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 6
             expect(cursorPosition.column).toBe 12
@@ -210,16 +204,16 @@ describe "Jumpy", ->
     describe "when the jumpy:toggle event is triggered
     and hotkeys are entered", ->
         it "the beacon animation class is added", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
-            atom.commands.dispatch workspaceElement, 'jumpy:c'
+            keydown('a')
+            keydown('c')
             expect(textEditorElement
                 .querySelectorAll('.beacon').length)
                 .toBe 1
         it "the beacon animation class is removed", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            keydown('a')
             waitsFor ->
                 ->
-                    atom.commands.dispatch workspaceElement, 'jumpy:c'
+                    keydown('c')
             runs ->
                 expect(textEditorElement
                     .querySelectorAll('.beacon').length)
@@ -227,23 +221,28 @@ describe "Jumpy", ->
 
     describe "when the jumpy:toggle event is triggered", ->
         it "updates the status bar", ->
-            expect document.querySelector('#status-bar-jumpy .status').innerHTML
-                .toBe 'Jump Mode!'
+            expect(document.querySelector('#status-bar-jumpy')
+                .innerHTML.trim()).toBe 'Jumpy: <span class="status">Jump Mode!</span>'
 
     describe "when the jumpy:clear event is triggered", ->
         it "clears the status bar", ->
             atom.commands.dispatch workspaceElement, 'jumpy:clear'
-            expect(document
-                .querySelector('#status-bar-jumpy').innerHTML).toBe ''
+            expect(document.querySelector('#status-bar-jumpy')
+                .style.display).toBe 'none'
+        it "does not prevent future status bar changes", ->
+            atom.commands.dispatch workspaceElement, 'jumpy:clear'
+            atom.commands.dispatch workspaceElement, 'jumpy:toggle'
+            expect(document.querySelector('#status-bar-jumpy .status')
+                .innerHTML).toBe 'Jump Mode!'
 
-    describe "when the jumpy:a event is triggered", ->
+    describe "when the keydown 'a' event is triggered", ->
         it "updates the status bar with a", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            keydown('a')
             expect(document
                 .querySelector '#status-bar-jumpy .status'
                     .innerHTML).toBe 'a'
         it "removes all labels that don't begin with a", ->
-            atom.commands.dispatch workspaceElement, 'jumpy:a'
+            keydown('a')
             decorations = textEditor.getOverlayDecorations()
             relevantDecorations = decorations.filter (d) ->
                 not d.getProperties().item.classList.contains 'irrelevant'
@@ -251,23 +250,34 @@ describe "Jumpy", ->
 
     describe "when the jumpy:reset event is triggered", ->
         it "clears first entered key and lets a new jump take place", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            keydown('a')
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
-            atom.commands.dispatch textEditorElement, 'jumpy:e'
+            keydown('a')
+            keydown('e')
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 0
             expect(cursorPosition.column).toBe 12
 
     describe "when the jumpy:reset event is triggered", ->
         it "updates the status bar", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            keydown('a')
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
             expect(document
                 .querySelector('#status-bar-jumpy .status')
                     .innerHTML).toBe 'Jump Mode!'
+        it "does not prevent next load's status", ->
+            keydown('a')
+            atom.commands.dispatch textEditorElement, 'jumpy:reset'
+            atom.commands.dispatch textEditorElement, 'jumpy:clear'
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            expect(document
+                .querySelector('#status-bar-jumpy .status')
+                    .innerHTML).toBe 'Jump Mode!'
+            expect(document
+                .querySelector('#status-bar-jumpy')
+                    .style.display).toNotBe 'none'
         it "resets all labels even those that don't begin with a", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            keydown('a')
             atom.commands.dispatch textEditorElement, 'jumpy:reset'
             decorations = textEditor.getOverlayDecorations()
             relevantDecorations = decorations.filter (d) ->
@@ -275,33 +285,42 @@ describe "Jumpy", ->
             expect(relevantDecorations).toHaveLength NUM_TOTAL_WORDS +
                 NUM_CAMEL_SPECIFIC_MATCHES
 
+    describe "when a jump is performed", ->
+        it "clears the status bar", ->
+            keydown('a')
+            keydown('a')
+            expect(document
+                .querySelector('#status-bar-jumpy .status').innerHTML).toBe ''
+            expect(document
+                .querySelector('#status-bar-jumpy').style.display).toBe 'none'
+
+    # TODO: This does not currently test vim mode.
     describe "when the a text selection has begun
     before a jumpy:toggle event is triggered", ->
         it "keeps the selection for subsequent jumps", ->
             atom.commands.dispatch textEditorElement, 'jumpy:clear'
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            keydown('a')
+            keydown('a')
             textEditor.selectRight()
             textEditor.selectRight()
             atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
-            atom.commands.dispatch textEditorElement, 'jumpy:e'
+            keydown('a')
+            keydown('e')
             expect(textEditor.getSelections()[0].getText()).toBe 'aa ab ac ad '
 
-    describe "when a character is entered that no label has a match for", ->
+    describe "when a character is entered that has no match", ->
         it "displays a status bar error message", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:z'
+            keydown('z')
             expect(document
                 .querySelector '#status-bar-jumpy'
                     .classList.contains 'no-match').toBeTruthy()
             expect(document
                 .querySelector '#status-bar-jumpy .status'
-                    .innerHTML == 'No match!').toBeTruthy()
+                    .innerHTML == 'No Match!').toBeTruthy()
         it "eventually clears the status bar error message", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
-            atom.commands.dispatch textEditorElement, 'jumpy:z'
-            atom.commands.dispatch textEditorElement, 'jumpy:a'
+            keydown('z')
+            keydown('a')
             expect(document
                 .querySelector '#status-bar-jumpy'
                     .classList.contains 'no-match').toBeFalsy()
@@ -309,12 +328,12 @@ describe "Jumpy", ->
                 .querySelector '#status-bar-jumpy .status'
                     .innerHTML == 'a').toBeTruthy()
         it "does not jump", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:z'
+            keydown('z')
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 1
             expect(cursorPosition.column).toBe 1
         it "leaves the labels up", ->
-            atom.commands.dispatch textEditorElement, 'jumpy:z'
+            keydown('z')
             decorations = textEditor.getOverlayDecorations()
             relevantDecorations = decorations.filter (d) ->
                 not d.getProperties().item.classList.contains 'irrelevant'
@@ -384,7 +403,8 @@ describe "Jumpy", ->
             runs ->
                 expect(textEditorElement
                     .classList.contains('jumpy-jump-mode')).toBe false
-                expect(textEditor.getOverlayDecorations()).toHaveLength 0
+                expect(textEditor.getOverlayDecorations().filter (d) ->
+                    d.properties.item.className == 'jumpy-label').toHaveLength 0
                 expect(workspaceElement
                     .querySelectorAll('.find-and-replace')).toHaveLength 1
 
@@ -412,3 +432,28 @@ describe "Jumpy", ->
                 expect(textEditor.getOverlayDecorations()).toHaveLength 0
                 expect(workspaceElement
                     .querySelectorAll('.fuzzy-finder')).toHaveLength 1
+
+    # TODO: This test doesn't work.  Also, shouldn't need vim-mode-plus
+    xdescribe "when insert mode is used before jumping", ->
+        activationPromise = []
+        beforeEach ->
+            activationPromise = atom.packages.activatePackage 'vim-mode-plus'
+
+        it "does not leave the editor in a dirty / modified state", ->
+            waitsForPromise ->
+                activationPromise
+
+            runs ->
+                atom.commands.dispatch textEditorElement, 'jumpy:toggle' # turn off the initial from scaffolding
+                atom.commands.dispatch textEditorElement, 'vim-mode-plus:activate-insert-mode'
+                atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+                keydown('a', textEditorElement)
+                keydown('a', textEditorElement)
+                expect(textEditorElement
+                    .classList.contains('jumpy-jump-mode')).toBe false
+                # Why don't these get added to the editor text?
+                keydown('b', textEditorElement)
+                keydown('b', textEditorElement)
+                # **************************************************************
+                # The the parent afterEach() handles expectations.
+                # **************************************************************

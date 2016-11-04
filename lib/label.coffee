@@ -21,21 +21,11 @@ for c1 in lowerCharacters
     for c2 in upperCharacters
         keys.push c1 + c2
 
-getCharacterSets = ->
-    [ lowerCharacters, upperCharacters ]
-
 getKeySet = ->
     _.clone keys
 
-drawLabels = (editor, allPositions, lineNumber, column, settings) ->
-    return unless settings.keys.length
-
-    keyLabel = settings.keys.shift()
-    position = {row: lineNumber, column: column}
-    # creates a reference:
-    allPositions[keyLabel] =
-        editor: editor.id
-        position: position
+drawLabel = (position, settings) ->
+    {editor, lineNumber, column, keyLabel } = position
 
     marker = editor.markScreenRange new Range(
         new Point(lineNumber, column),
@@ -45,7 +35,7 @@ drawLabels = (editor, allPositions, lineNumber, column, settings) ->
     labelElement = document.createElement('div')
     labelElement.textContent = keyLabel
     labelElement.style.fontSize = settings.fontSize
-    labelElement.classList.add 'jumpy-label'
+    labelElement.classList.add 'jumpy-label' # For styling and tests
 
     if settings.highContrast
         labelElement.classList.add 'high-contrast'
@@ -56,11 +46,11 @@ drawLabels = (editor, allPositions, lineNumber, column, settings) ->
         position: 'head'
     return decoration
 
-drawBeacon = (editor, location) ->
-    range = Range location.position, location.position
+drawBeacon = (editor, position) ->
+    range = Range position, position
     marker = editor.markScreenRange range, invalidate: 'never'
     beacon = document.createElement 'span'
-    beacon.classList.add 'beacon'
+    beacon.classList.add 'beacon' # For styling and tests
     editor.decorateMarker marker,
         item: beacon,
         type: 'overlay'
@@ -68,4 +58,4 @@ drawBeacon = (editor, location) ->
         marker.destroy()
     , 150
 
-module.exports = { getCharacterSets, getKeySet, drawLabels, drawBeacon }
+module.exports = { getKeySet, drawLabel, drawBeacon }
