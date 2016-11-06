@@ -31,7 +31,7 @@ class JumpyView extends View
     @content: ->
         @div ''
 
-    initialize: () ->
+    initialize: ->
         @disposables = new CompositeDisposable()
         @decorations = []
         @commands = new CompositeDisposable()
