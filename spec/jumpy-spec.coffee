@@ -102,6 +102,10 @@ describe "Jumpy", ->
         it "clears beacon effect", ->
             expect(textEditorElement.
                 querySelectorAll('span.beacon').length).toBe 0
+
+        # this is an important test ...depends on previous tests running
+        # in the series (could make this better)
+        # ensures no += stacking of keymaps (watch for geometric growth)
         it "only uses jumpy keymaps", ->
             expect(atom.keymaps.keyBindings.length).toBe (26 * 2) + 5 + 1
 
