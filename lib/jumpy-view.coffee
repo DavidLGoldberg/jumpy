@@ -118,8 +118,6 @@ class JumpyView extends View
         atom.keymaps.keyBindings = @getFilteredJumpyKeys()
 
     toggle: ->
-        @clearJumpMode()
-
         # Set dirty for @clearJumpMode
         @cleared = false
 
