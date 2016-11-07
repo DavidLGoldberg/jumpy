@@ -21,11 +21,12 @@ NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
 getDecorationsArrayFromAllEditors = ->
     decorations = []
-    atom.workspace.observeTextEditors (editor) ->
+    disposable = atom.workspace.observeTextEditors (editor) ->
         currentTextEditorElement = atom.views.getView(editor)
         return if $(currentTextEditorElement).is ':not(:visible)'
 
         decorations = decorations.concat(editor.getOverlayDecorations())
+    disposable.dispose()
     return decorations
 
 # Borrowed from: @lee-dohm
