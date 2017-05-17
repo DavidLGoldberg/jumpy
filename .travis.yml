@@ -1,8 +1,10 @@
 ### Project specific config ###
+language: generic
+
 env:
   global:
     - APM_TEST_PACKAGES=""
-    - ATOM_LINT_WITH_BUNDLED_NODE="false"
+    - ATOM_LINT_WITH_BUNDLED_NODE="true"
 
   matrix:
     - ATOM_CHANNEL=stable
@@ -12,15 +14,13 @@ os:
   - linux
   - osx
 
-# Installed for linting the project
-language: node_js
-node_js: "6"
+dist: trusty
 
 ### Generic setup follows ###
-script: 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
-
-# Needed to disable the auto-install step running `npm install`
-install: true
+script:
+  - curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh
+  - chmod u+x build-package.sh
+  - ./build-package.sh
 
 notifications:
   email:
@@ -42,4 +42,5 @@ addons:
     - build-essential
     - git
     - libgnome-keyring-dev
+    - libsecret-1-dev
     - fakeroot
