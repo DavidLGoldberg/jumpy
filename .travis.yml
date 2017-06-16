@@ -36,11 +36,23 @@ git:
 
 sudo: false
 
+
 addons:
+  artifacts:
+    paths:
+      - out/atom-amd64.deb
+      - out/atom.x86_64.rpm
+      - out/atom-amd64.tar.gz
+    target_paths: travis-artifacts/$TRAVIS_BUILD_ID
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
-    - build-essential
-    - git
-    - libgnome-keyring-dev
-    - libsecret-1-dev
+    - gcc-6
+    - g++-6
     - fakeroot
+    - git
+    - libsecret-1-dev
+    - rpm
+    - libx11-dev
+    - libxkbfile-dev
