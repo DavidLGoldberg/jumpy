@@ -181,7 +181,7 @@ describe "Jumpy", ->
                 classList.contains('jumpy-jump-mode')).not.toBeTruthy()
         it "jumps the cursor in folded regions", ->
             textEditor.setCursorBufferPosition [23, 20]
-            textEditor.foldCurrentRow()
+            textEditor.foldBufferRow(22)
             atom.commands.dispatch workspaceElement, 'jumpy:toggle'
             atom.commands.dispatch workspaceElement, 'jumpy:d'
             atom.commands.dispatch workspaceElement, 'jumpy:i'
