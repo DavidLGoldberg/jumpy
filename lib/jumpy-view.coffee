@@ -3,28 +3,11 @@
 # TODO: Remove space-pen?
 
 ### global atom ###
-{CompositeDisposable, Point, Range} = require 'atom'
-{View, $} = require 'space-pen'
+{ CompositeDisposable } = require 'atom'
+{ View, $ } = require 'space-pen'
 _ = require 'lodash'
 
-lowerCharacters =
-    (String.fromCharCode(a) for a in ['a'.charCodeAt()..'z'.charCodeAt()])
-upperCharacters =
-    (String.fromCharCode(a) for a in ['A'.charCodeAt()..'Z'.charCodeAt()])
-keys = []
-
-# A little ugly.
-# I used itertools.permutation in python.
-# Couldn't find a good one in npm.  Don't worry this takes < 1ms once.
-for c1 in lowerCharacters
-    for c2 in lowerCharacters
-        keys.push c1 + c2
-for c1 in upperCharacters
-    for c2 in lowerCharacters
-        keys.push c1 + c2
-for c1 in lowerCharacters
-    for c2 in upperCharacters
-        keys.push c1 + c2
+{ getCharacterSets, getKeySet, drawLabels, drawBeacon } = require('./label')
 
 class JumpyView extends View
 
@@ -42,7 +25,7 @@ class JumpyView extends View
             'jumpy:clear': => @clearJumpMode()
 
         commands = {}
-        for characterSet in [lowerCharacters, upperCharacters]
+        for characterSet in getCharacterSets()
             for c in characterSet
                 do (c) => commands['jumpy:' + c] = => @getKey(c)
         @commands.add atom.commands.add 'atom-workspace', commands
@@ -136,7 +119,7 @@ class JumpyView extends View
             document.querySelector '#status-bar-jumpy .status'
 
         @allPositions = {}
-        nextKeys = _.clone keys
+        keys = getKeySet()
         @disposables.add atom.workspace.observeTextEditors (editor) =>
             editorView = atom.views.getView(editor)
             $editorView = $(editorView)
@@ -157,34 +140,7 @@ class JumpyView extends View
                     maxColumn
                 ]
 
-            drawLabels = (lineNumber, column) =>
-                return unless nextKeys.length
-
-                keyLabel = nextKeys.shift()
-                position = {row: lineNumber, column: column}
-                # creates a reference:
-                @allPositions[keyLabel] =
-                    editor: editor.id
-                    position: position
-
-                marker = editor.markScreenRange new Range(
-                    new Point(lineNumber, column),
-                    new Point(lineNumber, column)),
-                    invalidate: 'touch'
-
-                labelElement = document.createElement('div')
-                labelElement.textContent = keyLabel
-                labelElement.style.fontSize = fontSize
-                labelElement.classList.add 'jumpy-label'
-                if highContrast
-                    labelElement.classList.add 'high-contrast'
-
-                decoration = editor.decorateMarker marker,
-                    type: 'overlay'
-                    item: labelElement
-                    position: 'head'
-                @decorations.push decoration
-
+            settings = { keys, highContrast, fontSize }
             [minColumn, maxColumn] = getVisibleColumnRange editorView
             rows = editor.getVisibleRowRange()
             if rows
@@ -193,14 +149,16 @@ class JumpyView extends View
                 for lineNumber in [firstVisibleRow...lastVisibleRow]
                     lineContents = editor.lineTextForScreenRow(lineNumber)
                     if editor.isFoldedAtScreenRow(lineNumber)
-                        drawLabels lineNumber, 0
+                        @decorations.push drawLabels editor,
+                            @allPositions, lineNumber, 0, settings
                     else
                         while ((word = wordsPattern.exec(lineContents)) != null)
                             column = word.index
                             # Do not do anything... markers etc.
                             # if the columns are out of bounds...
                             if column > minColumn && column < maxColumn
-                                drawLabels lineNumber, column
+                                @decorations.push drawLabels editor,
+                                    @allPositions, lineNumber, column, settings
 
             @initializeClearEvents(editorView)
 
@@ -244,7 +202,7 @@ class JumpyView extends View
         location = @findLocation()
         if location == null
             return
-        @disposables.add atom.workspace.observeTextEditors (currentEditor) =>
+        @disposables.add atom.workspace.observeTextEditors (currentEditor) ->
             editorView = atom.views.getView(currentEditor)
 
             # Prevent other editors from jumping cursors as well
@@ -263,19 +221,7 @@ class JumpyView extends View
                 currentEditor.setCursorScreenPosition location.position
 
             if atom.config.get 'jumpy.useHomingBeaconEffectOnJumps'
-                @drawBeacon currentEditor, location
-
-    drawBeacon: (editor, location) ->
-        range = Range location.position, location.position
-        marker = editor.markScreenRange range, invalidate: 'never'
-        beacon = document.createElement 'span'
-        beacon.classList.add 'beacon'
-        editor.decorateMarker marker,
-            item: beacon,
-            type: 'overlay'
-        setTimeout ->
-            marker.destroy()
-        , 150
+                drawBeacon currentEditor, location
 
     findLocation: ->
         label = "#{@firstChar}#{@secondChar}"
