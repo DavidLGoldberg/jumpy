@@ -1,38 +1,40 @@
 'use babel';
 
 import { Point, Range } from 'atom';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
-lowerCharacters = _.range('a'.charCodeAt(), 'z'.charCodeAt() + 1 /* for inclusive*/)
+const lowerCharacters: Array<string> = _.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1 /* for inclusive*/)
     .map(c => String.fromCharCode(c));
-upperCharacters = _.range('A'.charCodeAt(), 'Z'.charCodeAt() + 1 /* for inclusive*/)
+const upperCharacters: Array<string> = _.range('A'.charCodeAt(0), 'Z'.charCodeAt(0) + 1 /* for inclusive*/)
     .map(c => String.fromCharCode(c));
 
-keys = [];
+const keys: Array<string> = [];
 
 // A little ugly.
 // I used itertools.permutation in python.
 // Couldn't find a good one in npm.  Don't worry this takes < 1ms once.
-for (c1 of lowerCharacters) {
-    for (c2 of lowerCharacters) {
+// TODO: try a zip? and or make a func
+for (let c1 of lowerCharacters) {
+    for (let c2 of lowerCharacters) {
         keys.push(c1 + c2);
     }
 }
-for (c1 of upperCharacters) {
-    for (c2 of lowerCharacters) {
+for (let c1 of upperCharacters) {
+    for (let c2 of lowerCharacters) {
         keys.push(c1 + c2);
     }
 }
-for (c1 of lowerCharacters) {
-    for (c2 of upperCharacters) {
+for (let c1 of lowerCharacters) {
+    for (let c2 of upperCharacters) {
         keys.push(c1 + c2);
     }
 }
-getKeySet = function() {
+const getKeySet = function() {
     return _.clone(keys);
 }
 
-drawLabel = function (position, settings) {
+// TODO: Fix any
+const drawLabel = function (position: any, settings: any) {
     const { editor, lineNumber, column, keyLabel } = position;
 
     const marker = editor.markScreenRange(new Range(
@@ -40,7 +42,7 @@ drawLabel = function (position, settings) {
         new Point(lineNumber, column)),
         { invalidate: 'touch'});
 
-    labelElement = document.createElement('div');
+    const labelElement = document.createElement('div');
     labelElement.textContent = keyLabel;
     labelElement.style.fontSize = settings.fontSize;
     labelElement.classList.add('jumpy-label'); // For styling and tests
@@ -58,10 +60,10 @@ drawLabel = function (position, settings) {
     return decoration;
 };
 
-drawBeacon = function (editor, position) {
-    range = Range(position, position);
-    marker = editor.markScreenRange(range, { invalidate: 'never' });
-    beacon = document.createElement('span');
+const drawBeacon = function (editor: any, position: any) {
+    const range = Range(position, position);
+    const marker = editor.markScreenRange(range, { invalidate: 'never' });
+    const beacon = document.createElement('span');
     beacon.classList.add('beacon'); // For styling and tests
     editor.decorateMarker(marker,
         {

@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "javascript-state-machine": "2.4.0",
-    "lodash": "^2.4.1",
+    "lodash": "2.4.1",
     "space-pen": "^4.2.2",
     "tsconfig": "6.0.0",
     "tslib": "1.7.1",
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@types/atom": "0.0.38",
+    "@types/lodash": "4.14.77",
     "ts-node": "3.2.1"
   }
 }

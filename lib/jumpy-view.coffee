@@ -10,7 +10,7 @@ _ = require 'lodash'
 words = require './labelers/words'
 StateMachine = require 'javascript-state-machine'
 labelReducer = require '../dist/label-reducer'
-{ getKeySet, drawLabel, drawBeacon } = require('./label')
+{ getKeySet, drawLabel, drawBeacon } = require('../dist/label')
 
 class JumpyView extends View
 
