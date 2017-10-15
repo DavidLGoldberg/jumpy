@@ -1,6 +1,6 @@
 'use babel';
 
-import JumpyView from './jumpy-view';
+import * as JumpyView from '../lib/jumpy-view';
 
 module.exports = {
     jumpyView: null,
@@ -32,7 +32,7 @@ module.exports = {
         }
     },
 
-    activate: function (state) {
+    activate: function (state: any) {
         this.jumpyView = new JumpyView(state.jumpyViewState);
     },
 

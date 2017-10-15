@@ -1,6 +1,6 @@
 {
   "name": "jumpy",
-  "main": "./lib/jumpy",
+  "main": "./dist/jumpy",
   "version": "3.1.3",
   "description": "An Atom package that creates dynamic hotkeys to jump around files across visible panes.",
   "keywords": [
