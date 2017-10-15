@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash';
 
-function getVisibleColumnRange (editorView) {
+function getVisibleColumnRange (editorView: any) {
     const charWidth = editorView.getDefaultCharacterWidth()
     // FYI: asserts:
     // numberOfVisibleColumns = editorView.getWidth() / charWidth
@@ -15,7 +15,7 @@ function getVisibleColumnRange (editorView) {
     ];
 }
 
-function getLabels (editor, editorView, keys, settings) {
+function getLabels (editor: any, editorView: any, keys: Array<string>, settings: any) {
     const positions = [];
 
     const [ minColumn, maxColumn ] = getVisibleColumnRange(editorView);
@@ -27,7 +27,7 @@ function getLabels (editor, editorView, keys, settings) {
 
     const [ firstVisibleRow, lastVisibleRow ] = rows;
     // TODO: Right now there are issues with lastVisbleRow
-    for (lineNumber of _.range(firstVisibleRow, lastVisibleRow) /*excludes end value*/) {
+    for (const lineNumber of _.range(firstVisibleRow, lastVisibleRow) /*excludes end value*/) {
         const lineContents = editor.lineTextForScreenRow(lineNumber);
         if (editor.isFoldedAtScreenRow(lineNumber)) {
             if (!keys.length) {
@@ -38,6 +38,7 @@ function getLabels (editor, editorView, keys, settings) {
 
             positions.push({ editor, lineNumber, column: 0, keyLabel });
         } else {
+            let word: any;
             while ((word = settings.wordsPattern.exec(lineContents)) != null && keys.length) {
                 const keyLabel = keys.shift()
 

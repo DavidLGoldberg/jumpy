@@ -7,7 +7,7 @@
 { View, $ } = require 'space-pen'
 _ = require 'lodash'
 
-words = require './labelers/words'
+words = require '../dist/labelers/words'
 StateMachine = require 'javascript-state-machine'
 labelReducer = require '../dist/label-reducer'
 { getKeySet, drawLabel, drawBeacon } = require('../dist/label')
