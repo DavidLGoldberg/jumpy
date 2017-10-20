@@ -1,7 +1,7 @@
 "use strict";
 'use babel';
 Object.defineProperty(exports, "__esModule", { value: true });
-const JumpyView = require("../lib/jumpy-view");
+const jumpy_view_1 = require("./jumpy-view");
 module.exports = {
     jumpyView: null,
     config: {
@@ -32,7 +32,7 @@ module.exports = {
         }
     },
     activate(state) {
-        this.jumpyView = new JumpyView(state.jumpyViewState);
+        this.jumpyView = new jumpy_view_1.default(state.jumpyViewState);
     },
     deactivate() {
         if (this.jumpyView) {

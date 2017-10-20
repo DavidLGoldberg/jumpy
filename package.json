@@ -28,8 +28,9 @@
     "space-pen": "^4.2.2"
   },
   "devDependencies": {
-    "typescript": "2.5.3",
     "@types/atom": "0.0.38",
-    "@types/lodash": "4.14.77"
+    "@types/javascript-state-machine": "2.4.1",
+    "@types/lodash": "4.14.77",
+    "typescript": "2.5.3"
   }
 }

@@ -29,12 +29,12 @@ for (let c1 of lowerCharacters) {
         keys.push(c1 + c2);
     }
 }
-const getKeySet = function() {
+
+export function getKeySet() {
     return _.clone(keys);
 }
 
-// TODO: Fix any
-const drawLabel = function (position: any, settings: any) {
+export function drawLabel(position: any, settings: any) {
     const { editor, lineNumber, column, keyLabel } = position;
 
     const marker = editor.markScreenRange(new Range(
@@ -58,9 +58,9 @@ const drawLabel = function (position: any, settings: any) {
             position: 'head'
         });
     return decoration;
-};
+}
 
-const drawBeacon = function (editor: any, position: any) {
+export function drawBeacon(editor: any, position: any) {
     const range = Range(position, position);
     const marker = editor.markScreenRange(range, { invalidate: 'never' });
     const beacon = document.createElement('span');
@@ -73,6 +73,4 @@ const drawBeacon = function (editor: any, position: any) {
     setTimeout(function() {
         marker.destroy();
     } , 150);
-};
-
-module.exports = { getKeySet, drawLabel, drawBeacon };
+}

@@ -27,11 +27,11 @@ for (let c1 of lowerCharacters) {
         keys.push(c1 + c2);
     }
 }
-const getKeySet = function () {
+function getKeySet() {
     return _.clone(keys);
-};
-// TODO: Fix any
-const drawLabel = function (position, settings) {
+}
+exports.getKeySet = getKeySet;
+function drawLabel(position, settings) {
     const { editor, lineNumber, column, keyLabel } = position;
     const marker = editor.markScreenRange(new atom_1.Range(new atom_1.Point(lineNumber, column), new atom_1.Point(lineNumber, column)), { invalidate: 'touch' });
     const labelElement = document.createElement('div');
@@ -47,8 +47,9 @@ const drawLabel = function (position, settings) {
         position: 'head'
     });
     return decoration;
-};
-const drawBeacon = function (editor, position) {
+}
+exports.drawLabel = drawLabel;
+function drawBeacon(editor, position) {
     const range = atom_1.Range(position, position);
     const marker = editor.markScreenRange(range, { invalidate: 'never' });
     const beacon = document.createElement('span');
@@ -60,6 +61,6 @@ const drawBeacon = function (editor, position) {
     setTimeout(function () {
         marker.destroy();
     }, 150);
-};
-module.exports = { getKeySet, drawLabel, drawBeacon };
+}
+exports.drawBeacon = drawBeacon;
 //# sourceMappingURL=label.js.map

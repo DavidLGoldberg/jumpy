@@ -13,9 +13,8 @@
 
 // A *LABEL* looks like:
 // { editor, lineNumber, column, keyLabel }
-function labelReducer (labels: Array<any>, currentKey : string) {
+export default function labelReducer (labels: Array<any>, currentKey : string) {
     return labels.filter(function(label : any) {
         return label.keyLabel.startsWith(currentKey);
     });
 }
-export = labelReducer;

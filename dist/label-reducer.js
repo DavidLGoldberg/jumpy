@@ -1,5 +1,6 @@
 "use strict";
 'use babel';
+Object.defineProperty(exports, "__esModule", { value: true });
 // (PURE FUNCTION)
 //
 // WHEN GIVEN:
@@ -17,5 +18,5 @@ function labelReducer(labels, currentKey) {
         return label.keyLabel.startsWith(currentKey);
     });
 }
-module.exports = labelReducer;
+exports.default = labelReducer;
 //# sourceMappingURL=label-reducer.js.map

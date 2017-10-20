@@ -15,7 +15,7 @@ function getVisibleColumnRange (editorView: any) {
     ];
 }
 
-function getLabels (editor: any, editorView: any, keys: Array<string>, settings: any) {
+export default function getLabels (editor: any, editorView: any, keys: Array<string>, settings: any) {
     const positions = [];
 
     const [ minColumn, maxColumn ] = getVisibleColumnRange(editorView);
@@ -54,5 +54,3 @@ function getLabels (editor: any, editorView: any, keys: Array<string>, settings:
 
     return positions;
 }
-
-module.exports = { getLabels };

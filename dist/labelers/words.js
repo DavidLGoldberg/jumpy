@@ -46,5 +46,5 @@ function getLabels(editor, editorView, keys, settings) {
     }
     return positions;
 }
-module.exports = { getLabels };
+exports.default = getLabels;
 //# sourceMappingURL=words.js.map

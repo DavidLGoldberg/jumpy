@@ -1,6 +1,6 @@
 'use babel';
 
-import * as JumpyView from '../lib/jumpy-view';
+import JumpyView from './jumpy-view';
 
 module.exports = {
 
