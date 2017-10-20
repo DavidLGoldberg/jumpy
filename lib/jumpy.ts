@@ -3,6 +3,7 @@
 import * as JumpyView from '../lib/jumpy-view';
 
 module.exports = {
+
     jumpyView: null,
     config: {
         fontSize: {
@@ -32,16 +33,18 @@ module.exports = {
         }
     },
 
-    activate: function (state: any) {
+    activate(state: any) {
         this.jumpyView = new JumpyView(state.jumpyViewState);
     },
 
-    deactivate: function() {
-        this.jumpyView.destroy();
+    deactivate() {
+        if (this.jumpyView) {
+            this.jumpyView.destroy();
+        }
         this.jumpyView = null;
     },
 
-    serialize: function() {
+    serialize() {
         return {
             jumpyViewState: this.jumpyView.serialize()
         };

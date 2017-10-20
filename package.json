@@ -17,11 +17,6 @@
     "plugin",
     "extension"
   ],
-  "activationCommands": {
-    "atom-text-editor": [
-      "jumpy:toggle"
-    ]
-  },
   "repository": "https://github.com/DavidLGoldberg/jumpy",
   "license": "MIT",
   "engines": {

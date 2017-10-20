@@ -31,14 +31,16 @@ module.exports = {
             default: '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
         }
     },
-    activate: function (state) {
+    activate(state) {
         this.jumpyView = new JumpyView(state.jumpyViewState);
     },
-    deactivate: function () {
-        this.jumpyView.destroy();
+    deactivate() {
+        if (this.jumpyView) {
+            this.jumpyView.destroy();
+        }
         this.jumpyView = null;
     },
-    serialize: function () {
+    serialize() {
         return {
             jumpyViewState: this.jumpyView.serialize()
         };
