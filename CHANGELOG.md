@@ -1,4 +1,5 @@
 ## 4.0.0 - New Architecture
+*   Convert all core code from CoffeeScript to TypeScript.
 *   Pull out into modules and use javascript-state-machine.
 *   Preps for @johngeorgewright's code for tree-view labels and other initiatives.
 *   Use workspaceElement for key listening.  No more preregistered commands.
