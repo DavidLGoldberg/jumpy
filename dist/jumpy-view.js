@@ -9,6 +9,7 @@ const atom_1 = require("atom");
 const space_pen_1 = require("space-pen");
 const _ = require("lodash");
 const words_1 = require("./labelers/words");
+const tabs_1 = require("./labelers/tabs");
 const StateMachine = require("javascript-state-machine");
 const label_reducer_1 = require("./label-reducer");
 const label_1 = require("./label");
@@ -70,12 +71,17 @@ class JumpyView {
                         if (!this.keys.length) {
                             return;
                         }
-                        const currentEditorLabels = words_1.default(editor, editorView, this.keys, this.settings);
+                        const currentEditorWordLabels = words_1.default(editor, editorView, this.keys, this.settings);
+                        const currentEditorTabLabels = tabs_1.default(editor, editorView, this.keys, this.settings);
                         // only draw new labels
-                        for (const label of currentEditorLabels) {
+                        const allCurrentEditorLabels = [
+                            ...currentEditorWordLabels,
+                            ...currentEditorTabLabels
+                        ];
+                        for (const label of allCurrentEditorLabels) {
                             this.decorations.push(label_1.drawLabel(label, this.settings));
                         }
-                        this.allLabels = this.allLabels.concat(currentEditorLabels);
+                        this.allLabels = this.allLabels.concat(allCurrentEditorLabels);
                         this.currentLabels = _.clone(this.allLabels);
                     }));
                 },

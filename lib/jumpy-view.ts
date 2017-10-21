@@ -10,6 +10,7 @@ import { $ } from 'space-pen';
 import * as _ from 'lodash';
 
 import getLabelsForWords from './labelers/words';
+import getLabelsForTabs from './labelers/tabs';
 import * as StateMachine from 'javascript-state-machine';
 import labelReducer from './label-reducer';
 import { getKeySet, drawLabel, drawBeacon } from './label';
@@ -99,13 +100,19 @@ export default class JumpyView {
                         if (!this.keys.length) {
                             return;
                         }
-                        const currentEditorLabels = getLabelsForWords(editor, editorView, this.keys, this.settings);
+                        const currentEditorWordLabels = getLabelsForWords(editor, editorView, this.keys, this.settings);
+                        const currentEditorTabLabels = getLabelsForTabs(editor, editorView, this.keys, this.settings);
+
                         // only draw new labels
-                        for (const label of currentEditorLabels) {
+                        const allCurrentEditorLabels = [
+                            ...currentEditorWordLabels,
+                            ...currentEditorTabLabels
+                        ];
+                        for (const label of allCurrentEditorLabels) {
                             this.decorations.push(drawLabel(label, this.settings));
                         }
 
-                        this.allLabels = this.allLabels.concat(currentEditorLabels);
+                        this.allLabels = this.allLabels.concat(allCurrentEditorLabels);
                         this.currentLabels = _.clone(this.allLabels);
                     }));
                 },
