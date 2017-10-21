@@ -121,30 +121,7 @@ class JumpyView {
                     }
                 },
                 onjump: (event, from, to, location) => {
-                    const currentEditor = location.editor;
-                    const editorView = atom.views.getView(currentEditor);
-                    // Prevent other editors from jumping cursors as well
-                    // TODO: make a test for this if return
-                    if (currentEditor.id !== location.editor.id) {
-                        return;
-                    }
-                    const pane = atom.workspace.paneForItem(currentEditor);
-                    pane.activate();
-                    // isVisualMode is for vim-mode or vim-mode-plus:
-                    const isVisualMode = editorView.classList.contains('visual-mode');
-                    // isSelected is for regular selection in atom or in insert-mode in vim
-                    const isSelected = (currentEditor.getSelections().length === 1 &&
-                        currentEditor.getSelectedText() !== '');
-                    const position = atom_1.Point(location.lineNumber, location.column);
-                    if (isVisualMode || isSelected) {
-                        currentEditor.selectToScreenPosition(position);
-                    }
-                    else {
-                        currentEditor.setCursorScreenPosition(position);
-                    }
-                    if (atom.config.get('jumpy.useHomingBeaconEffectOnJumps')) {
-                        location.animateBeacon(currentEditor, position);
-                    }
+                    location.jump(location);
                 },
                 onreset: (event, from, to) => {
                     this.currentKeys = '';

@@ -9,6 +9,7 @@ export interface Label {
     editor: any;
     drawLabel: any;
     animateBeacon: any;
+    jump: any;
 }
 
 export interface Labeler {
