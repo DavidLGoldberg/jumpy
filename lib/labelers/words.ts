@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { LabelEnvironment, Label, Labeler } from '../label-interface';
 import { Point, Range } from 'atom';
 
-function getVisibleColumnRange (editorView: any) {
+function getVisibleColumnRange (editorView: any): Array<number> {
     const charWidth = editorView.getDefaultCharacterWidth()
     // FYI: asserts:
     // numberOfVisibleColumns = editorView.getWidth() / charWidth
@@ -17,7 +17,7 @@ function getVisibleColumnRange (editorView: any) {
     ];
 }
 
-function drawLabel(position: any, settings: any) {
+function drawLabel(position: any, settings: any): void {
     const { editor, lineNumber, column, keyLabel } = position;
 
     const marker = editor.markScreenRange(new Range(
@@ -43,7 +43,7 @@ function drawLabel(position: any, settings: any) {
     return decoration;
 }
 
-function animateBeacon(editor: any, position: any) {
+function animateBeacon(editor: any, position: any): void {
     const range = Range(position, position);
     const marker = editor.markScreenRange(range, { invalidate: 'never' });
     const beacon = document.createElement('span');
@@ -58,7 +58,7 @@ function animateBeacon(editor: any, position: any) {
     } , 150);
 }
 
-function jumpToWord(location) {
+function jumpToWord(location:Label): void {
     const currentEditor = location.editor;
     const editorView = atom.views.getView(currentEditor);
 

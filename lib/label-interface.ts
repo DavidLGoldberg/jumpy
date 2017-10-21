@@ -6,10 +6,11 @@ export interface LabelEnvironment {
 }
 
 export interface Label {
+    // TODO: keyLabel should probably be put here as opposed to the instances
     editor: any;
-    drawLabel: any;
-    animateBeacon: any;
-    jump: any;
+    drawLabel(label: Label): void;
+    animateBeacon(label: Label): void;
+    jump(label: Label): void;
 }
 
 export interface Labeler {
