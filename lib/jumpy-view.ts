@@ -10,8 +10,8 @@ import { $ } from 'space-pen';
 import * as _ from 'lodash';
 
 import { LabelEnvironment } from './label-interface';
-import Words from './labelers/words';
-import Tabs from './labelers/tabs';
+import getWordLabels from './labelers/words';
+import getTabLabels from './labelers/tabs';
 import * as StateMachine from 'javascript-state-machine';
 import labelReducer from './label-reducer';
 import { getKeySet, drawLabel, drawBeacon } from './label';
@@ -107,8 +107,8 @@ export default class JumpyView {
                             keys: this.keys,
                             settings: this.settings
                         }
-                        const currentEditorWordLabels = new Words().getLabels(environment);
-                        const currentEditorTabLabels = new Tabs().getLabels(environment);
+                        const currentEditorWordLabels = getWordLabels(environment);
+                        const currentEditorTabLabels = getTabLabels(environment);
 
                         // only draw new labels
                         const allCurrentEditorLabels = [

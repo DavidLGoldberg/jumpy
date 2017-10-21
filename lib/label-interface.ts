@@ -6,5 +6,5 @@ export interface LabelEnvironment {
 }
 
 export interface Labeler {
-    getLabels(environment:LabelEnvironment):Array<any>;
+    (environment:LabelEnvironment):Array<any>;
 }
