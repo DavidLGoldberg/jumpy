@@ -9,10 +9,9 @@ const atom_1 = require("atom");
 const space_pen_1 = require("space-pen");
 const _ = require("lodash");
 const words_1 = require("./labelers/words");
-const tabs_1 = require("./labelers/tabs");
 const StateMachine = require("javascript-state-machine");
 const label_reducer_1 = require("./label-reducer");
-const label_1 = require("./label");
+const keys_1 = require("./keys");
 class JumpyView {
     constructor(serializedState) {
         this.workspaceElement = atom.views.getView(atom.workspace);
@@ -52,7 +51,7 @@ class JumpyView {
                     // important to keep this up here and not in the observe
                     // text editor to not crash if no more keys left!
                     // this shouldn't have to be this way, but for now.
-                    this.keys = label_1.getKeySet();
+                    this.keys = keys_1.getKeySet();
                     this.allLabels = [];
                     this.currentLabels = [];
                     this.workspaceElement.addEventListener('keydown', this.keydownListener, true);
@@ -78,14 +77,13 @@ class JumpyView {
                             settings: this.settings
                         };
                         const currentEditorWordLabels = words_1.default(environment);
-                        const currentEditorTabLabels = tabs_1.default(environment);
+                        // const currentEditorTabLabels = getTabLabels(environment);
                         // only draw new labels
                         const allCurrentEditorLabels = [
                             ...currentEditorWordLabels,
-                            ...currentEditorTabLabels
                         ];
                         for (const label of allCurrentEditorLabels) {
-                            this.decorations.push(label_1.drawLabel(label, this.settings));
+                            this.decorations.push(label.drawLabel(label, this.settings));
                         }
                         this.allLabels = this.allLabels.concat(allCurrentEditorLabels);
                         this.currentLabels = _.clone(this.allLabels);
@@ -145,7 +143,7 @@ class JumpyView {
                         currentEditor.setCursorScreenPosition(position);
                     }
                     if (atom.config.get('jumpy.useHomingBeaconEffectOnJumps')) {
-                        label_1.drawBeacon(currentEditor, position);
+                        location.animateBeacon(currentEditor, position);
                     }
                 },
                 onreset: (event, from, to) => {

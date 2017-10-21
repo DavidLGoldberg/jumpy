@@ -9,12 +9,12 @@ import { CompositeDisposable, Point } from 'atom';
 import { $ } from 'space-pen';
 import * as _ from 'lodash';
 
-import { LabelEnvironment } from './label-interface';
+import { LabelEnvironment, Label } from './label-interface';
 import getWordLabels from './labelers/words';
 import getTabLabels from './labelers/tabs';
 import * as StateMachine from 'javascript-state-machine';
 import labelReducer from './label-reducer';
-import { getKeySet, drawLabel, drawBeacon } from './label';
+import { getKeySet } from './keys';
 
 export default class JumpyView {
     workspaceElement: any;
@@ -108,15 +108,15 @@ export default class JumpyView {
                             settings: this.settings
                         }
                         const currentEditorWordLabels = getWordLabels(environment);
-                        const currentEditorTabLabels = getTabLabels(environment);
+                        // const currentEditorTabLabels = getTabLabels(environment);
 
                         // only draw new labels
                         const allCurrentEditorLabels = [
                             ...currentEditorWordLabels,
-                            ...currentEditorTabLabels
+                            // ...currentEditorTabLabels
                         ];
                         for (const label of allCurrentEditorLabels) {
-                            this.decorations.push(drawLabel(label, this.settings));
+                            this.decorations.push(label.drawLabel(label, this.settings));
                         }
 
                         this.allLabels = this.allLabels.concat(allCurrentEditorLabels);
@@ -188,7 +188,7 @@ export default class JumpyView {
                     }
 
                     if (atom.config.get('jumpy.useHomingBeaconEffectOnJumps')) {
-                        drawBeacon(currentEditor, position);
+                        location.animateBeacon(currentEditor, position);
                     }
                 },
 
