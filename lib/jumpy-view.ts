@@ -9,21 +9,22 @@ import { CompositeDisposable, Point } from 'atom';
 import { $ } from 'space-pen';
 import * as _ from 'lodash';
 
-import getLabelsForWords from './labelers/words';
+import { LabelEnvironment, Label, Labeler } from './label-interface';
+import getWordLabels from './labelers/words';
+import getTabLabels from './labelers/tabs';
 import * as StateMachine from 'javascript-state-machine';
 import labelReducer from './label-reducer';
-import { getKeySet, drawLabel, drawBeacon } from './label';
+import { getKeySet } from './keys';
 
 export default class JumpyView {
     workspaceElement: any;
     disposables: CompositeDisposable;
-    decorations: Array<any>;
     commands: CompositeDisposable;
     fsm: any;
     currentKeys: string;
-    keys: Array<string>;
-    allLabels: Array<any>;
-    currentLabels: Array<any>;
+    allLabels: Array<Label>; // TODO: these lists of labels seem a little much.
+    currentLabels: Array<Label>;
+    drawnLabels: Array<Label>;
     keydownListener: any;
     settings: any;
     statusBar: HTMLElement | null;
@@ -34,7 +35,7 @@ export default class JumpyView {
     constructor(serializedState: any) {
         this.workspaceElement = atom.views.getView(atom.workspace);
         this.disposables = new CompositeDisposable();
-        this.decorations = [];
+        this.drawnLabels = [];
         this.commands = new CompositeDisposable();
 
         this.fsm = StateMachine.create({
@@ -71,50 +72,42 @@ export default class JumpyView {
 
                     this.currentKeys = '';
 
-                    // important to keep this up here and not in the observe
-                    // text editor to not crash if no more keys left!
-                    // this shouldn't have to be this way, but for now.
-                    this.keys = getKeySet();
-
-                    this.allLabels = [];
-                    this.currentLabels = [];
-
                     this.workspaceElement.addEventListener('keydown', this.keydownListener, true);
                     for (const e of ['blur', 'click', 'scroll']) {
                         this.workspaceElement.addEventListener(e, () => this.clearJumpModeHandler(), true);
                     }
 
-                    this.settings.wordsPattern.lastIndex = 0; // reset the RegExp for subsequent calls.
-                    this.disposables.add(atom.workspace.observeTextEditors((editor: any) => {
-                        const editorView = atom.views.getView(editor);
-                        if ($(editorView).is(':not(:visible)')) {
-                            return;
-                        }
+                    const environment:LabelEnvironment = {
+                        keys: getKeySet(),
+                        settings: this.settings
+                    };
 
-                        // 'jumpy-jump-mode is for keymaps and utilized by tests
-                        editorView.classList.add('jumpy-jump-mode',
-                            'jumpy-more-specific1', 'jumpy-more-specific2');
+                    // TODO: reduce with concat all labelers -> labeler.getLabels()
+                    const wordLabels:Array<Label> = getWordLabels(environment);
+                    const tabLabels:Array<Label> = getTabLabels(environment);
 
-                        // current labels for current editor in observe.
-                        if (!this.keys.length) {
-                            return;
-                        }
-                        const currentEditorLabels = getLabelsForWords(editor, editorView, this.keys, this.settings);
-                        // only draw new labels
-                        for (const label of currentEditorLabels) {
-                            this.decorations.push(drawLabel(label, this.settings));
-                        }
+                    // TODO: I really think alllabels can just be drawnlabels
+                    // maybe I call labeler.draw() still returns back anyway? Less functional?
+                    this.allLabels = [
+                        ...wordLabels,
+                        ...tabLabels
+                    ];
 
-                        this.allLabels = this.allLabels.concat(currentEditorLabels);
-                        this.currentLabels = _.clone(this.allLabels);
-                    }));
+                    for (const label of this.allLabels) {
+                        this.drawnLabels.push(label.drawLabel());
+                    }
+
+                    this.currentLabels = _.clone(this.allLabels);
                 },
 
                 onkey: (event: any, from: string, to: string, character: string) => {
-                    // instead... of the following, maybe do with
+                    // TODO: instead... of the following, maybe do with
                     // some substate ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
                     const testKeys = this.currentKeys + character;
                     const matched = this.currentLabels.some((label) => {
+                        if (!label.keyLabel) {
+                            return false;
+                        }
                         return label.keyLabel.startsWith(testKeys);
                     });
 
@@ -130,10 +123,12 @@ export default class JumpyView {
 
                     this.currentKeys = testKeys;
 
-                    for (const decoration of this.decorations) {
-                        const element = decoration.getProperties().item;
-                        if (!element.textContent.startsWith(this.currentKeys)) {
-                            element.classList.add('irrelevant');
+                    for (const label of this.drawnLabels) {
+                        if (!label.keyLabel || !label.element) {
+                            continue;
+                        }
+                        if (!label.keyLabel.startsWith(this.currentKeys)) {
+                            label.element.classList.add('irrelevant');
                         }
                     }
 
@@ -148,42 +143,17 @@ export default class JumpyView {
                     }
                 },
 
-                onjump: (event: any, from: string, to: string, location: any) => {
-                    const currentEditor = location.editor;
-                    const editorView = atom.views.getView(currentEditor);
-
-                    // Prevent other editors from jumping cursors as well
-                    // TODO: make a test for this if return
-                    if (currentEditor.id !== location.editor.id) {
-                        return;
-                    }
-
-                    const pane = atom.workspace.paneForItem(currentEditor);
-                    pane.activate();
-
-                    // isVisualMode is for vim-mode or vim-mode-plus:
-                    const isVisualMode = editorView.classList.contains('visual-mode');
-                    // isSelected is for regular selection in atom or in insert-mode in vim
-                    const isSelected = (currentEditor.getSelections().length === 1 &&
-                        currentEditor.getSelectedText() !== '');
-                    const position = Point(location.lineNumber, location.column);
-                    if (isVisualMode || isSelected) {
-                        currentEditor.selectToScreenPosition(position);
-                    } else {
-                        currentEditor.setCursorScreenPosition(position);
-                    }
-
-                    if (atom.config.get('jumpy.useHomingBeaconEffectOnJumps')) {
-                        drawBeacon(currentEditor, position);
-                    }
+                onjump: (event: any, from: string, to: string, location: Label) => {
+                    location.jump();
                 },
 
                 onreset: (event: any, from: string, to: string) => {
                     this.currentKeys = '';
                     this.currentLabels = _.clone(this.allLabels);
-                    for (const decoration of this.decorations) {
-                        const element:HTMLElement = decoration.getProperties().item;
-                        element.classList.remove('irrelevant');
+                    for (const label of this.currentLabels) {
+                        if (label.element) {
+                            label.element.classList.remove('irrelevant');
+                        }
                     }
                 },
 
@@ -290,11 +260,11 @@ export default class JumpyView {
 
     // TODO: move into fsm? change callers too
     clearJumpMode() {
-        const clearAllMarkers = () => {
-            for (const decoration of this.decorations) {
-                decoration.getMarker().destroy();
+        const clearAllLabels = () => {
+            for (const label of this.drawnLabels) {
+                label.destroy();
             }
-            this.decorations = []; // Very important for GC.
+            this.drawnLabels = []; // Very important for GC.
             // Verifiable in Dev Tools -> Timeline -> Nodes.
         };
 
@@ -303,14 +273,13 @@ export default class JumpyView {
         for (const e of ['blur', 'click', 'scroll']) {
             this.workspaceElement.removeEventListener(e, () => this.clearJumpModeHandler(), true);
         }
-        this.disposables.add(atom.workspace.observeTextEditors((editor: any) => {
+        for (const editor of atom.workspace.getTextEditors()) {
             const editorView = atom.views.getView(editor);
 
             editorView.classList.remove('jumpy-jump-mode',
                 'jumpy-more-specific1', 'jumpy-more-specific2');
-        }));
-        clearAllMarkers();
-        this.decorations = []; // Very important for GC.
+        }
+        clearAllLabels();
         if (this.disposables) {
             this.disposables.dispose();
         }
