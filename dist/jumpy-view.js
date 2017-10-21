@@ -71,8 +71,14 @@ class JumpyView {
                         if (!this.keys.length) {
                             return;
                         }
-                        const currentEditorWordLabels = words_1.default(editor, editorView, this.keys, this.settings);
-                        const currentEditorTabLabels = tabs_1.default(editor, editorView, this.keys, this.settings);
+                        const environment = {
+                            editor,
+                            editorView,
+                            keys: this.keys,
+                            settings: this.settings
+                        };
+                        const currentEditorWordLabels = words_1.default(environment);
+                        const currentEditorTabLabels = tabs_1.default(environment);
                         // only draw new labels
                         const allCurrentEditorLabels = [
                             ...currentEditorWordLabels,

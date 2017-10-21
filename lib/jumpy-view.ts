@@ -9,6 +9,7 @@ import { CompositeDisposable, Point } from 'atom';
 import { $ } from 'space-pen';
 import * as _ from 'lodash';
 
+import { LabelEnvironment } from './label-interface';
 import getLabelsForWords from './labelers/words';
 import getLabelsForTabs from './labelers/tabs';
 import * as StateMachine from 'javascript-state-machine';
@@ -100,8 +101,14 @@ export default class JumpyView {
                         if (!this.keys.length) {
                             return;
                         }
-                        const currentEditorWordLabels = getLabelsForWords(editor, editorView, this.keys, this.settings);
-                        const currentEditorTabLabels = getLabelsForTabs(editor, editorView, this.keys, this.settings);
+                        const environment:LabelEnvironment = {
+                            editor,
+                            editorView,
+                            keys: this.keys,
+                            settings: this.settings
+                        }
+                        const currentEditorWordLabels = getLabelsForWords(environment);
+                        const currentEditorTabLabels = getLabelsForTabs(environment);
 
                         // only draw new labels
                         const allCurrentEditorLabels = [
