@@ -22,6 +22,7 @@ class TabLabel {
         }
         labelElement.style.position = 'fixed';
         labelElement.classList.add('jumpy-label'); // For styling and tests
+        labelElement.classList.add('tab-label');
         labelElement.style.fontSize = this.settings.fontSize;
         if (this.settings.highContrast) {
             labelElement.classList.add('high-contrast');
@@ -41,6 +42,7 @@ class TabLabel {
             beacon.style.position = 'relative';
             beacon.style.zIndex = '4';
             beacon.classList.add('beacon'); // For styling and tests
+            beacon.classList.add('tab-beacon');
             foundTab.appendChild(beacon);
             setTimeout(function () {
                 beacon.remove();

@@ -10,11 +10,16 @@
     width: 2px;
     height: 2px;
     z-index: -1;
-    -webkit-animation: rip .085s;
+    -webkit-animation: ripple .085s;
     content: '';
     top: -6px;
+    &.tab-beacon {
+        // TODO: Really work needs to be done to trigger *after* tab switch
+        left: 18px;
+        top: -15px;
+    }
 }
-@-webkit-keyframes rip {
+@-webkit-keyframes ripple {
     0% {
         box-shadow:0 0 0 0 transparent,
                    0 0 0 0 transparent,
