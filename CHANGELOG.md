@@ -7,6 +7,7 @@
 * Add an extra css class to jumpy jump mode to make it more specific.
 * Remove code registering commands for jumpy keys for each letter.
 * Fix small bug of no match case after 2nd character.
+* Remove all space-pen / jQuery.
 * Add note about vim-mode-plus and hydrogen packages in README.md.
 
 ## 3.1.3 - Remove deprecation (Object.observe)

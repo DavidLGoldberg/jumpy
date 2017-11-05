@@ -3,10 +3,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: Merge in @johngeorgewright's code for treeview
 // TODO: Merge in @willdady's code for better accuracy.
-// TODO: Remove space-pen?
 /* global atom */
 const atom_1 = require("atom");
-const space_pen_1 = require("space-pen");
 const _ = require("lodash");
 const words_1 = require("./labelers/words");
 const tabs_1 = require("./labelers/tabs");
@@ -162,10 +160,12 @@ class JumpyView {
         }
         this.statusBar = document.querySelector('status-bar');
         if (this.statusBar) {
+            const statusBarJumpyElement = document.createElement('div');
+            statusBarJumpyElement.id = 'status-bar-jumpy';
+            statusBarJumpyElement.classList.add('inline-block');
+            statusBarJumpyElement.innerHTML = 'Jumpy: <span class="status"></span>';
             this.statusBar.addLeftTile({
-                item: space_pen_1.$('<div id="status-bar-jumpy" class="inline-block"> \
-                        Jumpy: <span class="status"></span> \
-                    </div>'),
+                item: statusBarJumpyElement,
                 priority: -1
             });
             this.statusBarJumpy = this.statusBar.querySelector('#status-bar-jumpy');

@@ -1,7 +1,6 @@
 'use babel';
 
 import * as _ from 'lodash';
-import { $ } from 'space-pen';
 import { LabelEnvironment, Label, Labeler } from '../label-interface';
 import { Point, Range, TextEditor } from 'atom';
 
@@ -16,6 +15,11 @@ function getVisibleColumnRange (editorView: any): Array<number> {
         minColumn,
         maxColumn
     ];
+}
+
+// Taken from jQuery: https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
+function isVisible(element) {
+    return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 
 class WordLabel implements Label {
@@ -128,7 +132,7 @@ const labeler: Labeler = function(env:LabelEnvironment):Array<WordLabel> {
         const [ minColumn, maxColumn ] = getVisibleColumnRange(editorView);
         const rows = textEditor.getVisibleRowRange();
 
-        if (!rows || $(editorView).is(':not(:visible)')) {
+        if (!rows || !isVisible(editorView)) {
             continue;
         }
 

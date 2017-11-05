@@ -2,11 +2,9 @@
 
 // TODO: Merge in @johngeorgewright's code for treeview
 // TODO: Merge in @willdady's code for better accuracy.
-// TODO: Remove space-pen?
 
 /* global atom */
 import { CompositeDisposable, Point } from 'atom';
-import { $ } from 'space-pen';
 import * as _ from 'lodash';
 
 import { LabelEnvironment, Label } from './label-interface';
@@ -205,10 +203,12 @@ export default class JumpyView {
 
         this.statusBar = <HTMLElement>document.querySelector('status-bar');
         if (this.statusBar) {
+            const statusBarJumpyElement = document.createElement('div');
+            statusBarJumpyElement.id = 'status-bar-jumpy';
+            statusBarJumpyElement.classList.add('inline-block');
+            statusBarJumpyElement.innerHTML = 'Jumpy: <span class="status"></span>';
             this.statusBar.addLeftTile({
-                item: $('<div id="status-bar-jumpy" class="inline-block"> \
-                        Jumpy: <span class="status"></span> \
-                    </div>'),
+                item: statusBarJumpyElement,
                 priority: -1
             });
             this.statusBarJumpy = <HTMLElement>this.statusBar.querySelector('#status-bar-jumpy');

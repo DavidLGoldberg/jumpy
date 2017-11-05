@@ -2,7 +2,6 @@
 'use babel';
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
-const space_pen_1 = require("space-pen");
 const atom_1 = require("atom");
 function getVisibleColumnRange(editorView) {
     const charWidth = editorView.getDefaultCharacterWidth();
@@ -14,6 +13,10 @@ function getVisibleColumnRange(editorView) {
         minColumn,
         maxColumn
     ];
+}
+// Taken from jQuery: https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
+function isVisible(element) {
+    return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 class WordLabel {
     destroy() {
@@ -93,7 +96,7 @@ const labeler = function (env) {
         }
         const [minColumn, maxColumn] = getVisibleColumnRange(editorView);
         const rows = textEditor.getVisibleRowRange();
-        if (!rows || space_pen_1.$(editorView).is(':not(:visible)')) {
+        if (!rows || !isVisible(editorView)) {
             continue;
         }
         const [firstVisibleRow, lastVisibleRow] = rows;
