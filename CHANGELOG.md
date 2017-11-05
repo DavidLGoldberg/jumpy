@@ -1,12 +1,13 @@
-## 4.0.0 - New Architecture
-*   Convert all core code from CoffeeScript to TypeScript.
-*   Pull out into modules and use javascript-state-machine.
-*   Preps for @johngeorgewright's code for tree-view labels and other initiatives.
-*   Use workspaceElement for key listening.  No more preregistered commands.
-*   Add an extra class to jumpy jump mode to make it more specific.
-*   Remove code registering commands for jumpy keys for each letter.
-*   Fix small bug of no match case after 2nd character.
-*   Add note about vim-mode-plus and hydrogen packages in README.md.
+## 4.0.0 - New Architecture + Jump to Tabs!
+* Add ability to jump to tabs!
+* Preps for @johngeorgewright's code for tree-view labels and other initiatives.
+* Convert all core code from CoffeeScript to TypeScript.
+* Pull out into modules and use javascript-state-machine.
+* Use workspaceElement for key listening.  No more preregistered commands.
+* Add an extra css class to jumpy jump mode to make it more specific.
+* Remove code registering commands for jumpy keys for each letter.
+* Fix small bug of no match case after 2nd character.
+* Add note about vim-mode-plus and hydrogen packages in README.md.
 
 ## 3.1.3 - Remove deprecation (Object.observe)
 *   Simplify and Remove logic that used Object.observe for key maps.
