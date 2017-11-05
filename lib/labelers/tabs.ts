@@ -1,8 +1,7 @@
 'use babel';
 
-import * as _ from 'lodash';
 import { LabelEnvironment, Label, Labeler } from '../label-interface';
-import { Range, TextEditor, Pane } from 'atom';
+import { TextEditor, Pane } from 'atom';
 
 class TabLabel implements Label {
     // TODO: check I need these defined again?

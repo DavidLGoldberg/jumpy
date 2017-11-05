@@ -6,6 +6,7 @@ export interface LabelEnvironment {
 }
 
 export interface Label {
+    // TODO: can I make this | null instead of undefined?
     keyLabel: string | undefined;
     textEditor: TextEditor | null;
     element: HTMLElement | null;

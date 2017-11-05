@@ -9,7 +9,7 @@ import { CompositeDisposable, Point } from 'atom';
 import { $ } from 'space-pen';
 import * as _ from 'lodash';
 
-import { LabelEnvironment, Label, Labeler } from './label-interface';
+import { LabelEnvironment, Label } from './label-interface';
 import getWordLabels from './labelers/words';
 import getTabLabels from './labelers/tabs';
 import * as StateMachine from 'javascript-state-machine';
