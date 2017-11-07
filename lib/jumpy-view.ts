@@ -13,6 +13,7 @@ import getTabLabels from './labelers/tabs';
 import * as StateMachine from 'javascript-state-machine';
 import labelReducer from './label-reducer';
 import { getKeySet } from './keys';
+import { addJumpModeClasses, removeJumpModeClasses } from './viewHelpers';
 
 export default class JumpyView {
     workspaceElement: any;
@@ -73,6 +74,11 @@ export default class JumpyView {
                     this.workspaceElement.addEventListener('keydown', this.keydownListener, true);
                     for (const e of ['blur', 'click', 'scroll']) {
                         this.workspaceElement.addEventListener(e, () => this.clearJumpModeHandler(), true);
+                    }
+
+                    const treeView:HTMLCollectionOf<Element> = document.getElementsByClassName('tree-view');
+                    if (treeView.length) {
+                        addJumpModeClasses(treeView[0]);
                     }
 
                     const environment:LabelEnvironment = {
@@ -273,11 +279,13 @@ export default class JumpyView {
         for (const e of ['blur', 'click', 'scroll']) {
             this.workspaceElement.removeEventListener(e, () => this.clearJumpModeHandler(), true);
         }
+        const treeView:HTMLCollectionOf<Element> = document.getElementsByClassName('tree-view');
+        if (treeView.length) {
+            removeJumpModeClasses(treeView[0]);
+        }
         for (const editor of atom.workspace.getTextEditors()) {
             const editorView = atom.views.getView(editor);
-
-            editorView.classList.remove('jumpy-jump-mode',
-                'jumpy-more-specific1', 'jumpy-more-specific2');
+            removeJumpModeClasses(editorView);
         }
         clearAllLabels();
         if (this.disposables) {

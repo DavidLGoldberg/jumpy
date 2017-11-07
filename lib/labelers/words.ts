@@ -2,6 +2,7 @@
 
 import * as _ from 'lodash';
 import { LabelEnvironment, Label, Labeler } from '../label-interface';
+import { addJumpModeClasses } from '../viewHelpers';
 import { Point, Range, TextEditor } from 'atom';
 
 function getVisibleColumnRange (editorView: any): Array<number> {
@@ -121,8 +122,7 @@ const labeler: Labeler = function(env:LabelEnvironment):Array<WordLabel> {
         const editorView = atom.views.getView(textEditor);
 
         // 'jumpy-jump-mode is for keymaps and utilized by tests
-        editorView.classList.add('jumpy-jump-mode',
-            'jumpy-more-specific1', 'jumpy-more-specific2');
+        addJumpModeClasses(editorView);
 
         // current labels for current textEditor in loop.
         if (!env.keys.length) {

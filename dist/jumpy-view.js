@@ -11,6 +11,7 @@ const tabs_1 = require("./labelers/tabs");
 const StateMachine = require("javascript-state-machine");
 const label_reducer_1 = require("./label-reducer");
 const keys_1 = require("./keys");
+const viewHelpers_1 = require("./viewHelpers");
 class JumpyView {
     constructor(serializedState) {
         this.workspaceElement = atom.views.getView(atom.workspace);
@@ -50,6 +51,10 @@ class JumpyView {
                     this.workspaceElement.addEventListener('keydown', this.keydownListener, true);
                     for (const e of ['blur', 'click', 'scroll']) {
                         this.workspaceElement.addEventListener(e, () => this.clearJumpModeHandler(), true);
+                    }
+                    const treeView = document.getElementsByClassName('tree-view');
+                    if (treeView.length) {
+                        viewHelpers_1.addJumpModeClasses(treeView[0]);
                     }
                     const environment = {
                         keys: keys_1.getKeySet(),
@@ -224,9 +229,13 @@ class JumpyView {
         for (const e of ['blur', 'click', 'scroll']) {
             this.workspaceElement.removeEventListener(e, () => this.clearJumpModeHandler(), true);
         }
+        const treeView = document.getElementsByClassName('tree-view');
+        if (treeView.length) {
+            viewHelpers_1.removeJumpModeClasses(treeView[0]);
+        }
         for (const editor of atom.workspace.getTextEditors()) {
             const editorView = atom.views.getView(editor);
-            editorView.classList.remove('jumpy-jump-mode', 'jumpy-more-specific1', 'jumpy-more-specific2');
+            viewHelpers_1.removeJumpModeClasses(editorView);
         }
         clearAllLabels();
         if (this.disposables) {

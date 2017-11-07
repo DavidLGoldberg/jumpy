@@ -2,6 +2,7 @@
 'use babel';
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
+const viewHelpers_1 = require("../viewHelpers");
 const atom_1 = require("atom");
 function getVisibleColumnRange(editorView) {
     const charWidth = editorView.getDefaultCharacterWidth();
@@ -89,7 +90,7 @@ const labeler = function (env) {
     for (const textEditor of atom.workspace.getTextEditors()) {
         const editorView = atom.views.getView(textEditor);
         // 'jumpy-jump-mode is for keymaps and utilized by tests
-        editorView.classList.add('jumpy-jump-mode', 'jumpy-more-specific1', 'jumpy-more-specific2');
+        viewHelpers_1.addJumpModeClasses(editorView);
         // current labels for current textEditor in loop.
         if (!env.keys.length) {
             continue;

@@ -76,12 +76,12 @@ If left on, will display a homing beacon (usually red) after all jumps.
 
 Put this override in your **'Atom'** -> **'Keymap...'** settings:
 
-    'atom-text-editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode)':
+    'atom-text-editor:not(.mini).vim-mode:not(.insert-mode):not(.jumpy-jump-mode), .tree-view':
         'f': 'jumpy:toggle'
 
 or if `vim-mode-plus`:
 
-    'atom-text-editor:not(.mini).vim-mode-plus:not(.insert-mode):not(.jumpy-jump-mode)':
+    'atom-text-editor:not(.mini).vim-mode-plus:not(.insert-mode):not(.jumpy-jump-mode), .tree-view':
         'f': 'jumpy:toggle'
 
 This will **bind 'f' to toggle Jumpy**.
