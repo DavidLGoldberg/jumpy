@@ -1,3 +1,5 @@
+## 4.1.1 - Fix performance issue with current Atom
+
 ## 4.1.0 - Add ability to jump while tree-view is focused
 * Should work with 'shift-enter' or 'f' bindings in vim-mode!
 * Alert users about current atom release's performance issues.
