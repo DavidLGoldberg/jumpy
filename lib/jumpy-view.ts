@@ -32,6 +32,26 @@ export default class JumpyView {
     savedInheritedDisplay: any;
 
     constructor(serializedState: any) {
+        const notification = atom.notifications.addWarning(
+        'Jumpy Performance', {
+            detail: '\n \
+The current stable build of Atom has some issues that affect \n \
+Jumpy. Note: https://github.com/atom/atom/pull/16083 \n \
+\n \
+Please be patient. \n \
+\n \
+The current atom-beta (Atom 1.23.0-beta0) works fine \n \
+with Jumpy and is coming soon! \n \
+Thanks @leroix and @nathansobo for all of your support \n \
+and quick fixes! \n \
+\n \
+This is a good opportunity to mention Jumpy 4.0.0 adds the \n \
+ability to jump to tabs! \n \
+CHANGELOG: \n \
+https://github.com/DavidLGoldberg/jumpy/blob/master/CHANGELOG.md',
+            dismissable: true
+        });
+
         this.workspaceElement = atom.views.getView(atom.workspace);
         this.disposables = new CompositeDisposable();
         this.drawnLabels = [];
