@@ -20,8 +20,7 @@ module.exports = {
         },
         useHomingBeaconEffectOnJumps: {
             description: 'This will animate a short lived homing beacon upon \
-            jump.  It is *temporarily* not working due to architectural \
-            changes in Atom.',
+            jump.',
             type: 'boolean',
             default: true
         },
