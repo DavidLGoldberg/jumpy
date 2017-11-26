@@ -1,5 +1,6 @@
 'use babel';
 
+import * as elmApp from '../dist/elm/state-machine';
 import JumpyView from './jumpy-view';
 
 module.exports = {
@@ -38,7 +39,8 @@ module.exports = {
     },
 
     activate(state: any) {
-        this.jumpyView = new JumpyView(state.jumpyViewState);
+        const stateMachine = elmApp.StateMachine.worker();
+        this.jumpyView = new JumpyView(state.jumpyViewState, stateMachine);
     },
 
     deactivate() {
@@ -50,7 +52,7 @@ module.exports = {
 
     serialize() {
         return {
-            jumpyViewState: this.jumpyView.serialize()
+            jumpyViewState: this.jumpyView.serialize(),
         };
     }
 };

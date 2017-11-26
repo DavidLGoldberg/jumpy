@@ -1,5 +1,6 @@
 .DS_Store
 npm-debug.log
 node_modules
+elm-stuff
 notes.txt
 graph.svg
