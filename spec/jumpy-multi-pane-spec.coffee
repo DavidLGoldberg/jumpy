@@ -16,6 +16,7 @@ NUM_TOTAL_WORDS =
 
 NUM_CAMEL_SPECIFIC_MATCHES = 4 + 5 + 3
 
+# TODO: Upgrade to Jasmine 3 and new arch's
 xdescribe "Jumpy", ->
     [workspaceElement, textEditorElement, textEditor, jumpyPromise] = []
 
