@@ -2,10 +2,21 @@
 
 import * as _ from 'lodash';
 
-const lowerCharacters: Array<string> = _.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1 /* for inclusive*/)
-    .map(c => String.fromCharCode(c));
-const upperCharacters: Array<string> = _.range('A'.charCodeAt(0), 'Z'.charCodeAt(0) + 1 /* for inclusive*/)
-    .map(c => String.fromCharCode(c));
+const customKeys = atom.config.get('jumpy.customKeys');
+let lowerCharacters: Array<string> = [];
+let upperCharacters: Array<string> = [];
+
+if (!customKeys) {
+  lowerCharacters = _.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1 /* for inclusive*/)
+      .map(c => String.fromCharCode(c));
+  upperCharacters = _.range('A'.charCodeAt(0), 'Z'.charCodeAt(0) + 1 /* for inclusive*/)
+      .map(c => String.fromCharCode(c));
+} else {
+  for (let key of customKeys) {
+    lowerCharacters.push(key.toLowerCase());
+    upperCharacters.push(key.toUpperCase());
+  }
+}
 
 const keys: Array<string> = [];
 

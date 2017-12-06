@@ -2,10 +2,21 @@
 'use babel';
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
-const lowerCharacters = _.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1 /* for inclusive*/)
-    .map(c => String.fromCharCode(c));
-const upperCharacters = _.range('A'.charCodeAt(0), 'Z'.charCodeAt(0) + 1 /* for inclusive*/)
-    .map(c => String.fromCharCode(c));
+const customKeys = atom.config.get('jumpy.customKeys');
+let lowerCharacters = [];
+let upperCharacters = [];
+if (!customKeys) {
+    lowerCharacters = _.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1 /* for inclusive*/)
+        .map(c => String.fromCharCode(c));
+    upperCharacters = _.range('A'.charCodeAt(0), 'Z'.charCodeAt(0) + 1 /* for inclusive*/)
+        .map(c => String.fromCharCode(c));
+}
+else {
+    for (let key of customKeys) {
+        lowerCharacters.push(key.toLowerCase());
+        upperCharacters.push(key.toUpperCase());
+    }
+}
 const keys = [];
 // A little ugly.
 // I used itertools.permutation in python.
