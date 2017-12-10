@@ -1,3 +1,6 @@
+## 4.2.0 - Add custom keys for labels
+*   Merge @taylon PR to add custom keys!
+
 ## 4.1.1 - Fix performance issue with current Atom
 
 ## 4.1.0 - Add ability to jump while tree-view is focused
