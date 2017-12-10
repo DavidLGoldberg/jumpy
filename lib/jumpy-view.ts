@@ -82,7 +82,7 @@ export default class JumpyView {
                     }
 
                     const environment:LabelEnvironment = {
-                        keys: getKeySet(),
+                        keys: getKeySet(atom.config.get('jumpy.customKeys')),
                         settings: this.settings
                     };
 

@@ -28,6 +28,11 @@ module.exports = {
             description: 'Jumpy will create labels based on this pattern.',
             type: 'string',
             default: '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
+        },
+        customKeys: {
+            description: 'Jumpy will use these characters in the specifed order to create labels (comma separated)',
+            type: 'array',
+            default: []
         }
     },
     activate(state) {

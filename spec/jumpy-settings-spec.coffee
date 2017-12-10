@@ -119,3 +119,23 @@ describe "Jumpy with non default settings on", ->
             cursorPosition = textEditor.getCursorBufferPosition()
             expect(cursorPosition.row).toBe 32
             expect(cursorPosition.column).toBe 5
+
+
+    describe "when customKeys is used", ->
+        # Tests hot swapping of keys.
+        # To confusing if this doesn't work for beginner Atom users without an Atom restart.
+        beforeEach ->
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle' # close default toggle from above before changing settings
+            atom.config.set 'jumpy.matchPattern', '([A-Z]+([0-9a-z])*)|[a-z0-9]{2,}'
+            atom.config.set 'jumpy.customKeys', ['s', 'd', 'f', 'g', 'h', 'j', 'k', 'l'] # home keys skipping 'a'
+
+        it "draws correct labels", ->
+            atom.commands.dispatch textEditorElement, 'jumpy:toggle'
+            labels = textEditor.getOverlayDecorations()
+            expect(labels.length)
+                .toBe NUM_TOTAL_WORDS + NUM_CAMEL_SPECIFIC_MATCHES
+
+            expect(labels[0].getProperties().item.textContent).toBe 'ss'
+            expect(labels[1].getProperties().item.textContent).toBe 'sd'
+            expect(labels[82].getProperties().item.textContent).toBe 'Ff'
+            expect(labels[83].getProperties().item.textContent).toBe 'Fg'
