@@ -57,7 +57,7 @@ class JumpyView {
                         viewHelpers_1.addJumpModeClasses(treeView[0]);
                     }
                     const environment = {
-                        keys: keys_1.getKeySet(),
+                        keys: keys_1.getKeySet(atom.config.get('jumpy.customKeys')),
                         settings: this.settings
                     };
                     // TODO: reduce with concat all labelers -> labeler.getLabels()
