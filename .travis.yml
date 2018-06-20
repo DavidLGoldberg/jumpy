@@ -14,8 +14,6 @@ os:
   - linux
   - osx
 
-dist: trusty
-
 ### Generic setup follows ###
 script:
   - curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh
@@ -36,23 +34,12 @@ git:
 
 sudo: false
 
+dist: trusty
 
 addons:
-  artifacts:
-    paths:
-      - out/atom-amd64.deb
-      - out/atom.x86_64.rpm
-      - out/atom-amd64.tar.gz
-    target_paths: travis-artifacts/$TRAVIS_BUILD_ID
   apt:
-    sources:
-    - ubuntu-toolchain-r-test
     packages:
-    - gcc-6
-    - g++-6
+    - build-essential
     - fakeroot
     - git
     - libsecret-1-dev
-    - rpm
-    - libx11-dev
-    - libxkbfile-dev
