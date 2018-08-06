@@ -1,5 +1,7 @@
 {
   "name": "jumpy",
+  "author": "David L. Goldberg",
+  "atomTestRunner": "./spec/custom-runner",
   "main": "./dist/jumpy",
   "version": "4.2.0",
   "description": "An Atom package that creates dynamic hotkeys to jump around files across visible panes.",
@@ -23,14 +25,14 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "javascript-state-machine": "2.4.0",
     "lodash": "2.4.1",
     "space-pen": "^4.2.2"
   },
   "devDependencies": {
     "@types/atom": "0.0.38",
-    "@types/javascript-state-machine": "2.4.1",
     "@types/lodash": "4.14.77",
+    "atom-jasmine3-test-runner": "3.1.0",
+    "madge": "3.2.0",
     "typescript": "2.5.3"
   }
 }

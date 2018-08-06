@@ -1,6 +1,7 @@
 "use strict";
 'use babel';
 Object.defineProperty(exports, "__esModule", { value: true });
+const elmApp = require("../dist/elm/state-machine");
 const jumpy_view_1 = require("./jumpy-view");
 module.exports = {
     jumpyView: null,
@@ -36,7 +37,8 @@ module.exports = {
         }
     },
     activate(state) {
-        this.jumpyView = new jumpy_view_1.default(state.jumpyViewState);
+        const stateMachine = elmApp.StateMachine.worker();
+        this.jumpyView = new jumpy_view_1.default(state.jumpyViewState, stateMachine);
     },
     deactivate() {
         if (this.jumpyView) {
@@ -46,7 +48,7 @@ module.exports = {
     },
     serialize() {
         return {
-            jumpyViewState: this.jumpyView.serialize()
+            jumpyViewState: this.jumpyView.serialize(),
         };
     }
 };

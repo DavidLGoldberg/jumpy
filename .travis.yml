@@ -5,6 +5,7 @@ env:
   global:
     - APM_TEST_PACKAGES=""
     - ATOM_LINT_WITH_BUNDLED_NODE="true"
+    - CI="true"
 
   matrix:
     - ATOM_CHANNEL=stable
