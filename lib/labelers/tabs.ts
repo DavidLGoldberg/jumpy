@@ -20,7 +20,7 @@ class TabLabel implements Label {
         const tabsPane:Pane = atom.workspace.paneForItem(this.textEditor);
         const tabsPaneElement:HTMLElement = atom.views.getView(tabsPane);
         const foundTab:HTMLElement | null = <HTMLElement>tabsPaneElement
-            .querySelector(`[data-path='${this.textEditor.getPath()}'`);
+            .querySelector(`[data-path='${this.textEditor.getPath()}']`);
 
         if (!foundTab) {
             return this;
