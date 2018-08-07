@@ -12,7 +12,7 @@ class TabLabel {
         const tabsPane = atom.workspace.paneForItem(this.textEditor);
         const tabsPaneElement = atom.views.getView(tabsPane);
         const foundTab = tabsPaneElement
-            .querySelector(`[data-path='${this.textEditor.getPath()}'`);
+            .querySelector(`[data-path='${this.textEditor.getPath()}']`);
         if (!foundTab) {
             return this;
         }
