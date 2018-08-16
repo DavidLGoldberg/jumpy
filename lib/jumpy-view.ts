@@ -10,9 +10,10 @@ import * as _ from 'lodash';
 import { LabelEnvironment, Label } from './label-interface';
 import getWordLabels from './labelers/words';
 import getTabLabels from './labelers/tabs';
+import getTreeItemLabels from './labelers/tree-items';
 import labelReducer from './label-reducer';
 import { getKeySet } from './keys';
-import { addJumpModeClasses, removeJumpModeClasses } from './viewHelpers';
+import { removeJumpModeClasses } from './viewHelpers';
 
 export default class JumpyView {
     workspaceElement: any;
@@ -35,7 +36,6 @@ export default class JumpyView {
         this.stateMachine = stateMachine;
 
         this.setSettings();
-        this.setUpJumpModeClasses();
 
         // Subscribe:
         this.stateMachine.ports.validKeyEntered.subscribe((keyLabel: string) => {
@@ -98,13 +98,6 @@ export default class JumpyView {
         }));
     }
 
-    setUpJumpModeClasses() {
-        const treeView:HTMLCollectionOf<Element> = document.getElementsByClassName('tree-view');
-        if (treeView.length) {
-            addJumpModeClasses(treeView[0]);
-        }
-    }
-
     initializeStatusBar() {
         // NOTE: This needs to be called when status bar is ready, so can't be called from constructor
 
@@ -158,12 +151,14 @@ export default class JumpyView {
         // TODO: reduce with concat all labelers -> labeler.getLabels()
         const wordLabels:Array<Label> = getWordLabels(environment);
         const tabLabels:Array<Label> = getTabLabels(environment);
+        const treeItemLabels:Array<Label> = getTreeItemLabels(environment);
 
         // TODO: I really think alllabels can just be drawnlabels
         // maybe I call labeler.draw() still returns back anyway? Less functional?
         this.allLabels = [
             ...wordLabels,
             ...tabLabels
+            ...treeItemLabels
         ];
 
         for (const label of this.allLabels) {

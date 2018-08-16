@@ -8,6 +8,7 @@ const atom_1 = require("atom");
 const _ = require("lodash");
 const words_1 = require("./labelers/words");
 const tabs_1 = require("./labelers/tabs");
+const tree_items_1 = require("./labelers/tree-items");
 const label_reducer_1 = require("./label-reducer");
 const keys_1 = require("./keys");
 const viewHelpers_1 = require("./viewHelpers");
@@ -19,7 +20,6 @@ class JumpyView {
         this.commands = new atom_1.CompositeDisposable();
         this.stateMachine = stateMachine;
         this.setSettings();
-        this.setUpJumpModeClasses();
         // Subscribe:
         this.stateMachine.ports.validKeyEntered.subscribe((keyLabel) => {
             for (const label of this.drawnLabels) {
@@ -72,12 +72,6 @@ class JumpyView {
             }
         }));
     }
-    setUpJumpModeClasses() {
-        const treeView = document.getElementsByClassName('tree-view');
-        if (treeView.length) {
-            viewHelpers_1.addJumpModeClasses(treeView[0]);
-        }
-    }
     initializeStatusBar() {
         // NOTE: This needs to be called when status bar is ready, so can't be called from constructor
         if (this.statusBarElement) {
@@ -125,11 +119,13 @@ class JumpyView {
         // TODO: reduce with concat all labelers -> labeler.getLabels()
         const wordLabels = words_1.default(environment);
         const tabLabels = tabs_1.default(environment);
+        const treeItemLabels = tree_items_1.default(environment);
         // TODO: I really think alllabels can just be drawnlabels
         // maybe I call labeler.draw() still returns back anyway? Less functional?
         this.allLabels = [
             ...wordLabels,
-            ...tabLabels
+            ...tabLabels,
+            ...treeItemLabels
         ];
         for (const label of this.allLabels) {
             this.drawnLabels.push(label.drawLabel());
