@@ -1,5 +1,11 @@
+## 5.0.0 - New Architecture + Jump to Tree View Items!
+* Enable jumping to the Tree View items!
+* Replace javascript-state-machine with headless Elm module.
+* Add '😞' to 'no match' alert.
+* All tests now using Jasmine3.  Much faster + fixes Travis build.
+
 ## 4.2.0 - Add custom keys for labels
-*   Merge @taylon PR to add custom keys!
+* Merge @taylon PR to add custom keys!
 
 ## 4.1.1 - Fix performance issue with current Atom
 
@@ -20,17 +26,17 @@
 * Add note about vim-mode-plus and hydrogen packages in README.md.
 
 ## 3.1.3 - Remove deprecation (Object.observe)
-*   Simplify and Remove logic that used Object.observe for key maps.
+* Simplify and Remove logic that used Object.observe for key maps.
 
 ## 3.1.2 - Fix beacon
-*   Merge @johngeorgewright PR to restore the beacon functionality!
+* Merge @johngeorgewright PR to restore the beacon functionality!
 
 ## 3.1.1 - Add Travis CI Badge
-*   First run of Travis!
+* First run of Travis!
 
 ## 3.1.0 Gitter and Travis Continuous Integration
-*   Adds .travis.yml to project for Travis Continuous Integration.
-*   Adds a gitter badge to the README.md.
+* Adds .travis.yml to project for Travis Continuous Integration.
+* Adds a gitter badge to the README.md.
 
 ## 3.0.3
 * Fix issue #84 (PR: #85) from Danny Arnold (@despairblue)
