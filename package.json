@@ -3,7 +3,7 @@
   "author": "David L. Goldberg",
   "atomTestRunner": "./spec/custom-runner",
   "main": "./dist/jumpy",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "An Atom package that creates dynamic hotkeys to jump around files across visible panes.",
   "keywords": [
     "hotkey",
