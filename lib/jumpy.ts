@@ -39,7 +39,7 @@ module.exports = {
     },
 
     activate(state: any) {
-        const stateMachine = elmApp.StateMachine.worker();
+        const stateMachine = elmApp.Elm.StateMachine.init();
         this.jumpyView = new JumpyView(state.jumpyViewState, stateMachine);
     },
 

@@ -1,8 +1,7 @@
 default: elm typescript
 
 elm:
-	elm-package install
-	elm-make lib/state-machine.elm --output=dist/elm/state-machine.js
+	/usr/local/bin/elm make lib/state-machine.elm --output=dist/elm/state-machine.js --optimize
 
 typescript:
 	npm install

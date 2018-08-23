@@ -83,7 +83,7 @@ class JumpyView {
             this.statusBarElement = statusBarElement;
             statusBarElement.id = 'status-bar-jumpy-container';
             statusBarElement.classList.add('inline-block');
-            statusBarElement.innerHTML = "<div id='status-bar-jumpy'>Jumpy: <span>Jump Mode!</span></div>";
+            statusBarElement.innerHTML = "<div id='status-bar-jumpy'>Jumpy: <span class='status'>Jump Mode!</span></div>";
             atomStatusBar.addLeftTile({
                 item: statusBarElement,
                 priority: -1
@@ -131,7 +131,7 @@ class JumpyView {
             this.drawnLabels.push(label.drawLabel());
         }
         this.currentLabels = _.clone(this.allLabels);
-        this.stateMachine.ports.labels.send(this.currentLabels
+        this.stateMachine.ports.getLabels.send(this.currentLabels
             .filter((label) => label.keyLabel) // ie. tabs open after limit reached
             .map((label) => label.keyLabel));
     }

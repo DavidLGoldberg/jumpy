@@ -1,6 +1,6 @@
 port module StateMachine exposing (..)
 
-import Char exposing (KeyCode)
+import Char
 import Html as Html exposing (..)
 import Html.Events as Events exposing (..)
 import Json.Decode as Json
@@ -8,9 +8,9 @@ import List exposing (any)
 import String exposing (..)
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    Platform.program
+    Platform.worker
         { init = init
         , update = update
         , subscriptions = subscriptions
@@ -20,7 +20,7 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ labels LoadLabels
+        [ getLabels LoadLabels
         , key KeyEntered
         , reset (Basics.always Reset)
         , exit (Basics.always Exit)
@@ -51,7 +51,7 @@ port labelJumped : String -> Cmd msg
 -- Inbound
 
 
-port labels : (Labels -> msg) -> Sub msg
+port getLabels : (Labels -> msg) -> Sub msg
 
 
 port key : (Int -> msg) -> Sub msg
@@ -79,8 +79,12 @@ type alias Model =
     }
 
 
-init : ( Model, Cmd Msg )
-init =
+type alias Flags =
+    {}
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     ( { active = False
       , keysEntered = ""
       , lastJumped = ""
@@ -108,10 +112,7 @@ clearStatus model =
 
 resetStatus : Model -> Model
 resetStatus model =
-    if model.active then
-        { model | status = "<div id='status-bar-jumpy'>Jumpy: <span class='status'>Jump Mode!</span></div>" }
-    else
-        model
+    { model | status = "<div id='status-bar-jumpy'>Jumpy: <span class='status'>Jump Mode!</span></div>" }
 
 
 resetKeys : Model -> Model
@@ -138,20 +139,24 @@ addKeyToStatus keyEntered model =
 
 modelAndStatus : Model -> ( Model, Cmd Msg )
 modelAndStatus model =
-    model
-        ! [ activeChanged model.active
-          , statusChanged model.status
-          , validKeyEntered model.keysEntered
-          ]
+    ( model
+    , Cmd.batch
+        [ activeChanged model.active
+        , statusChanged model.status
+        , validKeyEntered model.keysEntered
+        ]
+    )
 
 
 modelAndJumped : Model -> ( Model, Cmd Msg )
 modelAndJumped model =
-    model
-        ! [ activeChanged model.active
-          , statusChanged model.status
-          , labelJumped model.lastJumped
-          ]
+    ( model
+    , Cmd.batch
+        [ activeChanged model.active
+        , statusChanged model.status
+        , labelJumped model.lastJumped
+        ]
+    )
 
 
 turnOn : Model -> Model
@@ -191,9 +196,9 @@ update msg model =
                         |> turnOff
                         |> modelAndJumped
                 else
-                    model ! []
+                    ( model, Cmd.none )
             else
-                model ! []
+                ( model, Cmd.none )
 
         Reset ->
             if model.active then
@@ -202,7 +207,7 @@ update msg model =
                     |> resetStatus
                     |> modelAndStatus
             else
-                model ! []
+                ( model, Cmd.none )
 
         LoadLabels labels ->
             { model | labels = labels }
