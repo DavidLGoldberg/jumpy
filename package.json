@@ -17,7 +17,8 @@
     "productivity",
     "mouseless",
     "plugin",
-    "extension"
+    "extension",
+    "jumpy"
   ],
   "repository": "https://github.com/DavidLGoldberg/jumpy",
   "license": "MIT",
