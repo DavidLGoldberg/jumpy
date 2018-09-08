@@ -13,3 +13,6 @@ graph:
 
 test:
 	apm test
+
+count:
+	rg --files | grep -v \.js$ | grep -v dist | grep -v \.png$ | grep -v \.gif$ | grep -v package-lock.json | xargs wc -l | sort -n
