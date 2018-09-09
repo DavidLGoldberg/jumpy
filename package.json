@@ -33,7 +33,9 @@
     "@types/atom": "0.0.38",
     "@types/lodash": "4.14.77",
     "atom-jasmine3-test-runner": "3.1.0",
+    "elm-test": "0.19.0-beta8",
     "madge": "3.2.0",
-    "typescript": "2.5.3"
+    "typescript": "2.5.3",
+    "uglify-js": "3.4.9"
   }
 }

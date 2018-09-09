@@ -1,6 +1,6 @@
 'use babel';
 
-import * as elmApp from '../dist/elm/state-machine';
+import * as elmApp from '../dist/elm/StateMachine';
 import JumpyView from './jumpy-view';
 
 module.exports = {

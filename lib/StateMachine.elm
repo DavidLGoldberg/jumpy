@@ -1,4 +1,4 @@
-port module StateMachine exposing (..)
+port module StateMachine exposing (Flags, Labels, Model, Msg(..), activeChanged, addKeyToStatus, clearStatus, exit, getLabels, init, initCmds, key, labelJumped, main, modelAndJumped, modelAndStatus, onKeyPress, reset, resetKeys, resetStatus, setNoMatchStatus, statusChanged, subscriptions, turnOff, turnOn, update, validKeyEntered)
 
 import Char
 import Html as Html exposing (..)
@@ -185,18 +185,22 @@ update msg model =
                     model
                         |> setNoMatchStatus
                         |> modelAndStatus
+
                 else if length model.keysEntered == 0 then
                     -- FIRST LETTER ----------
                     { model | keysEntered = newKeysEntered }
                         |> addKeyToStatus keyEntered
                         |> modelAndStatus
+
                 else if length model.keysEntered == 1 then
                     -- SECOND LETTER ----------
                     { model | lastJumped = newKeysEntered }
                         |> turnOff
                         |> modelAndJumped
+
                 else
                     ( model, Cmd.none )
+
             else
                 ( model, Cmd.none )
 
@@ -206,6 +210,7 @@ update msg model =
                     |> resetKeys
                     |> resetStatus
                     |> modelAndStatus
+
             else
                 ( model, Cmd.none )
 

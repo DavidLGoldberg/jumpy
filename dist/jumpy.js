@@ -1,7 +1,7 @@
 "use strict";
 'use babel';
 Object.defineProperty(exports, "__esModule", { value: true });
-const elmApp = require("../dist/elm/state-machine");
+const elmApp = require("../dist/elm/StateMachine");
 const jumpy_view_1 = require("./jumpy-view");
 module.exports = {
     jumpyView: null,
