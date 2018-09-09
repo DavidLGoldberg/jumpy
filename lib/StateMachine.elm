@@ -1,4 +1,4 @@
-port module StateMachine exposing (Flags, Labels, Model, Msg(..), activeChanged, addKeyToStatus, clearStatus, exit, getLabels, init, initCmds, key, labelJumped, main, modelAndJumped, modelAndStatus, onKeyPress, reset, resetKeys, resetStatus, setNoMatchStatus, statusChanged, subscriptions, turnOff, turnOn, update, validKeyEntered)
+port module StateMachine exposing (Flags, Labels, Model, Msg(..), activeChanged, addKeyToStatus, clearStatus, exit, getLabels, init, key, labelJumped, main, modelAndJumped, modelAndStatus, onKeyPress, reset, resetKeys, resetStatus, setNoMatchStatus, statusChanged, turnOff, turnOn, update, validKeyEntered)
 
 import Char
 import Html as Html exposing (..)
@@ -13,18 +13,15 @@ main =
     Platform.worker
         { init = init
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions =
+            \model ->
+                Sub.batch
+                    [ getLabels LoadLabels
+                    , key KeyEntered
+                    , reset (Basics.always Reset)
+                    , exit (Basics.always Exit)
+                    ]
         }
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ getLabels LoadLabels
-        , key KeyEntered
-        , reset (Basics.always Reset)
-        , exit (Basics.always Exit)
-        ]
 
 
 type alias Labels =
@@ -91,13 +88,8 @@ init flags =
       , labels = []
       , status = ""
       }
-    , initCmds
+    , Cmd.none
     )
-
-
-initCmds : Cmd Msg
-initCmds =
-    Cmd.none
 
 
 onKeyPress : (Int -> msg) -> Attribute msg
