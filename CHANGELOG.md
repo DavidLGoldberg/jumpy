@@ -1,3 +1,12 @@
+## 5.0.2 - Few tweaks
+* Use uglify-js to decrease size! (leverages elm's --optimize)
+* Update README.md with links / install instructions to new Jumpy packages!
+* Attempt to improve travis test stability with wait time.
+
+## 5.0.1 - Upgrade elm and lodash
+* Upgrade to elm 0.19 (Greatly reduces size of state machine after compilation)
+* Upgrade lodash because of security concern.
+
 ## 5.0.0 - New Architecture + Jump to Tree View Items!
 * Enable jumping to the Tree View items!
 * Replace javascript-state-machine with headless Elm module.
