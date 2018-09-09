@@ -23,6 +23,10 @@ On command line:
 ```
 apm install jumpy
 ```
+or the for the whole jumpy suite:
+```
+apm install jumpy jumpy-beacon back-jumpy
+```
 
 ## Notes
 
@@ -119,8 +123,10 @@ atom-text-editor {
 }
 ```
 
-## My other Atom package :)
+## My other Atom packages :)
 
+*   [Jumpy-beacon](https://atom.io/packages/jumpy-beacon)
+*   [Back-jumpy](https://atom.io/packages/back-jumpy)
 *   [Qolor](https://atom.io/packages/qolor)
 
 ## Keywords
