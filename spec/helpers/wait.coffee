@@ -1,6 +1,6 @@
 wait = (doneFunc, waitTime) ->
     setTimeout ->
         doneFunc()
-    , waitTime || 300
+    , waitTime || 600
 
 module.exports = {wait}
