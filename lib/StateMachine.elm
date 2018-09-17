@@ -178,20 +178,22 @@ update msg model =
                         |> setNoMatchStatus
                         |> modelAndStatus
 
-                else if length model.keysEntered == 0 then
-                    -- FIRST LETTER ----------
-                    { model | keysEntered = newKeysEntered }
-                        |> addKeyToStatus keyEntered
-                        |> modelAndStatus
-
-                else if length model.keysEntered == 1 then
-                    -- SECOND LETTER ----------
-                    { model | lastJumped = newKeysEntered }
-                        |> turnOff
-                        |> modelAndJumped
-
                 else
-                    ( model, Cmd.none )
+                    case length model.keysEntered of
+                        0 ->
+                            -- FIRST LETTER ----------
+                            { model | keysEntered = newKeysEntered }
+                                |> addKeyToStatus keyEntered
+                                |> modelAndStatus
+
+                        1 ->
+                            -- SECOND LETTER ----------
+                            { model | lastJumped = newKeysEntered }
+                                |> turnOff
+                                |> modelAndJumped
+
+                        _ ->
+                            ( model, Cmd.none )
 
             else
                 ( model, Cmd.none )
