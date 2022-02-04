@@ -25,7 +25,7 @@ apm install jumpy
 ```
 or the for the whole jumpy suite:
 ```
-apm install jumpy jumpy-beacon back-jumpy
+apm install jumpy jumpy-beacon
 ```
 
 ## Notes
@@ -126,8 +126,12 @@ atom-text-editor {
 ## My other Atom packages :)
 
 *   [Jumpy-beacon](https://atom.io/packages/jumpy-beacon)
-*   [Back-jumpy](https://atom.io/packages/back-jumpy)
+*   [Back-jumpy](https://atom.io/packages/back-jumpy) (WIP)
 *   [Qolor](https://atom.io/packages/qolor)
+
+## My VS Code version of Jumpy :))
+
+*   [Jumpy2](https://marketplace.visualstudio.com/items?itemName=DavidLGoldberg.jumpy2) (Jumpy for VS Code from it's original author!)
 
 ## Keywords
 
